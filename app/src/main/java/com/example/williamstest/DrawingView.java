@@ -38,16 +38,22 @@ public class DrawingView extends View {
     //check if user has drawn
     private boolean started = false;
     //timer
-    private long startTime=0, timeToDraw = 0, startActivity;
+    private long startTime=0, startActivity;
     //string with times
     private String s1, s2;
+    //string to define the current draw
+    private String protocol, draw;
 
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setBackgroundResource(R.drawable.uno);
-        setupDrawing();
         setLayerType(LAYER_TYPE_HARDWARE, null);
         startActivity = System.currentTimeMillis();
+        setupDrawing();
+    }
+
+    public void setCornice(String p1, String c1) {
+        protocol = p1;
+        draw = c1;
     }
 
     public void setDimension (DisplayMetrics displaymetrics) {
@@ -59,6 +65,8 @@ public class DrawingView extends View {
         }
         offset = (int) (0.32*diameter);
         diameter -= offset;
+        String imageName = protocol+draw;
+        setBackgroundResource(getResources().getIdentifier(imageName, "drawable", "com.example.williamstest"));
     }
 
     //setup drawing
@@ -163,7 +171,7 @@ public class DrawingView extends View {
     }
 
     public void checkDrawOut(ArrayList<Pair<Float,Float>> figura) {
-        for (int i=0; i<10; i++) { //Aggiugno && score!=0
+        for (int i=0; i<14; i++) { //Aggiugno && score!=0
             float x1 = figura.get(i).first;
             float x2 = figura.get(i+15).first;
             float y1 = figura.get(i).second;
@@ -172,9 +180,10 @@ public class DrawingView extends View {
             if (x1<x2) { tmp=x1; x1=x2; x2=tmp; }
             if (y1<y2) { tmp=y1; y1=y2; y2=tmp; }
             for (int j=0; j<points.size(); j++) {
+                System.out.println("X1: "+x1+" X2: "+x2+" XX: "+figura.get(j).first);
                 if (points.get(j).first < x1 && points.get(j).first > x2 &&
                         points.get(j).second < y1 && points.get(j).second > y2) {
-                    //Aggiungo lo score
+                    //Aggiungo lo score ed esco
                 }
             }
         }

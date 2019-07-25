@@ -1,9 +1,13 @@
 package com.example.williamstest;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Timer;
 import java.util.UUID;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
@@ -16,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 
 public class PaintingActivity extends AppCompatActivity implements OnClickListener {
@@ -30,18 +35,25 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
     private ImageButton eraseBtn, drawBtn;
     //default shape points
     private ArrayList<Pair<Float, Float>> points = new ArrayList<>();
-    //reaction time and draw complete
-    private Timer firstInput, timeToDraw;
+    //check the number of the next draw and the protocol
+    private int nextDraw;
+    private String protocol, cornice;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle extras = getIntent().getExtras();
+        protocol = extras.getString("protocollo");
+        cornice = extras.getString("cornice");
+
         setContentView(R.layout.activity_painting);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         //get drawing view
         drawView = (DrawingView)findViewById(R.id.drawing);
+        drawView.setCornice(protocol, cornice);
+        nextDraw = Integer.parseInt(cornice);
 
         //get the textview
         LinearLayout paintLayout = (LinearLayout)findViewById(R.id.toprow);
@@ -77,37 +89,40 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             /*drawView.setDrawingCacheEnabled(true);
             MediaStore.Images.Media.insertImage(getContentResolver(), drawView.getDrawingCache(), UUID.randomUUID().toString()+".png", "drawing");
             drawView.destroyDrawingCache();*/
-            points.add(new Pair<>((float)964.44904, (float)833.00244));
-            points.add(new Pair<>((float)1000.2999, (float)824.9536));
-            points.add(new Pair<>((float)1021.32153, (float)817.01733));
-            points.add(new Pair<>((float)1046.9531, (float)796.4092));
-            points.add(new Pair<>((float)1104.582, (float)746.33655));
-            points.add(new Pair<>((float)1234.375, (float)616.4894));
-            points.add(new Pair<>((float)1272.0715, (float)582.92206));
-            points.add(new Pair<>((float)1313.951, (float)543.9166));
-            points.add(new Pair<>((float)1372.4609, (float)500.00684));
-            points.add(new Pair<>((float)1404.6266, (float)484.02173));
-            points.add(new Pair<>((float)1435.0825, (float)474.02417));
-            points.add(new Pair<>((float)1475.9781, (float)465.01538));
-            points.add(new Pair<>((float)1497.2399, (float)465.01538));
-            points.add(new Pair<>((float)1572.8906, (float)493.03052));
-
-            points.add(new Pair<>((float)963.90625, (float)964.0144));
-            points.add(new Pair<>((float)1008.1243, (float)931.98926));
-            points.add(new Pair<>((float)1038.0078, (float)915.8871));
-            points.add(new Pair<>((float)1068.8873, (float)901.5469));
-            points.add(new Pair<>((float)1118.0728, (float)886.81824));
-            points.add(new Pair<>((float)1238.3048, (float)869.2201));
-            points.add(new Pair<>((float)1308.0026, (float)854.9751));
-            points.add(new Pair<>((float)1390.09, (float)833.00244));
-            points.add(new Pair<>((float)1445.6525, (float)807.0198));
-            points.add(new Pair<>((float)1540.9375, (float)701.6879));
-            points.add(new Pair<>((float)1565.9375, (float)612.6849));
-            points.add(new Pair<>((float)1568.9062,(float) 591.4955));
-            points.add(new Pair<>((float)1568.9062, (float)578.4767));
-            points.add(new Pair<>((float)1199.0243,(float) 877.0027));
-            points.add(new Pair<>((float)1568.9062, (float)564.0022));
+            loadShapePoints();
             drawView.checkDrawOut(points);
+            if (nextDraw != 12) {
+                Intent myIntent = new Intent(PaintingActivity.this, PaintingActivity.class);
+                myIntent.putExtra("protocollo", protocol);
+                myIntent.putExtra("cornice", Integer.toString(++nextDraw));
+                PaintingActivity.this.startActivity(myIntent);
+            } else {
+                //.........
+            }
+        }
+    }
+
+    public void loadShapePoints () {
+        BufferedReader reader = null;
+        float tmp = 0;
+        try {
+            reader = new BufferedReader(new InputStreamReader(getAssets().open(protocol+cornice)));
+            String mLine;
+            for (int elem=0; (mLine = reader.readLine()) != null && elem<60; elem++) {
+                mLine = mLine.replaceAll("\\s+","");
+                if (elem%2==0) {
+                    tmp = Float.parseFloat(mLine);
+                } else {
+                    Pair p1 = new Pair(tmp, Float.parseFloat(mLine));
+                    points.add(p1);
+                }
+            }
+        } catch (IOException e) { } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) { }
+            }
         }
     }
 }

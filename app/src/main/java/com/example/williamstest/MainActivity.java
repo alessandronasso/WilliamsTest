@@ -16,6 +16,9 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent myIntent = new Intent(MainActivity.this, PaintingActivity.class);
+                myIntent.putExtra("protocollo", "a");
+                myIntent.putExtra("cornice", "1" +
+                        "");
                 MainActivity.this.startActivity(myIntent);
             }
         });
