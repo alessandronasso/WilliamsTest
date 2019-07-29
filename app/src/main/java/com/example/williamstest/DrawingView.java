@@ -43,6 +43,8 @@ public class DrawingView extends View {
     private long startTime=0, startActivity;
     //string with times
     private String s1, s2;
+    //number of erasure
+    private int eraseNumber = 0;
     //string to define the current draw
     private String protocol, draw;
     //string to determinate the score in the draw in/out part
@@ -56,6 +58,7 @@ public class DrawingView extends View {
 
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.setDrawingCacheEnabled(true);
         setLayerType(LAYER_TYPE_HARDWARE, null);
         startActivity = System.currentTimeMillis();
         setupDrawing();
@@ -148,7 +151,10 @@ public class DrawingView extends View {
                 if (!erase) {
                     ArrayList<Pair<Float, Float>> clone = new ArrayList<>(points);
                     segments.add(clone);
-                } else removeErasedPoints(points);
+                } else  {
+                    eraseNumber++;
+                    removeErasedPoints(points);
+                }
                 points.clear();
                 drawPath.reset();
                 //System.out.println("--------------------------");
@@ -178,6 +184,10 @@ public class DrawingView extends View {
             }
             if (linea.size()==0) segments.remove(i--);
         }
+    }
+
+    public int getEraseNumber () {
+        return eraseNumber;
     }
 
 
@@ -271,8 +281,8 @@ public class DrawingView extends View {
             else { asymmetryInside = 1; asymmetryOutside = 1; }
         } else {
             for (int z=0; z<segments.size()-1; z++, symmetryFound=false) {
-                for (int i=z+1; i<segments.size(); i++) {
-                    if (segments.get(z).size()>((segments.get(i).size())/1.5) || segments.get(i).size()>((segments.get(z).size())/1.5)) {
+                for (int i=z+1; i<segments.size()-1; i++) {
+                    if (segments.get(z).size()>((segments.get(i).size())/1.3) || segments.get(i).size()>((segments.get(z).size())/1.3)) {
                         ArrayList<Pair<Float,Float>> copia = segments.get(z);
                         int nGroupsFirstShape = (segments.get(z).size()*10)/100;
                         int nValuesFirstShape[] = new int[10];
@@ -367,5 +377,7 @@ public class DrawingView extends View {
     public void clearBitmap () {
         canvasBitmap.recycle();
     }
+
+    public Bitmap getCanvasBitmap () { return canvasBitmap; }
 }
 

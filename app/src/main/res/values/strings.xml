@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<string name="app_name">Test di Williams</string>
-	<string name="action_settings">Settings</string>
-	<string name="brush">Brush</string>
-	<string name="erase">Erase</string>
-	<string name="paint">Paint</string>
-	<string name="invioA">Protocollo A</string>
-	<string name="invioB">Protocollo B</string>
-	<string name="form_intro">Titolo</string>
+    <string name="app_name">Test di Williams</string>
+    <string name="action_settings">Settings</string>
+    <string name="brush">Brush</string>
+    <string name="erase">Erase</string>
+    <string name="paint">Paint</string>
+    <string name="invioA">Protocollo A</string>
+    <string name="invioB">Protocollo B</string>
+    <string name="form_intro">Titolo</string>
 
 </resources>

@@ -1,15 +1,20 @@
 package com.example.williamstest;
 
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.UUID;
-import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Pair;
 import android.view.Menu;
@@ -20,7 +25,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 
 public class PaintingActivity extends AppCompatActivity implements OnClickListener {
@@ -90,14 +94,20 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         else if (view.getId() == R.id.erase_btn) drawView.setErase(true);
         else if (view.getId() == R.id.undo_btn) drawView.restoreDraw();
         else if (view.equals(b1)){
-            /*drawView.setDrawingCacheEnabled(true);
-            MediaStore.Images.Media.insertImage(getContentResolver(), drawView.getDrawingCache(), UUID.randomUUID().toString()+".png", "drawing");
-            drawView.destroyDrawingCache();*/
             loadShapePoints();
+            String flessibilita = "---";
+            String originalita = drawView.getScoreDrawInOut()+"pt.";
+            String fluidita = (drawView.getScoreDrawInOut()!=0) ? "1pt." : "0pt.";
+            String elaborazione = drawView.getSymmetryScore()+"pt.";
+            String titoli = "---";
+            String tempoReazione = drawView.getReactionTime()+ "secondi";
+            String tempoCompletamentoDisegno = drawView.getTimeToDraw()+ "secondi";
+            String numeroCancellature = drawView.getEraseNumber()+" cancellature";
+            saveImage();
+            writeScore(fluidita, flessibilita, originalita, elaborazione, titoli, tempoReazione, tempoCompletamentoDisegno, numeroCancellature);
             System.out.println("Controllo disegno: "+drawView.getScoreDrawInOut()+"pt.");
             System.out.println("Controllo simmetrie: "+drawView.getSymmetryScore()+"pt.");
-            //drawView.checkSymmetries();
-            if (nextDraw != 12) {
+            if (nextDraw != 1) {
                 drawView.clearBitmap();
                 Intent myIntent = new Intent(PaintingActivity.this, PaintingActivity.class);
                 myIntent.putExtra("protocollo", protocol);
@@ -105,7 +115,10 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 PaintingActivity.this.startActivity(myIntent);
             } else {
-                //.........
+                Intent myIntent = new Intent(PaintingActivity.this, Result.class);
+                myIntent.putExtra("protocollo", protocol);
+                myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                PaintingActivity.this.startActivity(myIntent);
             }
         }
     }
@@ -133,5 +146,46 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             }
         }
         drawView.setShape(points);
+    }
+
+    public void saveImage () {
+        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+        File directory = cw.getDir("draw", Context.MODE_PRIVATE);
+        try {
+            OutputStream fOut = null;
+            Integer counter = 0;
+            File file = new File(directory.getAbsolutePath(), protocol + cornice + ".png");
+            fOut = new FileOutputStream(file);
+
+            Bitmap pictureBitmap = drawView.getDrawingCache();
+            pictureBitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+            fOut.flush();
+            fOut.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void writeScore (String f1, String f2, String o, String el, String tit, String t1, String t2, String n) {
+        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+        File directory = cw.getDir("draw", Context.MODE_PRIVATE);
+        System.out.println("PRIMO: "+directory.getAbsolutePath()+"/"+protocol+(cornice)+"_score.txt");
+        File file = new File(directory.getAbsolutePath()+"/"+protocol + cornice+"_score.txt");
+        try {
+            FileOutputStream fos = new FileOutputStream(file);
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fos);
+            outputStreamWriter.write("Fluidita': "+f1+"\n");
+            outputStreamWriter.write(f2+"\n");
+            outputStreamWriter.write(o+"\n");
+            outputStreamWriter.write(el+"\n");
+            outputStreamWriter.write(tit+"\n");
+            outputStreamWriter.write(t1+"\n");
+            outputStreamWriter.write(t2+"\n");
+            outputStreamWriter.write(n+"\n");
+            outputStreamWriter.flush();
+            outputStreamWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
