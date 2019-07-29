@@ -31,8 +31,10 @@ public class DrawingView extends View {
     private Bitmap canvasBitmap;
     //erase button
     private boolean erase=false;
-    //points for saving the images
+    //structure for saving the single segment
     private ArrayList<Pair<Float,Float>> points = new ArrayList<>();
+    //structure for saving all the lines drawn
+    private ArrayList<ArrayList<Pair<Float,Float>>> segments = new ArrayList<>();
     //dimension of the square
     int height, width, diameter, offset;
     //check if user has drawn
@@ -43,6 +45,14 @@ public class DrawingView extends View {
     private String s1, s2;
     //string to define the current draw
     private String protocol, draw;
+    //string to determinate the score in the draw in/out part
+    private int scoreDrawOut=0, scoreDrawIn=0;
+    //range of coordinates of the starting shape
+    private ArrayList<Pair<Float,Float>> figura;
+    //string to determinate the score of the symmetries
+    private int symmetryInside=0, symmetryOutside=0, asymmetryInside=0, asymmetryOutside=0;
+    //group of lines symmetric (to not check twice)
+    private ArrayList<ArrayList<Pair<Float,Float>>> sym = new ArrayList<>();;
 
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -98,10 +108,10 @@ public class DrawingView extends View {
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
         canvas.drawPath(drawPath, drawPaint);
 
-        canvas.drawRect(width/2 - diameter/2 ,
+        /*canvas.drawRect(width/2 - diameter/2 ,
                 (70),
                 width/2 + diameter/2,
-                1100, drawPaint);
+                1100, drawPaint);*/
     }
 
     //register user touches as drawing action
@@ -112,30 +122,36 @@ public class DrawingView extends View {
             long millis = System.currentTimeMillis() - startTime;
             s1 = String.format("%d sec", TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MILLISECONDS.toSeconds(startActivity));
             startTime = 0;
-            Toast.makeText(getContext(),s1,
-                    Toast.LENGTH_SHORT).show();
         }
         float touchX = event.getX();
         float touchY = event.getY();
         //respond to down, move and up events
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                //System.out.print(" "+touchX+", "+touchY);
+                /*System.out.println(" "+touchX);
+                System.out.println(" "+touchY);*/
                 drawPath.moveTo(touchX, touchY);
                 points.add(new Pair<Float, Float>(touchX, touchY));
                 break;
             case MotionEvent.ACTION_MOVE:
-                //System.out.print(" "+touchX+", "+touchY);
+                /*System.out.println(" "+touchX);
+                System.out.println(" "+touchY);*/
                 drawPath.lineTo(touchX, touchY);
                 points.add(new Pair<Float, Float>(touchX, touchY));
                 break;
             case MotionEvent.ACTION_UP:
-                //System.out.print(" "+touchX+", "+touchY);
+                /*System.out.println(" "+touchX);
+                System.out.println(" "+touchY);*/
                 drawPath.lineTo(touchX, touchY);
                 points.add(new Pair<Float, Float>(touchX, touchY));
                 drawCanvas.drawPath(drawPath, drawPaint);
+                if (!erase) {
+                    ArrayList<Pair<Float, Float>> clone = new ArrayList<>(points);
+                    segments.add(clone);
+                } else removeErasedPoints(points);
+                points.clear();
                 drawPath.reset();
-                //System.out.println("--------");
+                //System.out.println("--------------------------");
                 break;
             default:
                 return false;
@@ -145,14 +161,50 @@ public class DrawingView extends View {
         return true;
     }
 
+    public void removeErasedPoints (ArrayList<Pair<Float, Float>> toRemove) {
+        boolean found = false;
+        for (int i=0; i<segments.size(); i++) {
+            ArrayList<Pair<Float, Float>> linea = segments.get(i);
+            for (int j=0; j<toRemove.size(); j++, found=false) {
+                float x1 = toRemove.get(j).first;
+                float y1 = toRemove.get(j).second;
+                for (int x=0; !found && x<linea.size(); x++) {
+                    if (linea.get(x).first<x1+3 && linea.get(x).first>x1-3 &&
+                            linea.get(x).second<y1+3 && linea.get(x).second>y1-3) {
+                        found = true;
+                        linea.remove(x);
+                    }
+                }
+            }
+            if (linea.size()==0) segments.remove(i--);
+        }
+    }
+
 
     public void setErase(boolean isErase){
         erase=isErase;
-        if(erase) drawPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+        if(erase)
+            drawPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
         else drawPaint.setXfermode(null);
     }
 
-    public void drawFromArrayList() {
+    public void restoreDraw () {
+        if (segments.size()!=0) {
+            drawPath = null;
+            canvasBitmap = Bitmap.createBitmap(width, 350, Bitmap.Config.ARGB_8888);
+            drawPath = new Path();
+            invalidate();
+            onSizeChanged(width, height, width, height);
+            segments.remove(segments.size() - 1);
+            for (int i = 0; i < segments.size(); i++) drawFromArrayList(segments.get(i));
+        }
+    }
+
+    public void setShape (ArrayList<Pair<Float,Float>> points) {
+        figura = new ArrayList<>(points);
+    }
+
+    public void drawFromArrayList(ArrayList<Pair<Float,Float>> points) {
         int pointCount = points.size();
         if (pointCount < 2) {
             return;
@@ -170,23 +222,34 @@ public class DrawingView extends View {
         }
     }
 
-    public void checkDrawOut(ArrayList<Pair<Float,Float>> figura) {
-        for (int i=0; i<14; i++) { //Aggiugno && score!=0
-            float x1 = figura.get(i).first;
-            float x2 = figura.get(i+15).first;
-            float y1 = figura.get(i).second;
-            float y2 = figura.get(i+15).second;
-            float tmp;
-            if (x1<x2) { tmp=x1; x1=x2; x2=tmp; }
-            if (y1<y2) { tmp=y1; y1=y2; y2=tmp; }
-            for (int j=0; j<points.size(); j++) {
-                System.out.println("X1: "+x1+" X2: "+x2+" XX: "+figura.get(j).first);
-                if (points.get(j).first < x1 && points.get(j).first > x2 &&
-                        points.get(j).second < y1 && points.get(j).second > y2) {
-                    //Aggiungo lo score ed esco
+    public void checkDrawOut() {
+        boolean compreso = false;
+        for (int x=0; x<segments.size(); x++) {
+            ArrayList<Pair<Float,Float>> punti = segments.get(x);
+            for (int j=0; j<punti.size(); j++, compreso=false) {
+                for (int i=0; i<figura.size()/2-1 && !compreso; i++) {
+                    float x1 = figura.get(i).first;
+                    float x2 = figura.get(i+figura.size()/2).first;
+                    float y1 = figura.get(i).second;
+                    float y2 = figura.get(i+figura.size()/2).second;
+                    float tmp;
+                    if (x1<x2) { tmp=x1; x1=x2; x2=tmp; }
+                    if (y1<y2) { tmp=y1; y1=y2; y2=tmp; }
+                    if (punti.get(j).first < x1 && punti.get(j).first > x2 &&
+                            punti.get(j).second < y1 && punti.get(j).second > y2)
+                        compreso = true;
                 }
+                if (!compreso) scoreDrawOut = 1; else scoreDrawIn = 1;
             }
         }
+    }
+
+    public int getScoreDrawInOut () {
+        checkDrawOut();
+        if (scoreDrawOut == 0 && scoreDrawIn == 0) return 0;
+        else if (scoreDrawOut == 1 && scoreDrawIn == 0) return 1;
+        else if (scoreDrawOut == 0 && scoreDrawIn == 1) return 2;
+        else return 3;
     }
 
     public String getReactionTime () {
@@ -198,6 +261,111 @@ public class DrawingView extends View {
         s2 = String.format("%d sec", TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MILLISECONDS.toSeconds(startActivity));
         startTime = 0;
         return s2;
+    }
+
+    public void checkSymmetries() {
+        boolean symmetryFound = false;
+        if (segments.size() == 1) {
+            if (isInside(segments.get(0))==1) asymmetryInside = 1;
+            else if (isInside(segments.get(0))==2) asymmetryOutside = 1;
+            else { asymmetryInside = 1; asymmetryOutside = 1; }
+        } else {
+            for (int z=0; z<segments.size()-1; z++, symmetryFound=false) {
+                for (int i=z+1; i<segments.size(); i++) {
+                    if (segments.get(z).size()>((segments.get(i).size())/1.5) || segments.get(i).size()>((segments.get(z).size())/1.5)) {
+                        ArrayList<Pair<Float,Float>> copia = segments.get(z);
+                        int nGroupsFirstShape = (segments.get(z).size()*10)/100;
+                        int nValuesFirstShape[] = new int[10];
+                        for (int j=0, j2=0; j<10; j++, j2+=nGroupsFirstShape) {
+                            int sumValues=0;
+                            sumValues+=copia.get(j2).first-copia.get(j2+nGroupsFirstShape-1).first;
+                            sumValues+=copia.get(j2).second-copia.get(j2+nGroupsFirstShape-1).second;
+                            nValuesFirstShape[j] = sumValues;
+                        }
+                        ArrayList<Pair<Float,Float>> copia2 = segments.get(i);
+                        int nGroupSecondShape = (segments.get(i).size()*10)/100;
+                        int nValuesSecondShape[] = new int[10];
+                        for (int j=0, j2=0; j<10; j++, j2+=nGroupSecondShape) {
+                            int sumValues=0;
+                            sumValues+=copia2.get(j2).first-copia2.get(j2+nGroupSecondShape-1).first;
+                            sumValues+=copia2.get(j2).second-copia2.get(j2+nGroupSecondShape-1).second;
+                            nValuesSecondShape[j] = sumValues;
+                        }
+                        int differences[] = new int[10];
+                        int numberOf = 0;
+                        for (int x=0; x<10; x++) {
+                            differences[x] = nValuesFirstShape[x] - nValuesSecondShape[x];
+                            if (differences[x]<0) differences[x] = -differences[x];
+                            if (differences[x]<nGroupsFirstShape*2.5) numberOf++;
+                        }
+                        if (numberOf>6) {
+                            symmetryFound = true;
+                            System.out.println("Figura1 "+z+"; Figura2: "+(i)+" SONO SIMMETRICI");
+                            //check first shape
+                            if (isInside(segments.get(z))==1) symmetryInside = 1;
+                            else if (isInside(segments.get(z))==2) symmetryInside = 1;
+                            else { symmetryInside = 1; symmetryOutside = 1; }
+                            //check second shape
+                            if (isInside(segments.get(i))==1) symmetryInside = 1;
+                            else if (isInside(segments.get(i))==2) symmetryInside = 1;
+                            else { symmetryInside = 1; symmetryOutside = 1; }
+                            sym.add(segments.get(z));
+                            sym.add(segments.get(i));
+                        }
+                    }
+                }
+                if (!symmetryFound && notSym(segments.get(z))) {
+                    System.out.println("ENTRO");
+                    if (isInside(segments.get(z))==1) asymmetryInside = 1;
+                    else if (isInside(segments.get(z))==2) asymmetryOutside = 1;
+                    else { asymmetryInside = 1; asymmetryOutside = 1; }
+                }
+            }
+        }
+    }
+
+    public int isInside(ArrayList<Pair<Float,Float>> toCheck) {
+        boolean compreso = false;
+        int drawIn = 0, drawOut = 0;
+        for (int j=0; j<toCheck.size(); j++, compreso=false) {
+            for (int i=0; i<figura.size()/2-1 && !compreso; i++) {
+                float x1 = figura.get(i).first;
+                float x2 = figura.get(i+figura.size()/2).first;
+                float y1 = figura.get(i).second;
+                float y2 = figura.get(i+figura.size()/2).second;
+                float tmp;
+                if (x1<x2) { tmp=x1; x1=x2; x2=tmp; }
+                if (y1<y2) { tmp=y1; y1=y2; y2=tmp; }
+                if (toCheck.get(j).first < x1 && toCheck.get(j).first > x2 &&
+                        toCheck.get(j).second < y1 && toCheck.get(j).second > y2)
+                    compreso = true;
+            }
+            if (!compreso) drawOut = 1; else drawIn = 1;
+        }
+        if (drawIn == 1) return 1;
+        else if (drawOut == 1) return 2;
+        else return 3;
+    }
+
+    public int getSymmetryScore () {
+        checkSymmetries();
+        if (asymmetryOutside == 1 && asymmetryInside == 1) return 3;
+        else if (asymmetryOutside == 1) return 1;
+        else if (asymmetryInside == 1) return 2;
+        else return 0;
+    }
+
+    public boolean notSym (ArrayList<Pair<Float,Float>> toCheck) {
+        if (sym.size()==0) return true;
+        else {
+            for (int i=0; i<sym.size(); i++)
+                if (sym.get(i).equals(toCheck)) return false;
+        }
+        return true;
+    }
+
+    public void clearBitmap () {
+        canvasBitmap.recycle();
     }
 }
 

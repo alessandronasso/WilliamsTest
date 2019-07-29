@@ -32,7 +32,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
     //confirm button
     private Button b1;
     //draw button
-    private ImageButton eraseBtn, drawBtn;
+    private ImageButton eraseBtn, drawBtn, undoBtn;
     //default shape points
     private ArrayList<Pair<Float, Float>> points = new ArrayList<>();
     //check the number of the next draw and the protocol
@@ -69,6 +69,9 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         //draw button
         drawBtn = (ImageButton)findViewById(R.id.draw_btn);
         drawBtn.setOnClickListener(this);
+        //undo button
+        undoBtn = (ImageButton)findViewById(R.id.undo_btn);
+        undoBtn.setOnClickListener(this);
 
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
@@ -85,16 +88,21 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
     public void onClick(View view) {
         if (view.getId() == R.id.draw_btn) drawView.setErase(false);
         else if (view.getId() == R.id.erase_btn) drawView.setErase(true);
+        else if (view.getId() == R.id.undo_btn) drawView.restoreDraw();
         else if (view.equals(b1)){
             /*drawView.setDrawingCacheEnabled(true);
             MediaStore.Images.Media.insertImage(getContentResolver(), drawView.getDrawingCache(), UUID.randomUUID().toString()+".png", "drawing");
             drawView.destroyDrawingCache();*/
             loadShapePoints();
-            drawView.checkDrawOut(points);
+            System.out.println("Controllo disegno: "+drawView.getScoreDrawInOut()+"pt.");
+            System.out.println("Controllo simmetrie: "+drawView.getSymmetryScore()+"pt.");
+            //drawView.checkSymmetries();
             if (nextDraw != 12) {
+                drawView.clearBitmap();
                 Intent myIntent = new Intent(PaintingActivity.this, PaintingActivity.class);
                 myIntent.putExtra("protocollo", protocol);
                 myIntent.putExtra("cornice", Integer.toString(++nextDraw));
+                myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 PaintingActivity.this.startActivity(myIntent);
             } else {
                 //.........
@@ -108,7 +116,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         try {
             reader = new BufferedReader(new InputStreamReader(getAssets().open(protocol+cornice)));
             String mLine;
-            for (int elem=0; (mLine = reader.readLine()) != null && elem<60; elem++) {
+            for (int elem=0; (mLine = reader.readLine()) != null; elem++) {
                 mLine = mLine.replaceAll("\\s+","");
                 if (elem%2==0) {
                     tmp = Float.parseFloat(mLine);
@@ -124,5 +132,6 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 } catch (IOException e) { }
             }
         }
+        drawView.setShape(points);
     }
 }

@@ -29,6 +29,13 @@
             android:contentDescription="@string/erase"
             android:src="@drawable/eraser" />
 
+        <ImageButton
+            android:id="@+id/undo_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:contentDescription="Undo"
+            android:src="@drawable/undo" />
+
     </LinearLayout>
 
     <!-- Custom View -->
@@ -88,7 +95,7 @@
                 android:id="@+id/button_1"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:text="@string/invio" />
+                android:text="Avanti" />
         </LinearLayout>
     </LinearLayout>
 
