@@ -13,7 +13,6 @@ import android.util.DisplayMetrics;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -123,7 +122,7 @@ public class DrawingView extends View {
         if (!started) {
             started = true;
             long millis = System.currentTimeMillis() - startTime;
-            s1 = String.format("%d sec", TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MILLISECONDS.toSeconds(startActivity));
+            s1 = String.format("%d", TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MILLISECONDS.toSeconds(startActivity));
             startTime = 0;
         }
         float touchX = event.getX();
@@ -263,12 +262,12 @@ public class DrawingView extends View {
     }
 
     public String getReactionTime () {
-        return s1;
+        if (s1==null) return "0"; else return s1;
     }
 
     public String getTimeToDraw () {
         long millis = System.currentTimeMillis() - startTime;
-        s2 = String.format("%d sec", TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MILLISECONDS.toSeconds(startActivity));
+        s2 = String.format("%d", TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MILLISECONDS.toSeconds(startActivity));
         startTime = 0;
         return s2;
     }
@@ -281,8 +280,10 @@ public class DrawingView extends View {
             else { asymmetryInside = 1; asymmetryOutside = 1; }
         } else {
             for (int z=0; z<segments.size()-1; z++, symmetryFound=false) {
-                for (int i=z+1; i<segments.size()-1; i++) {
-                    if (segments.get(z).size()>((segments.get(i).size())/1.3) || segments.get(i).size()>((segments.get(z).size())/1.3)) {
+                for (int i=z+1; i<segments.size(); i++) {
+                    if ((segments.get(z).size()>((segments.get(i).size())/1.3) && segments.get(z).size()<((segments.get(i).size())*1.3))
+                            || (segments.get(i).size()>((segments.get(z).size())/1.3) && segments.get(i).size()<((segments.get(z).size())*1.3))) {
+                        System.out.println("SEIZE: "+segments.get(z).size()+" SIZE2: "+segments.get(i).size());
                         ArrayList<Pair<Float,Float>> copia = segments.get(z);
                         int nGroupsFirstShape = (segments.get(z).size()*10)/100;
                         int nValuesFirstShape[] = new int[10];
@@ -305,8 +306,9 @@ public class DrawingView extends View {
                         int numberOf = 0;
                         for (int x=0; x<10; x++) {
                             differences[x] = nValuesFirstShape[x] - nValuesSecondShape[x];
+                            System.out.println("DIFF "+differences[x]);
                             if (differences[x]<0) differences[x] = -differences[x];
-                            if (differences[x]<nGroupsFirstShape*2.5) numberOf++;
+                            if (differences[x]<nGroupsFirstShape*3.5) numberOf++;
                         }
                         if (numberOf>6) {
                             symmetryFound = true;
@@ -325,7 +327,6 @@ public class DrawingView extends View {
                     }
                 }
                 if (!symmetryFound && notSym(segments.get(z))) {
-                    System.out.println("ENTRO");
                     if (isInside(segments.get(z))==1) asymmetryInside = 1;
                     else if (isInside(segments.get(z))==2) asymmetryOutside = 1;
                     else { asymmetryInside = 1; asymmetryOutside = 1; }

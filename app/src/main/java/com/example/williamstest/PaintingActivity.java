@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -100,8 +99,8 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             String fluidita = (drawView.getScoreDrawInOut()!=0) ? "1pt." : "0pt.";
             String elaborazione = drawView.getSymmetryScore()+"pt.";
             String titoli = "---";
-            String tempoReazione = drawView.getReactionTime()+ "secondi";
-            String tempoCompletamentoDisegno = drawView.getTimeToDraw()+ "secondi";
+            String tempoReazione = drawView.getReactionTime()+ " secondi";
+            String tempoCompletamentoDisegno = drawView.getTimeToDraw()+ " secondi";
             String numeroCancellature = drawView.getEraseNumber()+" cancellature";
             saveImage();
             writeScore(fluidita, flessibilita, originalita, elaborazione, titoli, tempoReazione, tempoCompletamentoDisegno, numeroCancellature);
@@ -175,13 +174,13 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             FileOutputStream fos = new FileOutputStream(file);
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fos);
             outputStreamWriter.write("Fluidita': "+f1+"\n");
-            outputStreamWriter.write(f2+"\n");
-            outputStreamWriter.write(o+"\n");
-            outputStreamWriter.write(el+"\n");
-            outputStreamWriter.write(tit+"\n");
-            outputStreamWriter.write(t1+"\n");
-            outputStreamWriter.write(t2+"\n");
-            outputStreamWriter.write(n+"\n");
+            outputStreamWriter.write("Flessibilita': "+f2+"\n");
+            outputStreamWriter.write("Originalita': "+ o+"\n");
+            outputStreamWriter.write("Elaborazione: "+el+"\n");
+            outputStreamWriter.write("Titolo: "+tit+"\n");
+            outputStreamWriter.write("Tempo di reazione: "+t1+"\n");
+            outputStreamWriter.write("Tempo di completamento: "+t2+"\n");
+            outputStreamWriter.write("Numero di cancellature: "+n+"\n");
             outputStreamWriter.flush();
             outputStreamWriter.close();
         } catch (IOException e) {
