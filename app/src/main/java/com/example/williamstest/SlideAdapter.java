@@ -24,7 +24,6 @@ public class SlideAdapter extends PagerAdapter {
     LayoutInflater inflater;
     private String protocollo;
 
-    // list of titles
     private String[] lst_title;
 
 
@@ -67,6 +66,11 @@ public class SlideAdapter extends PagerAdapter {
         container.removeView((LinearLayout)object);
     }
 
+    /**
+     * Set the current protocol given by the Result activity.
+     *
+     * @param p current protocol
+     */
     public void setProtocol (String p) { protocollo = p; }
 
     public void setListOfTitles () {
@@ -77,6 +81,13 @@ public class SlideAdapter extends PagerAdapter {
     }
 
 
+    /**
+     * Get the image drawn by the user from the app_draw folder.
+     *
+     * @param view current image
+     * @param position current shape to check
+     * @return the image drawn by the user
+     */
     public ImageView getImage (View view, int position ) {
         ImageView img = (ImageView) view.findViewById(R.id.slideimg);
         try {
@@ -92,6 +103,13 @@ public class SlideAdapter extends PagerAdapter {
         return img;
     }
 
+    /**
+     * This method return a string corresponding the score of the user.
+     *
+     * @param position current shape to check
+     * @return the score of the user
+     * @throws IOException
+     */
     public String getDescription (int position) throws IOException {
         String content = "";
         ContextWrapper cw = new ContextWrapper(context());
@@ -105,6 +123,11 @@ public class SlideAdapter extends PagerAdapter {
         return content;
     }
 
+    /**
+     * This method return the context of the application.
+     *
+     * @return the current context
+     */
     private Context context() {
         return context;
     }

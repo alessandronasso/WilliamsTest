@@ -63,11 +63,23 @@ public class DrawingView extends View {
         setupDrawing();
     }
 
+    /**
+     * This method set the current protocol and the current shape got
+     * from the PaintingActivity.
+     *
+     * @param p1 the current protocol
+     * @param c1 the current shape
+     */
     public void setCornice(String p1, String c1) {
         protocol = p1;
         draw = c1;
     }
 
+    /**
+     * This method sets the display sizes and the background.
+     *
+     * @param displaymetrics the current display dimensions
+     */
     public void setDimension (DisplayMetrics displaymetrics) {
         height = displaymetrics.heightPixels;
         width = displaymetrics.widthPixels;
@@ -81,10 +93,12 @@ public class DrawingView extends View {
         setBackgroundResource(getResources().getIdentifier(imageName, "drawable", "com.example.williamstest"));
     }
 
-    //setup drawing
+
+    /**
+     * This method is used to prepare the user to draw.
+     */
     private void setupDrawing(){
 
-        //prepare for drawing and setup paint stroke properties
         drawPath = new Path();
         drawPaint = new Paint();
         drawPaint.setColor(paintColor);
@@ -96,7 +110,6 @@ public class DrawingView extends View {
         canvasPaint = new Paint(Paint.DITHER_FLAG);
     }
 
-    //size assigned to view
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
@@ -104,19 +117,12 @@ public class DrawingView extends View {
         drawCanvas = new Canvas(canvasBitmap);
     }
 
-    //draw the view - will be called after touch event
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
         canvas.drawPath(drawPath, drawPaint);
-
-        /*canvas.drawRect(width/2 - diameter/2 ,
-                (70),
-                width/2 + diameter/2,
-                1100, drawPaint);*/
     }
 
-    //register user touches as drawing action
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (!started) {
@@ -127,7 +133,6 @@ public class DrawingView extends View {
         }
         float touchX = event.getX();
         float touchY = event.getY();
-        //respond to down, move and up events
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 /*System.out.println(" "+touchX);
@@ -161,11 +166,16 @@ public class DrawingView extends View {
             default:
                 return false;
         }
-        //redraw
         invalidate();
         return true;
     }
 
+    /**
+     * This methods delete the points erased by the user from all
+     * the segments previous drawn.
+     *
+     * @param toRemove the list of points erased by the user
+     */
     public void removeErasedPoints (ArrayList<Pair<Float, Float>> toRemove) {
         boolean found = false;
         for (int i=0; i<segments.size(); i++) {
@@ -185,11 +195,23 @@ public class DrawingView extends View {
         }
     }
 
+    /**
+     * This methods is used to return the number of time the user erased
+     * at least one point.
+     *
+     * @return how many times the user has erased.
+     */
     public int getEraseNumber () {
         return eraseNumber;
     }
 
 
+    /**
+     * This method starts to clear the draw if the user is in
+     * "erase" modality.
+     *
+     * @param isErase check if the user has pressed on the relative button
+     */
     public void setErase(boolean isErase){
         erase=isErase;
         if(erase)
@@ -197,6 +219,10 @@ public class DrawingView extends View {
         else drawPaint.setXfermode(null);
     }
 
+    /**
+     * This method get called when the user press on the "undo" button. It cleans the paths
+     * and restores all the segments drawn by the user before, except the last one.
+     */
     public void restoreDraw () {
         if (segments.size()!=0) {
             drawPath = null;
@@ -206,13 +232,25 @@ public class DrawingView extends View {
             onSizeChanged(width, height, width, height);
             segments.remove(segments.size() - 1);
             for (int i = 0; i < segments.size(); i++) drawFromArrayList(segments.get(i));
+            eraseNumber++;
         }
     }
 
+    /**
+     * This method loads the list of points of the current shape, so they can be used to check
+     * if the draw has been done or there are symmetries out/in there.
+     *
+     * @param points the list of points of the current shape
+     */
     public void setShape (ArrayList<Pair<Float,Float>> points) {
         figura = new ArrayList<>(points);
     }
 
+    /**
+     * This methods draw a segment by a list of given points.
+     *
+     * @param points segments to draw
+     */
     public void drawFromArrayList(ArrayList<Pair<Float,Float>> points) {
         int pointCount = points.size();
         if (pointCount < 2) {
@@ -231,6 +269,9 @@ public class DrawingView extends View {
         }
     }
 
+    /**
+     * This method checks if the user has drawn outside or inside the current shape.
+     */
     public void checkDrawOut() {
         boolean compreso = false;
         for (int x=0; x<segments.size(); x++) {
@@ -253,6 +294,11 @@ public class DrawingView extends View {
         }
     }
 
+    /**
+     * This method return the score of the "flessibilita'" part.
+     *
+     * @return the score following the Williams test guideline
+     */
     public int getScoreDrawInOut () {
         checkDrawOut();
         if (scoreDrawOut == 0 && scoreDrawIn == 0) return 0;
@@ -261,10 +307,21 @@ public class DrawingView extends View {
         else return 3;
     }
 
+    /**
+     * This method returns the reaction time of the user. If he decide to
+     * not draw, it will returns 0.
+     *
+     * @return a string corresponding the reaction time of the user.
+     */
     public String getReactionTime () {
         if (s1==null) return "0"; else return s1;
     }
 
+    /**
+     * This method returns the time the user take to complete the draw.
+     *
+     * @return a string corresponding the completition time of the user.
+     */
     public String getTimeToDraw () {
         long millis = System.currentTimeMillis() - startTime;
         s2 = String.format("%d", TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MILLISECONDS.toSeconds(startActivity));
@@ -272,6 +329,9 @@ public class DrawingView extends View {
         return s2;
     }
 
+    /**
+     * This method checks is there symmetries inside/outside the current shape.
+     */
     public void checkSymmetries() {
         boolean symmetryFound = false;
         if (segments.size() == 1) {
@@ -335,6 +395,13 @@ public class DrawingView extends View {
         }
     }
 
+    /**
+     * This method checks if a segment has been drawn inside/outside (or both)
+     * the shape.
+     *
+     * @param toCheck the segment to check
+     * @return the position of the draw
+     */
     public int isInside(ArrayList<Pair<Float,Float>> toCheck) {
         boolean compreso = false;
         int drawIn = 0, drawOut = 0;
@@ -358,6 +425,11 @@ public class DrawingView extends View {
         else return 3;
     }
 
+    /**
+     * This method return the score of the "originalita'" part.
+     *
+     * @return the score following the Williams test guideline
+     */
     public int getSymmetryScore () {
         checkSymmetries();
         if (asymmetryOutside == 1 && asymmetryInside == 1) return 3;
@@ -366,6 +438,13 @@ public class DrawingView extends View {
         else return 0;
     }
 
+    /**
+     * This method checks if a segment has already found a symmetry.
+     *
+     * @param toCheck segment  to check.
+     * @return true/false depending if the segment
+     * has already found a symmetry
+     */
     public boolean notSym (ArrayList<Pair<Float,Float>> toCheck) {
         if (sym.size()==0) return true;
         else {
@@ -375,10 +454,12 @@ public class DrawingView extends View {
         return true;
     }
 
+    /**
+     * This method helps to clear the stack.
+     */
     public void clearBitmap () {
         canvasBitmap.recycle();
     }
 
-    public Bitmap getCanvasBitmap () { return canvasBitmap; }
 }
 
