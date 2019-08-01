@@ -18,4 +18,7 @@ public class Result extends AppCompatActivity {
         myadapter.setProtocol(protocol);
         viewPager.setAdapter(myadapter);
     }
+
+    @Override
+    public void onBackPressed() { }
 }

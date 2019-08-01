@@ -207,4 +207,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void onBackPressed() { }
 }

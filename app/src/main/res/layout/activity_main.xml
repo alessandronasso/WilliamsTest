@@ -4,46 +4,50 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:background="@drawable/background_main"
+    android:scaleType = "centerCrop"
     tools:context=".MainActivity">
 
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="762dp"
-        android:layout_height="337dp"
-        android:layout_marginLeft="45dp"
-        android:layout_marginTop="60dp"
-        android:text="test del pensiero\n     divergente"
+        android:layout_width="1063dp"
+        android:layout_height="476dp"
+        android:layout_marginLeft="275dp"
+        android:layout_marginTop="200dp"
+        android:fontFamily="@font/kotta_one"
+        android:text="Test del pensiero\n      divergente"
         android:textColor="#000000"
-        android:textSize="84sp"
+        android:textSize="100dp"
         android:textStyle="bold"
         tools:layout_editor_absoluteX="78dp"
         tools:layout_editor_absoluteY="123dp" />
 
     <Button
-        android:background="@drawable/button_bg"
         android:id="@+id/button_1"
-        android:textAllCaps="false"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="60dp"
-        android:layout_marginTop="420dp"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="400dp"
+        android:layout_marginTop="480dp"
+        android:background="@drawable/button_bg"
         android:text="@string/invioA"
+        android:textAllCaps="false"
         android:textColor="#FFFFFF"
+        android:textSize="18dp"
         app:layout_constraintVertical_bias="0.771" />
 
     <Button
         android:id="@+id/button_2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="250dp"
-        android:layout_marginTop="420dp"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="680dp"
+        android:layout_marginTop="480dp"
         android:background="@drawable/button_bg"
         android:text="@string/invioB"
         android:textAllCaps="false"
         android:textColor="#FFFFFF"
+        android:textSize="18dp"
         app:layout_constraintVertical_bias="0.771" />
 
 </RelativeLayout>
