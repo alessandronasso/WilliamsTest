@@ -40,8 +40,8 @@ public class DrawingView extends View {
     private boolean started = false;
     //timer
     private long startTime=0, startActivity;
-    //string with times
-    private String s1, s2;
+    //string with times and title
+    private String s1, s2, title="";
     //number of erasure
     private int eraseNumber = 0;
     //string to define the current draw
@@ -308,6 +308,16 @@ public class DrawingView extends View {
     }
 
     /**
+     * This method returns the title of the drawn inserted by the user.
+     *
+     * @return the title of the draw
+     */
+    public String getTitle () {
+        if (title=="") return "Senza nome";
+        else return  title;
+    }
+
+    /**
      * This method returns the reaction time of the user. If he decide to
      * not draw, it will returns 0.
      *
@@ -420,9 +430,9 @@ public class DrawingView extends View {
             }
             if (!compreso) drawOut = 1; else drawIn = 1;
         }
-        if (drawIn == 1) return 1;
+        if (drawIn == 1 && drawOut == 1) return 3;
         else if (drawOut == 1) return 2;
-        else return 3;
+        else return 1;
     }
 
     /**

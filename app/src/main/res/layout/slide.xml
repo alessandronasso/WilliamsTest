@@ -1,33 +1,307 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
+    android:background="@drawable/background_main2"
     android:id="@+id/slidelinearlayout">
 
     <ImageView
+        android:id="@+id/slideimg"
         android:layout_width="400dp"
         android:layout_height="380dp"
-        android:id="@+id/slideimg"
-        android:scaleType="centerCrop"/>
+        android:layout_marginLeft="200dp"
+        android:layout_marginTop="120dp"
+        android:scaleType="centerCrop" />
 
     <TextView
-        android:padding="16dp"
         android:id="@+id/txttitle"
-        android:textStyle="bold"
-        android:textSize="30sp"
-        android:text="Title Here"
-        android:textColor="#fff"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <TextView
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="310dp"
+        android:layout_marginTop="480dp"
         android:padding="16dp"
-        android:id="@+id/txtdescription"
-        android:textAlignment="center"
-        android:textSize="25sp"
-        android:text="Description is Here"
-        android:textColor="#fff"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-</LinearLayout>
+        android:text="Title Here"
+        android:textColor="#000000"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/tl"
+            android:layout_width="316dp"
+            android:layout_height="370dp"
+            android:layout_marginLeft="680dp"
+            android:layout_marginTop="170dp"
+            android:layout_marginRight="0dp"
+            android:background="@android:color/white"
+            android:padding="18dp"
+            tools:context=".MainActivity">
+            <!--
+            * TableLayout is a layout that arranges its children into rows and columns.
+            * A TableLayout consists of a number of TableRow objects, each defining a row.
+            * Each row has zero or more cells.
+            * Each cell can hold one View object.
+            * TableLayout containers do not display border lines for their rows, columns, or cells.
+            * The table has as many columns as the row with the most cells.
+            * A table can leave cells empty. Cells can span columns.
+            * The width of a column is defined by the row with the widest cell in that column.
+            * TableLayout can specify certain columns as shrinkable or stretchable
+              by calling setColumnShrinkable() or setColumnStretchable().
+            * In this example code we generate border for table and its columns, rows and cells.
+        -->
+            <TableRow
+                android:id="@+id/tr_item_1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/table_row_bg"
+                android:padding="2dp">
+
+                <TextView
+                    android:id="@+id/item_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/table_cell_bg"
+                    android:paddingRight="10dp"
+                    android:text="  Flessibilità"
+                    android:textColor="#030101"
+                    android:textSize="30dp" />
+
+                <TextView
+                    android:id="@+id/f_item_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/table_cell_bg"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:textColor="#070404"
+                    android:textSize="30dp" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tr_item_2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/table_row_bg"
+                android:padding="2dp">
+
+                <TextView
+                    android:id="@+id/item_2"
+                    android:layout_width="202dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/table_cell_bg"
+                    android:paddingRight="10dp"
+                    android:text="  Fluidità"
+                    android:textColor="#070404"
+                    android:textSize="30dp" />
+
+                <TextView
+                    android:id="@+id/fl_item_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/table_cell_bg"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:textColor="#070404"
+                    android:textSize="30dp" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tr_item_3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/table_row_bg"
+                android:padding="2dp">
+
+                <TextView
+                    android:id="@+id/item_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/table_cell_bg"
+                    android:paddingRight="10dp"
+                    android:text="  Originalità"
+                    android:textColor="#070404"
+                    android:textSize="30dp" />
+
+                <TextView
+                    android:id="@+id/o_item_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/table_cell_bg"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:textColor="#070404"
+                    android:textSize="30dp" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tr_item_4"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/table_row_bg"
+                android:padding="2dp">
+
+                <TextView
+                    android:id="@+id/item_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/table_cell_bg"
+                    android:paddingRight="10dp"
+                    android:text="  Elaborazione"
+                    android:textColor="#070404"
+                    android:textSize="30dp" />
+
+                <TextView
+                    android:id="@+id/el_item_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/table_cell_bg"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:textColor="#070404"
+                    android:textSize="30dp" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tr_item_5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/table_row_bg"
+                android:padding="2dp">
+
+                <TextView
+                    android:id="@+id/item_5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/table_cell_bg"
+                    android:paddingRight="10dp"
+                    android:text="  Titolo"
+                    android:textColor="#070404"
+                    android:textSize="30dp" />
+
+                <TextView
+                    android:id="@+id/t_item_5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/table_cell_bg"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:textColor="#070404"
+                    android:textSize="30dp" />
+            </TableRow>
+        </TableLayout>
+
+        <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/tl_2"
+            android:layout_width="500dp"
+            android:layout_height="230dp"
+            android:layout_marginLeft="710dp"
+            android:layout_marginTop="560dp"
+            android:background="@android:color/white"
+            android:padding="18dp"
+            tools:context=".MainActivity">
+            <!--
+            * TableLayout is a layout that arranges its children into rows and columns.
+            * A TableLayout consists of a number of TableRow objects, each defining a row.
+            * Each row has zero or more cells.
+            * Each cell can hold one View object.
+            * TableLayout containers do not display border lines for their rows, columns, or cells.
+            * The table has as many columns as the row with the most cells.
+            * A table can leave cells empty. Cells can span columns.
+            * The width of a column is defined by the row with the widest cell in that column.
+            * TableLayout can specify certain columns as shrinkable or stretchable
+              by calling setColumnShrinkable() or setColumnStretchable().
+            * In this example code we generate border for table and its columns, rows and cells.
+        -->
+            <TableRow
+                android:id="@+id/tr_item_6"
+                android:layout_width="222dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/table_row_bg"
+                android:padding="2dp">
+
+                <TextView
+                    android:id="@+id/t1_item_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/table_cell_bg"
+                    android:paddingRight="10dp"
+                    android:text="    Tempo di reazione"
+                    android:textColor="#070404"
+                    android:textSize="30dp" />
+
+                <TextView
+                    android:id="@+id/tempo_item_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/table_cell_bg"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:textColor="#070404"
+                    android:textSize="30dp" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tr_item_7"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/table_row_bg"
+                android:padding="2dp">
+
+                <TextView
+                    android:id="@+id/t2_item_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/table_cell_bg"
+                    android:paddingRight="10dp"
+                    android:text="    Tempo di completamento"
+                    android:textColor="#070404"
+                    android:textSize="30dp" />
+
+                <TextView
+                    android:id="@+id/tempo_item_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/table_cell_bg"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:textColor="#070404"
+                    android:textSize="30dp" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tr_item_8"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/table_row_bg"
+                android:padding="2dp">
+
+                <TextView
+                    android:id="@+id/n_cancellature"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/table_cell_bg"
+                    android:paddingRight="10dp"
+                    android:text="    Numero cancellature"
+                    android:textColor="#070404"
+                    android:textSize="30dp" />
+
+                <TextView
+                    android:id="@+id/n_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/table_cell_bg"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:textColor="#070404"
+                    android:textSize="30dp" />
+            </TableRow>
+        </TableLayout>
+    </RelativeLayout>
+</RelativeLayout>

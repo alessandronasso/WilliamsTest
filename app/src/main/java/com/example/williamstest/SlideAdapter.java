@@ -4,13 +4,13 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,36 +24,30 @@ public class SlideAdapter extends PagerAdapter {
     LayoutInflater inflater;
     private String protocollo;
 
-    private String[] lst_title;
-
 
     public SlideAdapter(Context context) {
         this.context = context;
     }
 
     @Override
-    public int getCount() {
-        setListOfTitles();;
-        return lst_title.length;
+    public boolean isViewFromObject(View view, Object object) {
+        return (view==(RelativeLayout)object);
     }
 
     @Override
-    public boolean isViewFromObject(View view, Object object) {
-        return (view==(LinearLayout)object);
+    public int getCount() {
+        return 12;
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.slide,container,false);
-        LinearLayout layoutslide = (LinearLayout) view.findViewById(R.id.slidelinearlayout);
-        TextView txttitle= (TextView) view.findViewById(R.id.txttitle);
-        TextView description = (TextView) view.findViewById(R.id.txtdescription);
-        layoutslide.setBackgroundColor(Color.rgb(55,55,55));
+        RelativeLayout layoutslide = (RelativeLayout) view.findViewById(R.id.slidelinearlayout);
         ImageView imgslide = getImage(view, position);
-        txttitle.setText(lst_title[position]);
+        TableLayout tl = (TableLayout) view.findViewById(R.id.tl);
         try {
-            description.setText(getDescription(position));
+            setTableText(view, getDescription(position));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -63,7 +57,7 @@ public class SlideAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        container.removeView((LinearLayout)object);
+        container.removeView((RelativeLayout)object);
     }
 
     /**
@@ -72,14 +66,6 @@ public class SlideAdapter extends PagerAdapter {
      * @param p current protocol
      */
     public void setProtocol (String p) { protocollo = p; }
-
-    public void setListOfTitles () {
-        lst_title = new String[12];
-        for (int i=0; i<12; i++) {
-            lst_title[i] = "Immagine "+protocollo.toUpperCase()+(i+1);
-        }
-    }
-
 
     /**
      * Get the image drawn by the user from the app_draw folder.
@@ -93,7 +79,6 @@ public class SlideAdapter extends PagerAdapter {
         try {
             ContextWrapper cw = new ContextWrapper(context);
             File directory = cw.getDir("draw", Context.MODE_PRIVATE);
-            System.out.println(directory.getAbsolutePath());
             File f = new File(directory.getAbsolutePath(), protocollo+(position+1)+".png");
             Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f));
             img.setImageBitmap(b);
@@ -121,6 +106,39 @@ public class SlideAdapter extends PagerAdapter {
            content+=line+"\n";
         }
         return content;
+    }
+
+    /**
+     * This method create and initialize the tables with the
+     * user scores.
+     *
+     * @param view view of the current activity
+     * @param content the stats of the user draw
+     */
+    private void setTableText (View view, String content) {
+        TextView f = (TextView) view.findViewById(R.id.f_item_1);
+        TextView fl = (TextView) view.findViewById(R.id.fl_item_2);
+        TextView o = (TextView) view.findViewById(R.id.o_item_3);
+        TextView el = (TextView) view.findViewById(R.id.el_item_4);
+        TextView t = (TextView) view.findViewById(R.id.t_item_5);
+        TextView t1 = (TextView) view.findViewById(R.id.tempo_item_1);
+        TextView t2 = (TextView) view.findViewById(R.id.tempo_item_2);
+        TextView t3 = (TextView) view.findViewById(R.id.n_3);
+        TextView txttitle= (TextView) view.findViewById(R.id.txttitle);
+        String[] values = content.split("\n");
+        f.setText(values[0]);
+        fl.setText(values[1]);
+        o.setText(values[2]);
+        el.setText(values[3]);
+        if (values[4].equals("Senza nome")) t.setText("0pt.");
+        else t.setText("0pt.");
+        t1.setText(values[5]);
+        t2.setText(values[6]);
+        t3.setText(values[7]);
+        txttitle.setText(values[4]);
+
+
+
     }
 
     /**
