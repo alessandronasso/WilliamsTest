@@ -6,6 +6,8 @@
     <string name="brush">Brush</string>
     <string name="erase">Erase</string>
     <string name="paint">Paint</string>
+    <string name="yes">Apri disegni</string>
+    <string name="no">Elimina test</string>
     <string name="invioA">Protocollo A</string>
     <string name="invioB">Protocollo B</string>
     <string name="form_intro">Titolo</string>

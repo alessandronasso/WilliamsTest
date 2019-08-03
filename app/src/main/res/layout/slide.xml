@@ -41,7 +41,7 @@
             android:layout_marginRight="0dp"
             android:background="@android:color/white"
             android:padding="18dp"
-            tools:context=".MainActivity">
+            tools:context=".Result">
             <!--
             * TableLayout is a layout that arranges its children into rows and columns.
             * A TableLayout consists of a number of TableRow objects, each defining a row.
@@ -204,8 +204,8 @@
             android:layout_marginLeft="710dp"
             android:layout_marginTop="560dp"
             android:background="@android:color/white"
-            android:padding="18dp"
-            tools:context=".MainActivity">
+            android:padding="25dp"
+            tools:context=".Result">
             <!--
             * TableLayout is a layout that arranges its children into rows and columns.
             * A TableLayout consists of a number of TableRow objects, each defining a row.

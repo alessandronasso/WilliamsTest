@@ -23,6 +23,7 @@ public class SlideAdapter extends PagerAdapter {
     Context context;
     LayoutInflater inflater;
     private String protocollo;
+    private String folder;
 
 
     public SlideAdapter(Context context) {
@@ -67,6 +68,9 @@ public class SlideAdapter extends PagerAdapter {
      */
     public void setProtocol (String p) { protocollo = p; }
 
+
+    public void setFolder (String s) { folder = s; }
+
     /**
      * Get the image drawn by the user from the app_draw folder.
      *
@@ -79,7 +83,7 @@ public class SlideAdapter extends PagerAdapter {
         try {
             ContextWrapper cw = new ContextWrapper(context);
             File directory = cw.getDir("draw", Context.MODE_PRIVATE);
-            File f = new File(directory.getAbsolutePath(), protocollo+(position+1)+".png");
+            File f = new File(directory.getAbsolutePath()+folder, protocollo+(position+1)+".png");
             Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f));
             img.setImageBitmap(b);
         } catch (FileNotFoundException e) {
@@ -99,8 +103,7 @@ public class SlideAdapter extends PagerAdapter {
         String content = "";
         ContextWrapper cw = new ContextWrapper(context());
         File directory = cw.getDir("draw", Context.MODE_PRIVATE);
-        System.out.println(directory.getAbsolutePath()+"/"+protocollo+(position+1)+"_score.txt");
-        LineNumberReader reader = new LineNumberReader(new FileReader(directory.getAbsolutePath()+"/"+protocollo+(position+1)+"_score.txt"));
+        LineNumberReader reader = new LineNumberReader(new FileReader(directory.getAbsolutePath()+folder+"/"+protocollo+(position+1)+"_score.txt"));
         String line;
         while ((line = reader.readLine()) != null) {
            content+=line+"\n";

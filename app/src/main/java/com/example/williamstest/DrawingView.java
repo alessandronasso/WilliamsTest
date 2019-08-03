@@ -349,10 +349,10 @@ public class DrawingView extends View {
             else if (isInside(segments.get(0))==2) asymmetryOutside = 1;
             else { asymmetryInside = 1; asymmetryOutside = 1; }
         } else {
-            for (int z=0; z<segments.size()-1; z++, symmetryFound=false) {
+            for (int z=0; z<segments.size()-1 && segments.size()>=10; z++, symmetryFound=false) {
                 for (int i=z+1; i<segments.size(); i++) {
-                    if ((segments.get(z).size()>((segments.get(i).size())/1.3) && segments.get(z).size()<((segments.get(i).size())*1.3))
-                            || (segments.get(i).size()>((segments.get(z).size())/1.3) && segments.get(i).size()<((segments.get(z).size())*1.3))) {
+                    if (((segments.get(z).size()>(segments.get(i).size())/1.3) && segments.get(z).size()<((segments.get(i).size())*1.3))
+                            || ((segments.get(i).size()>(segments.get(z).size())/1.3) && segments.get(i).size()<((segments.get(z).size())*1.3))) {
                         System.out.println("SEIZE: "+segments.get(z).size()+" SIZE2: "+segments.get(i).size());
                         ArrayList<Pair<Float,Float>> copia = segments.get(z);
                         int nGroupsFirstShape = (segments.get(z).size()*10)/100;

@@ -14,6 +14,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".Result"></activity>
         <activity android:name=".PaintingActivity" />
+        <activity android:name=".UserList" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

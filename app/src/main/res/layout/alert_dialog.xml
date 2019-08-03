@@ -1,0 +1,61 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dialog_rl"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    tools:context=".UserList"
+    android:background="@drawable/shape_dialog">
+    <TextView
+        android:id="@+id/dialog_titile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Scegli un'operazione"
+        android:textAlignment="center"
+        android:padding="5dp"
+        android:textColor="@android:color/black"
+        android:background="#D3D3D3"
+        android:textSize="26dp" />
+
+    <TextView
+        android:id="@+id/dialog_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Vuoi aprire o eliminare il test?"
+        android:textAlignment="center"
+        android:padding="15dp"
+        android:textSize="26dp"
+        android:layout_marginLeft="80dp"
+        android:background="@android:color/white"
+        android:textColor="@android:color/black"
+        android:layout_below="@id/dialog_titile" />
+    <Button
+        android:id="@+id/dialog_neutral_btn"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:text="Indietro"
+        android:layout_below="@id/dialog_tv"
+        android:textColor="@android:color/black"
+        android:background="@drawable/button_bg_3" />
+    <Button
+        android:id="@+id/dialog_positive_btn"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:text="Apri"
+        android:layout_alignBaseline="@id/dialog_neutral_btn"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/button_bg_3"
+        android:layout_marginRight="20dp"/>
+    <Button
+        android:id="@+id/dialog_negative_btn"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:text="Elimina"
+        android:layout_toLeftOf="@id/dialog_positive_btn"
+        android:layout_alignBaseline="@id/dialog_neutral_btn"
+        android:background="@drawable/button_bg_3"
+        android:layout_marginRight="10dp" />
+</RelativeLayout>
