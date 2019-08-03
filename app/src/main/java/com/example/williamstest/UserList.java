@@ -53,8 +53,8 @@ public class UserList extends ListActivity {
                         public void onClick(View v) {
                             dialog.cancel();
                             Intent myIntent = new Intent(UserList.this, Result.class);
-                            myIntent.putExtra("cartella", user[position].replaceAll("[^\\d.]", ""));
-                            myIntent.putExtra("protocollo", findProtocol(user[position].replaceAll("[^\\d.]", "")));
+                            myIntent.putExtra("cartella", user_list.get(position).replaceAll("[^\\d.]", ""));
+                            myIntent.putExtra("protocollo", findProtocol(user_list.get(position).replaceAll("[^\\d.]", "")));
                             myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             UserList.this.startActivity(myIntent);
                         }
@@ -63,7 +63,7 @@ public class UserList extends ListActivity {
                         @Override
                         public void onClick(View v) {
                             dialog.cancel();
-                            File dir = new File("/data/user/0/com.example.williamstest/app_draw" + user[position].replaceAll("[^\\d.]", ""));
+                            File dir = new File("/data/user/0/com.example.williamstest/app_draw" + user_list.get(position).replaceAll("[^\\d.]", ""));
                             if (dir.isDirectory()) {
                                 String[] children = dir.list();
                                 for (int i = 0; i < children.length; i++)
@@ -90,6 +90,11 @@ public class UserList extends ListActivity {
         }
     }
 
+    /**
+     * This method retrives the list of test done by the users.
+     *
+     * @return the list of tests
+     */
     public String[] loadUser() {
         String user[] = null;
         int numb = 0, arrayString = 0;
@@ -109,6 +114,12 @@ public class UserList extends ListActivity {
         return user;
     }
 
+    /**
+     * This methods retrieves the protocol that the user has clicked on.
+     *
+     * @param n folder number where get the data
+     * @return the protocol drawn by the user
+     */
     public String findProtocol(String n) {
         File dir = new File("/data/user/0/com.example.williamstest/app_draw" + n);
         if (dir.isDirectory()) {
@@ -121,6 +132,10 @@ public class UserList extends ListActivity {
         return null;
     }
 
+    /**
+     * This methods generates the alert dialog if the page has no elements
+     * to show.
+     */
     private void showCustomDialog() {
         ViewGroup viewGroup = findViewById(android.R.id.content);
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_negative, viewGroup, false);
@@ -130,6 +145,13 @@ public class UserList extends ListActivity {
         alertDialog.show();
     }
 
+    /**
+     * This methods, directly connected to the positive button of the alert dialog
+     * which appaers when pressing on an item of the list, connects the user
+     * to the corresponding activity.
+     *
+     * @param view current view
+     */
     public void goNext(View view) {
         alertDialog.dismiss();
         Intent myIntent = new Intent(UserList.this, MainActivity.class);

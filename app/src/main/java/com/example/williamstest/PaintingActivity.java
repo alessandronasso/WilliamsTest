@@ -109,7 +109,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             saveImage();
             writeScore(fluidita, flessibilita, originalita, elaborazione, titoli, tempoReazione, tempoCompletamentoDisegno, numeroCancellature);
             System.out.println("Controllo simmetrie: "+drawView.getSymmetryScore()+"pt.");
-            if (nextDraw != 1) {
+            if (nextDraw != 12) {
                 drawView.clearBitmap();
                 Intent myIntent = new Intent(PaintingActivity.this, PaintingActivity.class);
                 myIntent.putExtra("protocollo", protocol);
@@ -161,9 +161,10 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
      * This method sets the folder of the current user.
      */
     public void findFolder () {
-        int i =1;
+        int i = 1;
         File ex = new File("/data/user/0/com.example.williamstest/app_draw"+i);
-        for (i=1; ex.isDirectory(); i++) ex = new File("/data/user/0/com.example.williamstest/app_draw"+(i));
+        while (ex.isDirectory())
+            ex = new File("/data/user/0/com.example.williamstest/app_draw"+(++i));
         folder = i;
     }
 

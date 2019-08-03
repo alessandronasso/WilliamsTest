@@ -69,6 +69,12 @@ public class SlideAdapter extends PagerAdapter {
     public void setProtocol (String p) { protocollo = p; }
 
 
+    /**
+     * This methods is used to set the folder number where retrieve
+     * the images and the text files.
+     *
+     * @param s folder number
+     */
     public void setFolder (String s) { folder = s; }
 
     /**
@@ -139,9 +145,6 @@ public class SlideAdapter extends PagerAdapter {
         t2.setText(values[6]);
         t3.setText(values[7]);
         txttitle.setText(values[4]);
-
-
-
     }
 
     /**

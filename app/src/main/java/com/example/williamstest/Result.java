@@ -15,7 +15,6 @@ public class Result extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         String protocol = extras.getString("protocollo");
         String folder = extras.getString("cartella");
-        System.out.println("CARTELLA: "+folder);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         myadapter = new SlideAdapter(this);
         myadapter.setProtocol(protocol);
