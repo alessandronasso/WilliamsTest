@@ -11,7 +11,7 @@
         android:id="@+id/slideimg"
         android:layout_width="420dp"
         android:layout_height="380dp"
-        android:layout_marginLeft="180dp"
+        android:layout_marginLeft="220dp"
         android:layout_marginTop="120dp"
         android:scaleType="centerCrop" />
 
@@ -19,7 +19,7 @@
         android:id="@+id/txttitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="310dp"
+        android:layout_marginLeft="330dp"
         android:layout_marginTop="480dp"
         android:padding="16dp"
         android:text="Title Here"
@@ -36,8 +36,8 @@
             android:id="@+id/tl"
             android:layout_width="316dp"
             android:layout_height="370dp"
-            android:layout_marginLeft="680dp"
-            android:layout_marginTop="170dp"
+            android:layout_marginLeft="720dp"
+            android:layout_marginTop="190dp"
             android:layout_marginRight="0dp"
             android:background="@android:color/white"
             android:padding="18dp"
@@ -303,5 +303,49 @@
                     android:textSize="30dp" />
             </TableRow>
         </TableLayout>
+
+        <TextView
+            android:id="@+id/t1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="760dp"
+            android:layout_marginTop="150dp"
+            android:fontFamily="@font/sriracha"
+            android:text="Punteggio finale"
+            android:textColor="#DD1717"
+            android:textSize="30dp" />
+
+        <TextView
+            android:id="@+id/t"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="765dp"
+            android:layout_marginTop="153dp"
+            android:fontFamily="@font/sriracha"
+            android:text="______________"
+            android:textColor="#020101"
+            android:textSize="30dp" />
+
+        <TextView
+            android:id="@+id/t4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="785dp"
+            android:layout_marginTop="532dp"
+            android:fontFamily="@font/sriracha"
+            android:text="______________________"
+            android:textColor="#020101"
+            android:textSize="30dp" />
+
+        <TextView
+            android:id="@+id/t2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="780dp"
+            android:layout_marginTop="530dp"
+            android:fontFamily="@font/sriracha"
+            android:text="Considerazioni aggiuntive"
+            android:textColor="#DD1717"
+            android:textSize="30dp" />
     </RelativeLayout>
 </RelativeLayout>
