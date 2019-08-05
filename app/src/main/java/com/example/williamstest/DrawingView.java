@@ -269,30 +269,32 @@ public class DrawingView extends View {
         }
     }
 
+
     /**
      * This method checks if the user has drawn outside or inside the current shape.
      */
+
     public void checkDrawOut() {
         boolean compreso = false;
         for (int x=0; x<segments.size(); x++) {
             ArrayList<Pair<Float,Float>> punti = segments.get(x);
             for (int j=0; j<punti.size(); j++, compreso=false) {
-                for (int i=0; i<figura.size()/2-1 && !compreso; i++) {
+                for (int i=0; i<figura.size() && !compreso; i++) {
                     float x1 = figura.get(i).first;
-                    float x2 = figura.get(i+figura.size()/2).first;
                     float y1 = figura.get(i).second;
-                    float y2 = figura.get(i+figura.size()/2).second;
-                    float tmp;
-                    if (x1<x2) { tmp=x1; x1=x2; x2=tmp; }
-                    if (y1<y2) { tmp=y1; y1=y2; y2=tmp; }
-                    if (punti.get(j).first < x1 && punti.get(j).first > x2 &&
-                            punti.get(j).second < y1 && punti.get(j).second > y2)
-                        compreso = true;
+                    for (int ii=0; ii<figura.size() && !compreso; ii++) {
+                        float x2 = figura.get(ii).first;
+                        float y2 = figura.get(ii).second;
+                        if ((punti.get(j).first < x1 && punti.get(j).first > x2) &&
+                                (punti.get(j).second < y1 && punti.get(j).second > y2))
+                            compreso = true;
+                    }
                 }
                 if (!compreso) scoreDrawOut = 1; else scoreDrawIn = 1;
             }
         }
     }
+
 
     /**
      * This method return the score of the "flessibilita'" part.
@@ -415,17 +417,16 @@ public class DrawingView extends View {
         boolean compreso = false;
         int drawIn = 0, drawOut = 0;
         for (int j=0; j<toCheck.size(); j++, compreso=false) {
-            for (int i=0; i<figura.size()/2-1 && !compreso; i++) {
+            for (int i=0; i<figura.size() && !compreso; i++) {
                 float x1 = figura.get(i).first;
-                float x2 = figura.get(i+figura.size()/2).first;
                 float y1 = figura.get(i).second;
-                float y2 = figura.get(i+figura.size()/2).second;
-                float tmp;
-                if (x1<x2) { tmp=x1; x1=x2; x2=tmp; }
-                if (y1<y2) { tmp=y1; y1=y2; y2=tmp; }
-                if (toCheck.get(j).first < x1 && toCheck.get(j).first > x2 &&
-                        toCheck.get(j).second < y1 && toCheck.get(j).second > y2)
-                    compreso = true;
+                for (int ii=0; ii<figura.size() && !compreso; ii++) {
+                    float x2 = figura.get(ii).first;
+                    float y2 = figura.get(ii).second;
+                    if ((toCheck.get(j).first < x1 && toCheck.get(j).first > x2) &&
+                            (toCheck.get(j).second < y1 && toCheck.get(j).second > y2))
+                        compreso = true;
+                }
             }
             if (!compreso) drawOut = 1; else drawIn = 1;
         }

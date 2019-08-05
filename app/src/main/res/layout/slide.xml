@@ -35,7 +35,7 @@
             xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/tl"
             android:layout_width="316dp"
-            android:layout_height="370dp"
+            android:layout_height="260dp"
             android:layout_marginLeft="720dp"
             android:layout_marginTop="190dp"
             android:layout_marginRight="0dp"

@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Pair;
+import android.view.Display;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -109,7 +112,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             saveImage();
             writeScore(fluidita, flessibilita, originalita, elaborazione, titoli, tempoReazione, tempoCompletamentoDisegno, numeroCancellature);
             System.out.println("Controllo simmetrie: "+drawView.getSymmetryScore()+"pt.");
-            if (nextDraw != 12) {
+            if (nextDraw != 1) {
                 drawView.clearBitmap();
                 Intent myIntent = new Intent(PaintingActivity.this, PaintingActivity.class);
                 myIntent.putExtra("protocollo", protocol);
@@ -134,6 +137,11 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
      */
     public void loadShapePoints () {
         BufferedReader reader = null;
+        Display display = getWindowManager(). getDefaultDisplay();
+        Point size = new Point();
+        display. getSize(size);
+        int width = size. x;
+        int height = size. y;
         float tmp = 0;
         try {
             reader = new BufferedReader(new InputStreamReader(getAssets().open(protocol+cornice)));
@@ -143,7 +151,13 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 if (elem%2==0) {
                     tmp = Float.parseFloat(mLine);
                 } else {
-                    Pair p1 = new Pair(tmp, Float.parseFloat(mLine));
+                    /*float percent_width = Float.valueOf(tmp) / 2560;
+                    float percent_height = Float.valueOf(Float.parseFloat(mLine)) / 1704;
+                    float x = percent_width * width;
+                    float y = percent_height * height;*/
+                    float x = tmp;
+                    float y = Float.parseFloat(mLine);
+                    Pair p1 = new Pair(x, y);
                     points.add(p1);
                 }
             }
