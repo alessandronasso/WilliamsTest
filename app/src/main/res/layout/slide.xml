@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
@@ -9,40 +11,54 @@
 
     <ImageView
         android:id="@+id/slideimg"
-        android:layout_width="420dp"
-        android:layout_height="380dp"
-        android:layout_marginLeft="220dp"
-        android:layout_marginTop="120dp"
-        android:scaleType="centerCrop" />
+        android:layout_width="524dp"
+        android:layout_height="433dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="124dp"
+        android:layout_marginTop="144dp"
+        android:scaleType="centerCrop"
+        tools:layout_conversion_absoluteHeight="380dp"
+        tools:layout_conversion_absoluteWidth="420dp"
+        tools:layout_editor_absoluteX="220dp"
+        tools:layout_editor_absoluteY="120dp" />
 
     <TextView
         android:id="@+id/txttitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="330dp"
-        android:layout_marginTop="480dp"
+        android:layout_below="@+id/slideimg"
+        android:layout_alignEnd="@+id/slideimg"
+        android:layout_marginTop="35dp"
+        android:layout_marginEnd="198dp"
         android:padding="16dp"
         android:text="Title Here"
         android:textColor="#000000"
         android:textSize="30sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        tools:layout_conversion_absoluteHeight="73dp"
+        tools:layout_conversion_absoluteWidth="166dp"
+        tools:layout_editor_absoluteX="330dp"
+        tools:layout_editor_absoluteY="480dp" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-        <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/tl"
-            android:layout_width="316dp"
-            android:layout_height="260dp"
-            android:layout_marginLeft="720dp"
-            android:layout_marginTop="190dp"
-            android:layout_marginRight="0dp"
-            android:background="@android:color/white"
-            android:padding="18dp"
-            tools:context=".Result">
-            <!--
+    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/tl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/t2"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="265dp"
+        android:layout_marginBottom="86dp"
+        android:background="@android:color/white"
+        android:padding="18dp"
+        tools:context=".Result"
+        tools:layout_conversion_absoluteHeight="260dp"
+        tools:layout_conversion_absoluteWidth="316dp"
+        tools:layout_editor_absoluteX="220dp"
+        tools:layout_editor_absoluteY="190dp">
+        <!--
             * TableLayout is a layout that arranges its children into rows and columns.
             * A TableLayout consists of a number of TableRow objects, each defining a row.
             * Each row has zero or more cells.
@@ -55,158 +71,165 @@
               by calling setColumnShrinkable() or setColumnStretchable().
             * In this example code we generate border for table and its columns, rows and cells.
         -->
-            <TableRow
-                android:id="@+id/tr_item_1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/table_row_bg"
-                android:padding="2dp">
+        <TableRow
+            android:id="@+id/tr_item_1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/table_row_bg"
+            android:padding="2dp">
 
-                <TextView
-                    android:id="@+id/item_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/table_cell_bg"
-                    android:paddingRight="10dp"
-                    android:text="  Flessibilità"
-                    android:textColor="#030101"
-                    android:textSize="30dp" />
-
-                <TextView
-                    android:id="@+id/f_item_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/table_cell_bg"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:textColor="#070404"
-                    android:textSize="30dp" />
-            </TableRow>
-
-            <TableRow
-                android:id="@+id/tr_item_2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/table_row_bg"
-                android:padding="2dp">
-
-                <TextView
-                    android:id="@+id/item_2"
-                    android:layout_width="202dp"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/table_cell_bg"
-                    android:paddingRight="10dp"
-                    android:text="  Fluidità"
-                    android:textColor="#070404"
-                    android:textSize="30dp" />
-
-                <TextView
-                    android:id="@+id/fl_item_2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/table_cell_bg"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:textColor="#070404"
-                    android:textSize="30dp" />
-            </TableRow>
-
-            <TableRow
-                android:id="@+id/tr_item_3"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/table_row_bg"
-                android:padding="2dp">
-
-                <TextView
-                    android:id="@+id/item_3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/table_cell_bg"
-                    android:paddingRight="10dp"
-                    android:text="  Originalità"
-                    android:textColor="#070404"
-                    android:textSize="30dp" />
-
-                <TextView
-                    android:id="@+id/o_item_3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/table_cell_bg"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:textColor="#070404"
-                    android:textSize="30dp" />
-            </TableRow>
-
-            <TableRow
-                android:id="@+id/tr_item_4"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/table_row_bg"
-                android:padding="2dp">
-
-                <TextView
-                    android:id="@+id/item_4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/table_cell_bg"
-                    android:paddingRight="10dp"
-                    android:text="  Elaborazione"
-                    android:textColor="#070404"
-                    android:textSize="30dp" />
-
-                <TextView
-                    android:id="@+id/el_item_4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/table_cell_bg"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:textColor="#070404"
-                    android:textSize="30dp" />
-            </TableRow>
-
-            <TableRow
-                android:id="@+id/tr_item_5"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/item_1"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/table_row_bg"
-                android:padding="2dp">
+                android:background="@drawable/table_cell_bg"
+                android:paddingRight="10dp"
+                android:text="  Flessibilità"
+                android:textColor="#030101"
+                android:textSize="30dp" />
 
-                <TextView
-                    android:id="@+id/item_5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/table_cell_bg"
-                    android:paddingRight="10dp"
-                    android:text="  Titolo"
-                    android:textColor="#070404"
-                    android:textSize="30dp" />
+            <TextView
+                android:id="@+id/f_item_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/table_cell_bg"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textColor="#070404"
+                android:textSize="30dp" />
+        </TableRow>
 
-                <TextView
-                    android:id="@+id/t_item_5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/table_cell_bg"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:textColor="#070404"
-                    android:textSize="30dp" />
-            </TableRow>
-        </TableLayout>
+        <TableRow
+            android:id="@+id/tr_item_2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/table_row_bg"
+            android:padding="2dp">
 
-        <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/tl_2"
-            android:layout_width="500dp"
-            android:layout_height="230dp"
-            android:layout_marginLeft="710dp"
-            android:layout_marginTop="560dp"
-            android:background="@android:color/white"
-            android:padding="25dp"
-            tools:context=".Result">
-            <!--
+            <TextView
+                android:id="@+id/item_2"
+                android:layout_width="202dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/table_cell_bg"
+                android:paddingRight="10dp"
+                android:text="  Fluidità"
+                android:textColor="#070404"
+                android:textSize="30dp" />
+
+            <TextView
+                android:id="@+id/fl_item_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/table_cell_bg"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textColor="#070404"
+                android:textSize="30dp" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tr_item_3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/table_row_bg"
+            android:padding="2dp">
+
+            <TextView
+                android:id="@+id/item_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/table_cell_bg"
+                android:paddingRight="10dp"
+                android:text="  Originalità"
+                android:textColor="#070404"
+                android:textSize="30dp" />
+
+            <TextView
+                android:id="@+id/o_item_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/table_cell_bg"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textColor="#070404"
+                android:textSize="30dp" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tr_item_4"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/table_row_bg"
+            android:padding="2dp">
+
+            <TextView
+                android:id="@+id/item_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/table_cell_bg"
+                android:paddingRight="10dp"
+                android:text="  Elaborazione"
+                android:textColor="#070404"
+                android:textSize="30dp" />
+
+            <TextView
+                android:id="@+id/el_item_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/table_cell_bg"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textColor="#070404"
+                android:textSize="30dp" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tr_item_5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/table_row_bg"
+            android:padding="2dp">
+
+            <TextView
+                android:id="@+id/item_5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/table_cell_bg"
+                android:paddingRight="10dp"
+                android:text="  Titolo"
+                android:textColor="#070404"
+                android:textSize="30dp" />
+
+            <TextView
+                android:id="@+id/t_item_5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/table_cell_bg"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textColor="#070404"
+                android:textSize="30dp" />
+        </TableRow>
+    </TableLayout>
+
+    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/tl_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/tl"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="193dp"
+        android:layout_marginEnd="-248dp"
+        android:layout_marginBottom="26dp"
+        android:background="@android:color/white"
+        android:padding="25dp"
+        tools:context=".Result"
+        tools:layout_conversion_absoluteHeight="208dp"
+        tools:layout_conversion_absoluteWidth="314dp"
+        tools:layout_editor_absoluteX="710dp"
+        tools:layout_editor_absoluteY="560dp">
+        <!--
             * TableLayout is a layout that arranges its children into rows and columns.
             * A TableLayout consists of a number of TableRow objects, each defining a row.
             * Each row has zero or more cells.
@@ -219,133 +242,157 @@
               by calling setColumnShrinkable() or setColumnStretchable().
             * In this example code we generate border for table and its columns, rows and cells.
         -->
-            <TableRow
-                android:id="@+id/tr_item_6"
-                android:layout_width="222dp"
-                android:layout_height="match_parent"
-                android:background="@drawable/table_row_bg"
-                android:padding="2dp">
+        <TableRow
+            android:id="@+id/tr_item_6"
+            android:layout_width="222dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/table_row_bg"
+            android:padding="2dp">
 
-                <TextView
-                    android:id="@+id/t1_item_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/table_cell_bg"
-                    android:paddingRight="10dp"
-                    android:text="    Tempo di reazione"
-                    android:textColor="#070404"
-                    android:textSize="30dp" />
+            <TextView
+                android:id="@+id/t1_item_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/table_cell_bg"
+                android:paddingRight="10dp"
+                android:text="    Tempo di reazione"
+                android:textColor="#070404"
+                android:textSize="30dp" />
 
-                <TextView
-                    android:id="@+id/tempo_item_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/table_cell_bg"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:textColor="#070404"
-                    android:textSize="30dp" />
-            </TableRow>
+            <TextView
+                android:id="@+id/tempo_item_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/table_cell_bg"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textColor="#070404"
+                android:textSize="30dp" />
+        </TableRow>
 
-            <TableRow
-                android:id="@+id/tr_item_7"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/table_row_bg"
-                android:padding="2dp">
+        <TableRow
+            android:id="@+id/tr_item_7"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/table_row_bg"
+            android:padding="2dp">
 
-                <TextView
-                    android:id="@+id/t2_item_2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/table_cell_bg"
-                    android:paddingRight="10dp"
-                    android:text="    Tempo di completamento"
-                    android:textColor="#070404"
-                    android:textSize="30dp" />
+            <TextView
+                android:id="@+id/t2_item_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/table_cell_bg"
+                android:paddingRight="10dp"
+                android:text="    Tempo di completamento"
+                android:textColor="#070404"
+                android:textSize="30dp" />
 
-                <TextView
-                    android:id="@+id/tempo_item_2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/table_cell_bg"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:textColor="#070404"
-                    android:textSize="30dp" />
-            </TableRow>
+            <TextView
+                android:id="@+id/tempo_item_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/table_cell_bg"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textColor="#070404"
+                android:textSize="30dp" />
+        </TableRow>
 
-            <TableRow
-                android:id="@+id/tr_item_8"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/table_row_bg"
-                android:padding="2dp">
+        <TableRow
+            android:id="@+id/tr_item_8"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/table_row_bg"
+            android:padding="2dp">
 
-                <TextView
-                    android:id="@+id/n_cancellature"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/table_cell_bg"
-                    android:paddingRight="10dp"
-                    android:text="    Numero cancellature"
-                    android:textColor="#070404"
-                    android:textSize="30dp" />
+            <TextView
+                android:id="@+id/n_cancellature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/table_cell_bg"
+                android:paddingRight="10dp"
+                android:text="    Numero cancellature"
+                android:textColor="#070404"
+                android:textSize="30dp" />
 
-                <TextView
-                    android:id="@+id/n_3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/table_cell_bg"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:textColor="#070404"
-                    android:textSize="30dp" />
-            </TableRow>
-        </TableLayout>
+            <TextView
+                android:id="@+id/n_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/table_cell_bg"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textColor="#070404"
+                android:textSize="30dp" />
+        </TableRow>
+    </TableLayout>
 
-        <TextView
-            android:id="@+id/t1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="760dp"
-            android:layout_marginTop="150dp"
-            android:fontFamily="@font/sriracha"
-            android:text="Punteggio finale"
-            android:textColor="#DD1717"
-            android:textSize="30dp" />
+    <TextView
+        android:id="@+id/t1"
+        android:layout_width="249dp"
+        android:layout_height="79dp"
+        android:layout_above="@+id/tl"
+        android:layout_alignEnd="@+id/tl"
+        android:layout_marginEnd="13dp"
+        android:layout_marginBottom="-32dp"
+        android:fontFamily="@font/sriracha"
+        android:text="Punteggio finale"
+        android:textColor="#DD1717"
+        android:textSize="30dp"
+        tools:layout_conversion_absoluteHeight="61dp"
+        tools:layout_conversion_absoluteWidth="217dp"
+        tools:layout_editor_absoluteX="760dp"
+        tools:layout_editor_absoluteY="150dp" />
 
-        <TextView
-            android:id="@+id/t"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="765dp"
-            android:layout_marginTop="153dp"
-            android:fontFamily="@font/sriracha"
-            android:text="______________"
-            android:textColor="#020101"
-            android:textSize="30dp" />
+    <TextView
+        android:id="@+id/t"
+        android:layout_width="wrap_content"
+        android:layout_height="57dp"
+        android:layout_alignTop="@+id/t1"
+        android:layout_alignEnd="@+id/t1"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="33dp"
+        android:fontFamily="@font/sriracha"
+        android:text="______________"
+        android:textColor="#020101"
+        android:textSize="30dp"
+        tools:layout_conversion_absoluteHeight="61dp"
+        tools:layout_conversion_absoluteWidth="210dp"
+        tools:layout_editor_absoluteX="765dp"
+        tools:layout_editor_absoluteY="153dp" />
 
-        <TextView
-            android:id="@+id/t4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="785dp"
-            android:layout_marginTop="532dp"
-            android:fontFamily="@font/sriracha"
-            android:text="______________________"
-            android:textColor="#020101"
-            android:textSize="30dp" />
+    <TextView
+        android:id="@+id/t4"
+        android:layout_width="421dp"
+        android:layout_height="157dp"
+        android:layout_alignEnd="@+id/tl_2"
+        android:layout_alignBottom="@+id/t1"
+        android:layout_marginEnd="-1dp"
+        android:layout_marginBottom="-478dp"
+        android:fontFamily="@font/sriracha"
+        android:text="______________________"
+        android:textColor="#020101"
+        android:textSize="30dp"
+        tools:layout_conversion_absoluteHeight="115dp"
+        tools:layout_conversion_absoluteWidth="239dp"
+        tools:layout_editor_absoluteX="785dp"
+        tools:layout_editor_absoluteY="532dp" />
 
-        <TextView
-            android:id="@+id/t2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="780dp"
-            android:layout_marginTop="530dp"
-            android:fontFamily="@font/sriracha"
-            android:text="Considerazioni aggiuntive"
-            android:textColor="#DD1717"
-            android:textSize="30dp" />
-    </RelativeLayout>
+    <TextView
+        android:id="@+id/t2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tl_2"
+        android:layout_marginEnd="-408dp"
+        android:layout_marginBottom="166dp"
+        android:layout_toStartOf="@+id/tl_2"
+        android:fontFamily="@font/sriracha"
+        android:text="Considerazioni aggiuntive"
+        android:textColor="#DD1717"
+        android:textSize="30dp"
+        tools:layout_conversion_absoluteHeight="115dp"
+        tools:layout_conversion_absoluteWidth="244dp"
+        tools:layout_editor_absoluteX="780dp"
+        tools:layout_editor_absoluteY="530dp" />
+
 </RelativeLayout>

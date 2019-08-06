@@ -151,12 +151,8 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 if (elem%2==0) {
                     tmp = Float.parseFloat(mLine);
                 } else {
-                    /*float percent_width = Float.valueOf(tmp) / 2560;
-                    float percent_height = Float.valueOf(Float.parseFloat(mLine)) / 1704;
-                    float x = percent_width * width;
-                    float y = percent_height * height;*/
-                    float x = tmp;
-                    float y = Float.parseFloat(mLine);
+                    float x = Float.valueOf(tmp)*(width/(float)2600);
+                    float y = Float.valueOf(Float.parseFloat(mLine))*(height/(float)2200);
                     Pair p1 = new Pair(x, y);
                     points.add(p1);
                 }
