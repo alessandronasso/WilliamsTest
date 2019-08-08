@@ -93,8 +93,8 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.draw_btn) drawView.setErase(false);
-        else if (view.getId() == R.id.erase_btn) drawView.setErase(true);
+        if (view.getId() == R.id.draw_btn) { drawView.updateStroke(5); drawView.setErase(false); }
+        else if (view.getId() == R.id.erase_btn)  { drawView.setErase(true); drawView.updateStroke(25); }
         else if (view.getId() == R.id.undo_btn) drawView.restoreDraw();
         else if (view.equals(b1)){
             loadShapePoints();

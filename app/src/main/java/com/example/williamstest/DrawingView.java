@@ -177,21 +177,21 @@ public class DrawingView extends View {
      * @param toRemove the list of points erased by the user
      */
     public void removeErasedPoints (ArrayList<Pair<Float, Float>> toRemove) {
-        boolean found = false;
         for (int i=0; i<segments.size(); i++) {
+            int initialSize = segments.get(i).size();
             ArrayList<Pair<Float, Float>> linea = segments.get(i);
-            for (int j=0; j<toRemove.size(); j++, found=false) {
+            for (int j=0; j<toRemove.size(); j++) {
                 float x1 = toRemove.get(j).first;
                 float y1 = toRemove.get(j).second;
-                for (int x=0; !found && x<linea.size(); x++) {
-                    if (linea.get(x).first<x1+3 && linea.get(x).first>x1-3 &&
-                            linea.get(x).second<y1+3 && linea.get(x).second>y1-3) {
-                        found = true;
-                        linea.remove(x);
+                for (int x=0; x<linea.size(); x++) {
+                    if (linea.get(x).first<x1+10 && linea.get(x).first>x1-10 &&
+                            linea.get(x).second<y1+10 && linea.get(x).second>y1-10) {
+                        segments.get(i).remove(x);
                     }
                 }
             }
-            if (linea.size()==0) segments.remove(i--);
+            if (segments.get(i).size()==0 || ((segments.get(i).size()*100)/initialSize)<=20)
+                segments.remove(i--);
         }
     }
 
@@ -203,6 +203,15 @@ public class DrawingView extends View {
      */
     public int getEraseNumber () {
         return eraseNumber;
+    }
+
+    /**
+     * This method changes the size of the brush/eraser.
+     *
+     * @param size is the dimensione of the brush/eraser
+     */
+    public void updateStroke (int size) {
+        drawPaint.setStrokeWidth(size);
     }
 
 
