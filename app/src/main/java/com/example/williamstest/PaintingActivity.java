@@ -4,12 +4,10 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Pair;
-import android.view.Display;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,7 +16,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -137,11 +134,8 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
      */
     public void loadShapePoints () {
         BufferedReader reader = null;
-        Display display = getWindowManager(). getDefaultDisplay();
-        Point size = new Point();
-        display. getSize(size);
-        int width = size. x;
-        int height = size. y;
+        float height = drawView.getCanvasHeight();
+        float width = drawView.getCanvasWidth();
         float tmp = 0;
         try {
             reader = new BufferedReader(new InputStreamReader(getAssets().open(protocol+cornice)));
@@ -151,8 +145,8 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 if (elem%2==0) {
                     tmp = Float.parseFloat(mLine);
                 } else {
-                    float x = Float.valueOf(tmp)*(width/(float)2600);
-                    float y = Float.valueOf(Float.parseFloat(mLine))*(height/(float)2200);
+                    float x = (width/2540)*(Float.valueOf(tmp));
+                    float y = (height/1109)*(Float.valueOf(Float.parseFloat(mLine)));
                     Pair p1 = new Pair(x, y);
                     points.add(p1);
                 }
