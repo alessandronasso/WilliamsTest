@@ -10,8 +10,8 @@
         android:layout_width="@dimen/_180sdp"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="@dimen/_65sdp"
-        android:layout_marginTop="@dimen/_94sdp"
+        android:layout_marginLeft="@dimen/_60sdp"
+        android:layout_marginTop="@dimen/_86sdp"
         android:orientation="vertical">
 
         <ImageView
@@ -40,7 +40,7 @@
         android:layout_height="@dimen/_100sdp"
         android:layout_alignParentTop="true"
         android:layout_marginStart="@dimen/_30sdp"
-        android:layout_marginTop="@dimen/_78sdp"
+        android:layout_marginTop="@dimen/_70sdp"
         android:layout_toEndOf="@+id/immagine"
         android:orientation="vertical">
 
