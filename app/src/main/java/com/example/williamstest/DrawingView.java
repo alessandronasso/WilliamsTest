@@ -352,6 +352,8 @@ public class DrawingView extends View {
 
     /**
      * This method checks is there symmetries inside/outside the current shape.
+     * The first thing it does is to check if there is only one element drawnby the child.
+     * If yes
      */
     public void checkSymmetries() {
         boolean symmetryFound = false;
@@ -363,35 +365,11 @@ public class DrawingView extends View {
             for (int z=0; z<segments.size(); z++, symmetryFound=false) {
                 for (int i=z+1; i<segments.size() && segments.get(z).size()>9; i++) {
                     if (between(z, i) || between(i, z)) {
-                        ArrayList<Pair<Float,Float>> copia = segments.get(z);
-                        int nGroupsFirstShape = (segments.get(z).size()*10)/100;
-                        int nValuesFirstShape[] = new int[10];
-                        for (int j=0, j2=0; j<10; j++, j2+=nGroupsFirstShape) {
-                            int sumValues=0;
-                            sumValues+=copia.get(j2).first-copia.get(j2+nGroupsFirstShape-1).first;
-                            sumValues+=copia.get(j2).second-copia.get(j2+nGroupsFirstShape-1).second;
-                            nValuesFirstShape[j] = sumValues;
-                        }
-                        ArrayList<Pair<Float,Float>> copia2 = segments.get(i);
-                        int nGroupSecondShape = (segments.get(i).size()*10)/100;
-                        int nValuesSecondShape[] = new int[10];
-                        for (int j=0, j2=0; j<10; j++, j2+=nGroupSecondShape) {
-                            int sumValues=0;
-                            sumValues+=copia2.get(j2).first-copia2.get(j2+nGroupSecondShape-1).first;
-                            sumValues+=copia2.get(j2).second-copia2.get(j2+nGroupSecondShape-1).second;
-                            nValuesSecondShape[j] = sumValues;
-                        }
-                        int differences[] = new int[10];
-                        int numberOf = 0;
-                        for (int x=0; x<10; x++) {
-                            differences[x] = nValuesFirstShape[x] - nValuesSecondShape[x];
-                            //System.out.println("DIFF "+differences[x]);
-                            if (differences[x]<0) differences[x] = -differences[x];
-                            if (differences[x]<nGroupsFirstShape*3.5) numberOf++;
-                        }
-                        if (numberOf>6) {
+                        boolean similar = checkShape(z, i, "+", "+");
+                        boolean invertX = checkShape(z, i, "-", "+");
+                        boolean invertY = checkShape(z, i, "+", "-");
+                        if ((similar || invertX || invertY) && isInside(segments.get(z))==isInside(segments.get(i))) {
                             symmetryFound = true;
-                            //System.out.println("Figura1 "+z+"; Figura2: "+(i)+" SONO SIMMETRICI");
                             //check first shape
                             if (isInside(segments.get(z))==1) symmetryInside = 1;
                             else if (isInside(segments.get(z))==2) symmetryInside = 1;
@@ -406,13 +384,55 @@ public class DrawingView extends View {
                     }
                 }
                 if (!symmetryFound && notSym(segments.get(z))) {
-                    System.out.println("FIGURA NOT SYM: "+(z));
                     if (isInside(segments.get(z))==1) asymmetryInside = 1;
                     else if (isInside(segments.get(z))==2) asymmetryOutside = 1;
                     else { asymmetryInside = 1; asymmetryOutside = 1; }
                 }
             }
         }
+    }
+
+    /**
+     * This method divides the shapes we want to compare in 10 parts each.
+     * and checks how they change and the difference between them in each of the 10
+     * parts, to see how they are similar. The operator are used to check if they are
+     * symmetric. They can be symmetric throught the X-asis or through the Y-asis.
+     *
+     * @param z the first segment to check
+     * @param i the first segment to check
+     * @param x The operator of the X-axis
+     * @param y The operator of the Y-axis
+     * @return how two shapes are similar/symmetric
+     */
+    private boolean checkShape (int z, int i, String x, String y) {
+        ArrayList<Pair<Float,Float>> copia = segments.get(z);
+        int nGroupsFirstShape = (segments.get(z).size()*10)/100;
+        int nValuesFirstShape[] = new int[10];
+        for (int j=0, j2=0; j<10; j++, j2+=nGroupsFirstShape) {
+            int sumValues=0;
+            if (x.equals("+")) sumValues+=copia.get(j2).first-copia.get(j2+nGroupsFirstShape-1).first;
+            else sumValues+=(-(copia.get(j2).first-copia.get(j2+nGroupsFirstShape-1).first));
+            if (y.equals("-")) sumValues+=copia.get(j2).second-copia.get(j2+nGroupsFirstShape-1).second;
+            else sumValues+=(-(copia.get(j2).second-copia.get(j2+nGroupsFirstShape-1).second));
+            nValuesFirstShape[j] = sumValues;
+        }
+        ArrayList<Pair<Float,Float>> copia2 = segments.get(i);
+        int nGroupSecondShape = (segments.get(i).size()*10)/100;
+        int nValuesSecondShape[] = new int[10];
+        for (int j=0, j2=0; j<10; j++, j2+=nGroupSecondShape) {
+            int sumValues=0;
+            sumValues+=copia2.get(j2).first-copia2.get(j2+nGroupSecondShape-1).first;
+            sumValues+=copia2.get(j2).second-copia2.get(j2+nGroupSecondShape-1).second;
+            nValuesSecondShape[j] = sumValues;
+        }
+        int differences[] = new int[10];
+        int numberOf = 0;
+        for (int index=0; index<10; index++) {
+            differences[index] = nValuesFirstShape[index] - nValuesSecondShape[index];
+            if (differences[index]<0) differences[index] = -differences[index];
+            if (differences[index]<nGroupsFirstShape*3.5) numberOf++;
+        }
+        if (numberOf>6) return true; else return false;
     }
 
     /**
@@ -423,7 +443,7 @@ public class DrawingView extends View {
      * @return if the shapes size are similar
      */
     private boolean between (int i1, int i2) {
-        return segments.get(i1).size()>(segments.get(i2).size()/1.2) && segments.get(i1).size()<((segments.get(i2).size())*1.2);
+        return segments.get(i1).size()>(segments.get(i2).size()/2) && segments.get(i1).size()<((segments.get(i2).size())*2);
     }
 
     /**
