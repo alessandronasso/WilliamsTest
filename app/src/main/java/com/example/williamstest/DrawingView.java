@@ -283,7 +283,7 @@ public class DrawingView extends View {
      * This method checks if the user has drawn outside or inside the current shape.
      */
 
-    public void checkDrawOut() {
+    private void checkDrawOut() {
         boolean compreso = false;
         for (int x=0; x<segments.size(); x++) {
             ArrayList<Pair<Float,Float>> punti = segments.get(x);
@@ -362,8 +362,7 @@ public class DrawingView extends View {
         } else {
             for (int z=0; z<segments.size(); z++, symmetryFound=false) {
                 for (int i=z+1; i<segments.size() && segments.get(z).size()>9; i++) {
-                    if (((segments.get(z).size()>(segments.get(i).size())/1.4) && segments.get(z).size()<((segments.get(i).size())*1.4))
-                            || ((segments.get(i).size()>(segments.get(z).size())/1.4) && segments.get(i).size()<((segments.get(z).size())*1.4))) {
+                    if (between(z, i) || between(i, z)) {
                         ArrayList<Pair<Float,Float>> copia = segments.get(z);
                         int nGroupsFirstShape = (segments.get(z).size()*10)/100;
                         int nValuesFirstShape[] = new int[10];
@@ -386,13 +385,13 @@ public class DrawingView extends View {
                         int numberOf = 0;
                         for (int x=0; x<10; x++) {
                             differences[x] = nValuesFirstShape[x] - nValuesSecondShape[x];
-                            System.out.println("DIFF "+differences[x]);
+                            //System.out.println("DIFF "+differences[x]);
                             if (differences[x]<0) differences[x] = -differences[x];
                             if (differences[x]<nGroupsFirstShape*3.5) numberOf++;
                         }
                         if (numberOf>6) {
                             symmetryFound = true;
-                            System.out.println("Figura1 "+z+"; Figura2: "+(i)+" SONO SIMMETRICI");
+                            //System.out.println("Figura1 "+z+"; Figura2: "+(i)+" SONO SIMMETRICI");
                             //check first shape
                             if (isInside(segments.get(z))==1) symmetryInside = 1;
                             else if (isInside(segments.get(z))==2) symmetryInside = 1;
@@ -407,12 +406,24 @@ public class DrawingView extends View {
                     }
                 }
                 if (!symmetryFound && notSym(segments.get(z))) {
+                    System.out.println("FIGURA NOT SYM: "+(z));
                     if (isInside(segments.get(z))==1) asymmetryInside = 1;
                     else if (isInside(segments.get(z))==2) asymmetryOutside = 1;
                     else { asymmetryInside = 1; asymmetryOutside = 1; }
                 }
             }
         }
+    }
+
+    /**
+     * This methods checks if the shapes have a similar size.
+     *
+     * @param i1 index of the first ArrayList
+     * @param i2 index of the second ArrayList
+     * @return if the shapes size are similar
+     */
+    private boolean between (int i1, int i2) {
+        return segments.get(i1).size()>(segments.get(i2).size()/1.2) && segments.get(i1).size()<((segments.get(i2).size())*1.2);
     }
 
     /**
@@ -499,6 +510,4 @@ public class DrawingView extends View {
     public float getCanvasHeight () {
         return drawCanvas.getHeight();
     }
-
 }
-
