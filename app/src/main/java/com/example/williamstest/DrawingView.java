@@ -278,6 +278,37 @@ public class DrawingView extends View {
         }
     }
 
+    /**
+     * This method returns a list of points inverted following the axes given in input.
+     *
+     * @param points the list of points to invert
+     * @param ax the axes where to execute the method
+     * @return the inverted list of points
+     */
+    private ArrayList<Pair<Float,Float>> invertAxes (ArrayList<Pair<Float,Float>> points, String ax)  {
+        float x_m = (points.get(0).first+points.get(points.size()-1).first)/2;
+        float y_m = (points.get(0).second+points.get(points.size()-1).second)/2;
+        for (int i=0; i<points.size()/2; i++) {
+            if (ax.equals("x")) {
+                float new_x = points.get(i).first - x_m;
+                points.set(i, new Pair<Float, Float>(x_m-new_x,points.get(i).second));
+            } else {
+                float new_y = points.get(i).second - y_m;
+                points.set(i, new Pair<Float, Float>(points.get(i).first, y_m-new_y));
+            }
+        }
+        for (int i=points.size()/2; i<points.size(); i++) {
+            if (ax.equals("x")) {
+                float new_x = x_m - points.get(i).first;
+                points.set(i, new Pair<Float, Float>(x_m+new_x, points.get(i).second));
+            } else {
+                float new_y = y_m - points.get(i).second;
+                points.set(i, new Pair<Float, Float>(points.get(i).first, y_m+new_y));
+            }
+        }
+        return points;
+    }
+
 
     /**
      * This method checks if the user has drawn outside or inside the current shape.
@@ -365,9 +396,9 @@ public class DrawingView extends View {
             for (int z=0; z<segments.size(); z++, symmetryFound=false) {
                 for (int i=z+1; i<segments.size() && segments.get(z).size()>9; i++) {
                     if (between(z, i) || between(i, z)) {
-                        boolean similar = checkShape(z, i, "+", "+");
-                        boolean invertX = checkShape(z, i, "-", "+");
-                        boolean invertY = checkShape(z, i, "+", "-");
+                        boolean similar = checkShape(z, segments.get(i));
+                        boolean invertX = checkShape(z, invertAxes(segments.get(i), "x"));
+                        boolean invertY = checkShape(z, invertAxes(segments.get(i), "y"));
                         if ((similar || invertX || invertY) && isInside(segments.get(z))==isInside(segments.get(i))) {
                             symmetryFound = true;
                             //check first shape
@@ -399,25 +430,20 @@ public class DrawingView extends View {
      * symmetric. They can be symmetric throught the X-asis or through the Y-asis.
      *
      * @param z the first segment to check
-     * @param i the first segment to check
-     * @param x The operator of the X-axis
-     * @param y The operator of the Y-axis
      * @return how two shapes are similar/symmetric
      */
-    private boolean checkShape (int z, int i, String x, String y) {
+    private boolean checkShape (int z, ArrayList<Pair<Float,Float>> points) {
         ArrayList<Pair<Float,Float>> copia = segments.get(z);
         int nGroupsFirstShape = (segments.get(z).size()*10)/100;
         int nValuesFirstShape[] = new int[10];
         for (int j=0, j2=0; j<10; j++, j2+=nGroupsFirstShape) {
             int sumValues=0;
-            if (x.equals("+")) sumValues+=copia.get(j2).first-copia.get(j2+nGroupsFirstShape-1).first;
-            else sumValues+=(-(copia.get(j2).first-copia.get(j2+nGroupsFirstShape-1).first));
-            if (y.equals("-")) sumValues+=copia.get(j2).second-copia.get(j2+nGroupsFirstShape-1).second;
-            else sumValues+=(-(copia.get(j2).second-copia.get(j2+nGroupsFirstShape-1).second));
+            sumValues+=copia.get(j2).first-copia.get(j2+nGroupsFirstShape-1).first;
+            sumValues+=copia.get(j2).second-copia.get(j2+nGroupsFirstShape-1).second;
             nValuesFirstShape[j] = sumValues;
         }
-        ArrayList<Pair<Float,Float>> copia2 = segments.get(i);
-        int nGroupSecondShape = (segments.get(i).size()*10)/100;
+        ArrayList<Pair<Float,Float>> copia2 = points;
+        int nGroupSecondShape = (copia2.size()*10)/100;
         int nValuesSecondShape[] = new int[10];
         for (int j=0, j2=0; j<10; j++, j2+=nGroupSecondShape) {
             int sumValues=0;
@@ -434,6 +460,7 @@ public class DrawingView extends View {
         }
         if (numberOf>6) return true; else return false;
     }
+
 
     /**
      * This methods checks if the shapes have a similar size.
