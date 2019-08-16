@@ -279,11 +279,11 @@ public class DrawingView extends View {
     }
 
     /**
-     * This method returns a list of points inverted following the axes given in input.
+     * This method invert the points on the axes given in input.
      *
      * @param points the list of points to invert
-     * @param ax the axes where to execute the method
-     * @return the inverted list of points
+     * @param ax the axes where invert the points
+     * @return the list of points inverted
      */
     private ArrayList<Pair<Float,Float>> invertAxes (ArrayList<Pair<Float,Float>> points, String ax)  {
         float x_m = (points.get(0).first+points.get(points.size()-1).first)/2;
@@ -393,12 +393,15 @@ public class DrawingView extends View {
             else if (isInside(segments.get(0))==2) asymmetryOutside = 1;
             else { asymmetryInside = 1; asymmetryOutside = 1; }
         } else {
-            for (int z=0; z<segments.size(); z++, symmetryFound=false) {
-                for (int i=z+1; i<segments.size() && segments.get(z).size()>9; i++) {
+            for (int z=0; z<segments.size() && segments.get(z).size()>9; z++, symmetryFound=false) {
+                for (int i=z+1; i<segments.size() && segments.get(i).size()>9; i++) {
                     if (between(z, i) || between(i, z)) {
                         boolean similar = checkShape(z, segments.get(i));
+                        icp(z, segments.get(i));
                         boolean invertX = checkShape(z, invertAxes(segments.get(i), "x"));
+                        icp(z, invertAxes(segments.get(i), "x"));
                         boolean invertY = checkShape(z, invertAxes(segments.get(i), "y"));
+                        icp(z, invertAxes(segments.get(i), "y"));
                         if ((similar || invertX || invertY) && isInside(segments.get(z))==isInside(segments.get(i))) {
                             symmetryFound = true;
                             //check first shape
@@ -427,7 +430,7 @@ public class DrawingView extends View {
      * This method divides the shapes we want to compare in 10 parts each.
      * and checks how they change and the difference between them in each of the 10
      * parts, to see how they are similar. The operator are used to check if they are
-     * symmetric. They can be symmetric throught the X-asis or through the Y-asis.
+     * symmetric. They can be symmetric through the X-axis or through the Y-axis.
      *
      * @param z the first segment to check
      * @return how two shapes are similar/symmetric
@@ -456,9 +459,66 @@ public class DrawingView extends View {
         for (int index=0; index<10; index++) {
             differences[index] = nValuesFirstShape[index] - nValuesSecondShape[index];
             if (differences[index]<0) differences[index] = -differences[index];
-            if (differences[index]<nGroupsFirstShape*3.5) numberOf++;
+            if (differences[index]<nGroupsFirstShape*2) numberOf++;
         }
-        if (numberOf>6) return true; else return false;
+        if (numberOf>=6) return true; else return false;
+    }
+
+    /**
+     * This method is based on the Iterative Closest Point algorithm
+     * (To verify)
+     *
+     * @param z the index of the first list of points
+     * @param points the second list of points to compare
+     */
+    private void icp (int z, ArrayList<Pair<Float,Float>> points) {
+        ArrayList<Pair<Float,Float>> copia = segments.get(z);
+        ArrayList<Pair<Float,Float>> copia2 = points;
+        double x_trattino = 0.0;
+        double y_trattino = 0.0;
+        double x_trattino_primo = 0.0;
+        double y_trattino_primo = 0.0;
+        for (int i=0; i<copia.size(); i++) {
+            x_trattino+=copia.get(i).first;
+            y_trattino+=copia.get(i).second;
+        }
+        x_trattino = x_trattino*((double)1/copia.size());
+        y_trattino = y_trattino*((double)1/copia.size());
+        for (int i=0; i<copia2.size(); i++) {
+            x_trattino_primo+=copia2.get(i).first;
+            y_trattino_primo+=copia2.get(i).second;
+        }
+        x_trattino_primo = x_trattino_primo*((double)1/copia2.size());
+        y_trattino_primo = y_trattino_primo*((double)1/copia2.size());
+        double Sxx = 0.0;
+        double Syy = 0.0;
+        double Sxy = 0.0;
+        double Syx = 0.0;
+        int min = 0;
+        if (copia.size()>copia2.size()) min = copia2.size(); else min = copia.size();
+        for (int i=0; i<min; i++) {
+            Sxx+=((copia.get(i).first-x_trattino)*(copia2.get(i).first-x_trattino_primo));
+        }
+        for (int i=0; i<min; i++) {
+            Syy+=((copia.get(i).second-y_trattino)*(copia2.get(i).second-y_trattino_primo));
+        }
+        for (int i=0; i<min; i++) {
+            Sxy+=((copia.get(i).first-x_trattino)*(copia2.get(i).second-y_trattino_primo));
+        }
+        for (int i=0; i<min; i++) {
+            Syx+=((copia.get(i).second-y_trattino)*(copia2.get(i).first-x_trattino_primo));
+        }
+        double rotation = Math.atan((Sxy-Syx)/(Sxx+Syy));
+
+        double Tx = x_trattino_primo - (x_trattino*Math.cos(rotation)-y_trattino*Math.sin(rotation));
+        double Ty = y_trattino_primo - (x_trattino*Math.sin(rotation)+y_trattino*Math.cos(rotation));
+        double eDist = 0.0;
+
+        for (int i=0; i<min; i++) {
+            eDist += (Math.pow(copia.get(i).first*Math.cos(rotation)-copia.get(i).second*Math.sin(rotation)+Tx-copia2.get(i).first, 2.0)+Math.pow(copia.get(i).first*Math.sin(rotation)+copia.get(i).second*Math.cos(rotation)+Ty-copia2.get(i).second, 2.0));
+        }
+
+        System.out.println("EDIST: "+eDist);
     }
 
 
