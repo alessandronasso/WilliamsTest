@@ -13,6 +13,7 @@ import android.util.DisplayMetrics;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
+
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -44,6 +45,8 @@ public class DrawingView extends View {
     private String s1, s2, title="";
     //number of erasure
     private int eraseNumber = 0;
+    //string to define the current draw
+    private int undoNumber = 0;
     //string to define the current draw
     private String protocol, draw;
     //string to determinate the score in the draw in/out part
@@ -108,6 +111,7 @@ public class DrawingView extends View {
         drawPaint.setStrokeJoin(Paint.Join.ROUND);
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
         canvasPaint = new Paint(Paint.DITHER_FLAG);
+
     }
 
     @Override
@@ -115,6 +119,9 @@ public class DrawingView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
         canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         drawCanvas = new Canvas(canvasBitmap);
+        System.out.println("SIZE DRAW: "+segments.size());
+        for (int i=0; i<segments.size(); i++)
+            drawFromArrayList(segments.get(i));
     }
 
     @Override
@@ -241,7 +248,7 @@ public class DrawingView extends View {
             onSizeChanged(width, height, width, height);
             segments.remove(segments.size() - 1);
             for (int i = 0; i < segments.size(); i++) drawFromArrayList(segments.get(i));
-            eraseNumber++;
+            undoNumber++;
         }
     }
 
@@ -397,11 +404,14 @@ public class DrawingView extends View {
                 for (int i=z+1; i<segments.size() && segments.get(i).size()>9; i++) {
                     if (between(z, i) || between(i, z)) {
                         boolean similar = checkShape(z, segments.get(i));
+                        System.out.println("SIMILAR");
                         icp(z, segments.get(i));
                         boolean invertX = checkShape(z, invertAxes(segments.get(i), "x"));
-                        icp(z, invertAxes(segments.get(i), "x"));
+                        System.out.println("X AS");
+                        icp(z, reverse(segments.get(i)));
                         boolean invertY = checkShape(z, invertAxes(segments.get(i), "y"));
-                        icp(z, invertAxes(segments.get(i), "y"));
+                        System.out.println("Y AS");
+                        icp(i, reverse(segments.get(z)));
                         if ((similar || invertX || invertY) && isInside(segments.get(z))==isInside(segments.get(i))) {
                             symmetryFound = true;
                             //check first shape
@@ -444,6 +454,7 @@ public class DrawingView extends View {
             sumValues+=copia.get(j2).first-copia.get(j2+nGroupsFirstShape-1).first;
             sumValues+=copia.get(j2).second-copia.get(j2+nGroupsFirstShape-1).second;
             nValuesFirstShape[j] = sumValues;
+            System.out.println("Primo gruppo: "+sumValues);
         }
         ArrayList<Pair<Float,Float>> copia2 = points;
         int nGroupSecondShape = (copia2.size()*10)/100;
@@ -453,13 +464,15 @@ public class DrawingView extends View {
             sumValues+=copia2.get(j2).first-copia2.get(j2+nGroupSecondShape-1).first;
             sumValues+=copia2.get(j2).second-copia2.get(j2+nGroupSecondShape-1).second;
             nValuesSecondShape[j] = sumValues;
+            System.out.println("Secondo gruppo: "+sumValues);
         }
         int differences[] = new int[10];
         int numberOf = 0;
         for (int index=0; index<10; index++) {
             differences[index] = nValuesFirstShape[index] - nValuesSecondShape[index];
             if (differences[index]<0) differences[index] = -differences[index];
-            if (differences[index]<nGroupsFirstShape*2) numberOf++;
+            if (differences[index]<nGroupsFirstShape*2.5) numberOf++;
+            System.out.println("Differenze: "+differences[index]);
         }
         if (numberOf>=6) return true; else return false;
     }
@@ -471,7 +484,7 @@ public class DrawingView extends View {
      * @param z the index of the first list of points
      * @param points the second list of points to compare
      */
-    private void icp (int z, ArrayList<Pair<Float,Float>> points) {
+    private double icp (int z, ArrayList<Pair<Float,Float>> points) {
         ArrayList<Pair<Float,Float>> copia = segments.get(z);
         ArrayList<Pair<Float,Float>> copia2 = points;
         double x_trattino = 0.0;
@@ -519,8 +532,8 @@ public class DrawingView extends View {
         }
 
         System.out.println("EDIST: "+eDist);
+        return eDist;
     }
-
 
     /**
      * This methods checks if the shapes have a similar size.
@@ -591,6 +604,21 @@ public class DrawingView extends View {
         return true;
     }
 
+    private ArrayList<Pair<Float,Float>> reverse(ArrayList<Pair<Float,Float>> list) {
+        for(int i = 0, j = list.size() - 1; i < j; i++) {
+            list.add(i, list.remove(j));
+        }
+        return list;
+    }
+
+    public ArrayList<ArrayList<Pair<Float,Float>>> getPoints () {
+        return segments;
+    }
+
+    public void setPoints (ArrayList<ArrayList<Pair<Float,Float>>> pts) {
+        segments = new ArrayList<>(pts);
+    }
+
     /**
      * This method helps to clear the stack.
      */
@@ -600,7 +628,7 @@ public class DrawingView extends View {
 
     /**
      * This method return the width of the drawing area which is used
-     * to adapt it to every device
+     * to adapt it to every device.
      *
      * @return the width of the Canvas
      */
@@ -610,11 +638,39 @@ public class DrawingView extends View {
 
     /**
      * This method return the height of the drawing area which is used
-     * to adapt it to every device
+     * to adapt it to every device.
      *
      * @return the height of the Canvas
      */
     public float getCanvasHeight () {
         return drawCanvas.getHeight();
+    }
+
+    /**
+     * This method return the current brush color.
+     *
+     * @return the current brush color
+     */
+    public int getPaintColor () {
+        return paintColor;
+    }
+
+    /**
+     * This method returns the number of undo done by the user.
+     *
+     * @return how many undo have been done
+     */
+    public int getUndoNumber () {
+        return undoNumber;
+    }
+
+    /**
+     * This method changes the current drawing color.
+     *
+     * @param color the new color
+     */
+    public void setPaintColor (int color) {
+        paintColor = color;
+        drawPaint.setColor(paintColor);
     }
 }

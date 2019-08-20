@@ -8,15 +8,20 @@ import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.LineNumberReader;
 
@@ -25,6 +30,7 @@ public class SlideAdapter extends PagerAdapter {
     LayoutInflater inflater;
     private String protocollo;
     private String folder;
+    private EditText f;
 
 
     public SlideAdapter(Context context) {
@@ -48,6 +54,18 @@ public class SlideAdapter extends PagerAdapter {
         RelativeLayout layoutslide = (RelativeLayout) view.findViewById(R.id.slidelinearlayout);
         ImageView imgslide = getImage(view, position);
         TableLayout tl = (TableLayout) view.findViewById(R.id.tl);
+        Button b1 = (Button) view.findViewById(R.id.modifica);
+        final int pos = position;
+        b1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    modifyFile(pos);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         try {
             setTableText(view, getDescription(position));
         } catch (IOException e) {
@@ -126,7 +144,7 @@ public class SlideAdapter extends PagerAdapter {
      * @param content the stats of the user draw
      */
     private void setTableText (View view, String content) {
-        TextView f = (TextView) view.findViewById(R.id.f_item_1);
+        f = (EditText) view.findViewById(R.id.f_item_1);
         TextView fl = (TextView) view.findViewById(R.id.fl_item_2);
         TextView o = (TextView) view.findViewById(R.id.o_item_3);
         TextView el = (TextView) view.findViewById(R.id.el_item_4);
@@ -134,6 +152,7 @@ public class SlideAdapter extends PagerAdapter {
         TextView t1 = (TextView) view.findViewById(R.id.tempo_item_1);
         TextView t2 = (TextView) view.findViewById(R.id.tempo_item_2);
         TextView t3 = (TextView) view.findViewById(R.id.n_3);
+        TextView t4 = (TextView) view.findViewById(R.id.n_4);
         TextView txttitle= (TextView) view.findViewById(R.id.txttitle);
         String[] values = content.split("\n");
         f.setText(values[0]);
@@ -145,7 +164,30 @@ public class SlideAdapter extends PagerAdapter {
         t1.setText(values[5]);
         t2.setText(values[6]);
         t3.setText(values[7]);
+        t4.setText(values[8]);
         txttitle.setText(values[4]);
+    }
+
+    public void modifyFile (int position) throws IOException {
+        ContextWrapper cw = new ContextWrapper(context);
+        File directory = cw.getDir("draw", Context.MODE_PRIVATE);
+        File inputFile = new File(directory.getAbsolutePath()+folder+"/"+protocollo+(position+1)+"_score.txt");
+        File tempFile = new File(directory.getAbsolutePath()+folder+"/"+protocollo+(position+1)+"_scoretmp.txt");
+
+        BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+        BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+
+        String currentLine; int i=0;
+
+        while((currentLine = reader.readLine()) != null) {
+            if (i==0) {
+                i++;
+                writer.write(f.getText() + System.getProperty("line.separator"));
+            } else writer.write(currentLine + System.getProperty("line.separator"));
+        }
+        writer.close();
+        reader.close();
+        tempFile.renameTo(inputFile);
     }
 
     /**

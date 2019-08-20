@@ -83,7 +83,7 @@
                     android:textColor="#030101"
                     android:textSize="@dimen/_10sdp" />
 
-                <TextView
+                <EditText
                     android:id="@+id/f_item_1"
                     android:layout_width="@dimen/_100sdp"
                     android:layout_height="wrap_content"
@@ -216,13 +216,13 @@
     <LinearLayout
         android:id="@+id/tabella2"
         android:layout_width="@dimen/_157sdp"
-        android:layout_height="@dimen/_65sdp"
+        android:layout_height="@dimen/_80sdp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="@dimen/_250sdp"
         android:layout_marginTop="@dimen/_10sdp"
         android:layout_marginEnd="@dimen/_74sdp"
-        android:layout_marginBottom="@dimen/_20sdp"
+        android:layout_marginBottom="@dimen/_28sdp"
         android:orientation="vertical">
 
         <TextView
@@ -331,6 +331,46 @@
                     android:textColor="#070404"
                     android:textSize="@dimen/_10sdp" />
             </TableRow>
+
+            <TableRow
+                android:id="@+id/tr_item_9"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/table_row_bg"
+                android:padding="2dp"
+                android:scrollbarSize="@dimen/_1sdp">
+
+                <TextView
+                    android:id="@+id/n_undo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/table_cell_bg"
+                    android:paddingRight="10dp"
+                    android:text="    Numero di undo"
+                    android:textColor="#070404"
+                    android:textSize="@dimen/_10sdp" />
+
+                <TextView
+                    android:id="@+id/n_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/table_cell_bg"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:textColor="#070404"
+                    android:textSize="@dimen/_10sdp" />
+            </TableRow>
         </TableLayout>
     </LinearLayout>
+
+    <Button
+        android:id="@+id/modifica"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="38dp"
+        android:layout_marginTop="229dp"
+        android:layout_marginBottom="@dimen/_250sdp"
+        android:layout_toEndOf="@+id/tabella1"
+        android:text="Modifica" />
 </RelativeLayout>

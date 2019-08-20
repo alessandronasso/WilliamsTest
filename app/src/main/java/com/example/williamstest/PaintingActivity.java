@@ -2,6 +2,7 @@ package com.example.williamstest;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -16,14 +17,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+
+import yuku.ambilwarna.AmbilWarnaDialog;
 
 
 public class PaintingActivity extends AppCompatActivity implements OnClickListener {
@@ -33,7 +42,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
     //title of the draw
     private EditText title;
     //confirm button
-    private Button b1;
+    private Button b1, b2, b3;
     //draw button
     private ImageButton eraseBtn, drawBtn, undoBtn;
     //default shape points
@@ -51,7 +60,6 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         Bundle extras = getIntent().getExtras();
         protocol = extras.getString("protocollo");
         cornice = extras.getString("cornice");
-
         setContentView(R.layout.activity_painting);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
@@ -66,8 +74,14 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         //textfield
         title = (EditText) paintLayout.findViewById(R.id.edittitle);
         //confirm button
-        b1 = (Button) paintLayout2.findViewById(R.id.button_1);
+        b1 = (Button) paintLayout2.findViewById(R.id.bb_1);
         b1.setOnClickListener(this);
+        //button to next draw
+        b2 = (Button) paintLayout2.findViewById(R.id.bb_2);
+        b2.setOnClickListener(this);
+        //button to previous draw
+        b3 = (Button) paintLayout2.findViewById(R.id.bb_3);
+        b3.setOnClickListener(this);
         //erase button
         eraseBtn = (ImageButton)findViewById(R.id.erase_btn);
         eraseBtn.setOnClickListener(this);
@@ -78,11 +92,42 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         undoBtn = (ImageButton)findViewById(R.id.undo_btn);
         undoBtn.setOnClickListener(this);
 
+        drawBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openDialog(false);
+            }
+        });
+
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         drawView.setDimension(displaymetrics);
         if (cornice.equals("1")) findFolder();
         else folder = extras.getInt("cartella");
+        try {
+            restorePoints();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void openDialog(boolean supportsAlpha) {
+        drawView.setErase(false);
+        int currentColor = drawView.getPaintColor();
+        AmbilWarnaDialog dialog = new AmbilWarnaDialog(this, currentColor, supportsAlpha, new AmbilWarnaDialog.OnAmbilWarnaListener() {
+            @Override
+            public void onOk(AmbilWarnaDialog dialog, int color) {
+                drawView.setPaintColor(color);
+                drawView.updateStroke(5);
+                drawView.setErase(false);
+            }
+
+            @Override
+            public void onCancel(AmbilWarnaDialog dialog) {
+                //do nothing
+            }
+        });
+        dialog.show();
     }
 
     @Override
@@ -93,10 +138,25 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.draw_btn) { drawView.updateStroke(5); drawView.setErase(false); }
-        else if (view.getId() == R.id.erase_btn)  { drawView.setErase(true); drawView.updateStroke(25); }
+        if (view.getId() == R.id.draw_btn) {
+            drawView.updateStroke(5);
+            drawView.setErase(false);
+        } else if (view.getId() == R.id.erase_btn)  { drawView.setErase(true); drawView.updateStroke(25); }
         else if (view.getId() == R.id.undo_btn) drawView.restoreDraw();
         else if (view.equals(b1)){
+            ContextWrapper cw = new ContextWrapper(this);
+            File directory = cw.getDir("draw"+(folder), Context.MODE_PRIVATE);
+            File file = new File(directory.getAbsolutePath()+"/completed.txt");
+            try {
+                FileOutputStream fos = new FileOutputStream(file, true);
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fos);
+                outputStreamWriter.append(cornice).append(String.valueOf('\n'));
+                outputStreamWriter.flush();
+                outputStreamWriter.close();
+                deleteFromNotCompleted();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             loadShapePoints();
             String flessibilita = "---";
             String originalita = drawView.getScoreDrawInOut()+"pt.";
@@ -106,10 +166,11 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             String tempoReazione = drawView.getReactionTime()+ " s";
             String tempoCompletamentoDisegno = drawView.getTimeToDraw()+ " s";
             String numeroCancellature = drawView.getEraseNumber()+"";
+            String undo = drawView.getUndoNumber()+"";
             saveImage();
-            writeScore(fluidita, flessibilita, originalita, elaborazione, titoli, tempoReazione, tempoCompletamentoDisegno, numeroCancellature);
+            writeScore(fluidita, flessibilita, originalita, elaborazione, titoli, tempoReazione, tempoCompletamentoDisegno, numeroCancellature, undo);
             System.out.println("Controllo simmetrie: "+drawView.getSymmetryScore()+"pt.");
-            if (nextDraw != 1) {
+            if (nextDraw < 12) {
                 drawView.clearBitmap();
                 Intent myIntent = new Intent(PaintingActivity.this, PaintingActivity.class);
                 myIntent.putExtra("protocollo", protocol);
@@ -118,13 +179,148 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 PaintingActivity.this.startActivity(myIntent);
             } else {
-                Intent myIntent = new Intent(PaintingActivity.this, Result.class);
+                new android.support.v7.app.AlertDialog.Builder(PaintingActivity.this)
+                        .setTitle("Chiusura test")
+                        .setMessage("Vuoi concludere il test?")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent myIntent = new Intent(PaintingActivity.this, Result.class);
+                                myIntent.putExtra("protocollo", protocol);
+                                myIntent.putExtra("cartella", Integer.toString(folder));
+                                myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                PaintingActivity.this.startActivity(myIntent);
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, null)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+            }
+        } else if (view.equals(b3)) { //INDIETRO
+            try {
+                savePoints();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            int prev = -1;
+            try {
+                prev = findPreviousNotCompleted();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (prev!=-1) {
+                drawView.clearBitmap();
+                Intent myIntent = new Intent(PaintingActivity.this, PaintingActivity.class);
                 myIntent.putExtra("protocollo", protocol);
-                myIntent.putExtra("cartella", Integer.toString(folder));
+                myIntent.putExtra("cornice", Integer.toString(prev));
+                myIntent.putExtra("cartella", folder);
+                myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                PaintingActivity.this.startActivity(myIntent);
+            } else
+                Toast.makeText(this, "Non ci sono altri disegni", Toast.LENGTH_LONG).show();
+        } else if (view.equals(b2)) { //SALTA
+            try {
+                savePoints();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            ContextWrapper cw = new ContextWrapper(this);
+            File directory = cw.getDir("draw"+(folder), Context.MODE_PRIVATE);
+            File file = new File(directory.getAbsolutePath()+"/not-completed.txt");
+            try {
+                FileOutputStream fos = new FileOutputStream(file, true);
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fos);
+                outputStreamWriter.append(cornice).append(String.valueOf('\n'));
+                outputStreamWriter.flush();
+                outputStreamWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            int next = -1;
+            try {
+                next = findNextNotCompleted();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (next!=-1) {
+                drawView.clearBitmap();
+                Intent myIntent = new Intent(PaintingActivity.this, PaintingActivity.class);
+                myIntent.putExtra("protocollo", protocol);
+                myIntent.putExtra("cornice", Integer.toString(next));
+                myIntent.putExtra("cartella", folder);
+                myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                PaintingActivity.this.startActivity(myIntent);
+            } else if (nextDraw>12)
+                Toast.makeText(this, "Non ci sono altri disegni", Toast.LENGTH_LONG).show();
+            else {
+                drawView.clearBitmap();
+                Intent myIntent = new Intent(PaintingActivity.this, PaintingActivity.class);
+                myIntent.putExtra("protocollo", protocol);
+                myIntent.putExtra("cornice", Integer.toString(++nextDraw));
+                myIntent.putExtra("cartella", folder);
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 PaintingActivity.this.startActivity(myIntent);
             }
         }
+    }
+
+    public int findPreviousNotCompleted () throws IOException {
+        ContextWrapper cw = new ContextWrapper(this);
+        int n = -1;
+        File directory = cw.getDir("draw"+(folder), Context.MODE_PRIVATE);
+        if (!(new File(directory.getAbsolutePath()+"/not-completed.txt")).exists()) return n;
+        else {
+            FileReader f = new FileReader(directory.getAbsolutePath()+"/not-completed.txt");
+            LineNumberReader reader = new LineNumberReader(f);
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (Integer.parseInt(line)<Integer.parseInt(cornice) && Integer.parseInt(line)>n) n = Integer.parseInt(line);
+            }
+            f.close();
+        }
+
+        return n;
+    }
+
+    public int findNextNotCompleted () throws IOException {
+        ContextWrapper cw = new ContextWrapper(this);
+        int countLine=0;
+        File directory = cw.getDir("draw"+(folder), Context.MODE_PRIVATE);
+        if ((new File(directory.getAbsolutePath()+"/completed.txt")).exists()) {
+            boolean no = false;
+            for (int count = Integer.parseInt(cornice)+1; count<13; count++, no=false) {
+                FileReader f = new FileReader(directory.getAbsolutePath()+"/completed.txt");
+                LineNumberReader reader = new LineNumberReader(f);
+                String line;
+                for (countLine=0; (line = reader.readLine()) != null; countLine++) {
+                    if (Integer.parseInt(line) == count) no=true;
+                }
+                if (!no) return count;
+                f.close();
+            }
+        } else return Integer.parseInt(cornice)+1;
+        if (countLine==12) return 13; else return Integer.parseInt(cornice)+1;
+    }
+
+    public void deleteFromNotCompleted () throws IOException {
+        ContextWrapper cw = new ContextWrapper(this);
+        File directory = cw.getDir("draw"+(folder), Context.MODE_PRIVATE);
+        File inputFile = new File(directory.getAbsolutePath()+"/not-completed.txt");
+        File tempFile = new File(directory.getAbsolutePath()+"/not-completedtmp.txt");
+
+        BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+        BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+
+        String lineToRemove = cornice;
+        String currentLine;
+
+        while((currentLine = reader.readLine()) != null) {
+            String trimmedLine = currentLine.trim();
+            if(trimmedLine.equals(lineToRemove)) continue;
+            writer.write(currentLine + System.getProperty("line.separator"));
+        }
+        writer.close();
+        reader.close();
+        tempFile.renameTo(inputFile);
     }
 
     /**
@@ -204,7 +400,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
      * @param t2 The completion time since the user starts drawing
      * @param n How many times the users use the erase button
      */
-    public void writeScore (String f1, String f2, String o, String el, String tit, String t1, String t2, String n) {
+    public void writeScore (String f1, String f2, String o, String el, String tit, String t1, String t2, String n, String undo) {
         ContextWrapper cw = new ContextWrapper(getApplicationContext());
         File directory = cw.getDir("draw"+(folder), Context.MODE_PRIVATE);
         File file = new File(directory.getAbsolutePath()+"/"+protocol + cornice+"_score.txt");
@@ -219,12 +415,54 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             outputStreamWriter.write(t1+"\n");
             outputStreamWriter.write(t2+"\n");
             outputStreamWriter.write(n+"\n");
-            outputStreamWriter.write(protocol+"\n");
+            outputStreamWriter.write(undo+"\n");
             outputStreamWriter.flush();
             outputStreamWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void savePoints () throws IOException {
+        ArrayList<ArrayList<Pair<Float,Float>>> points = new ArrayList<>(drawView.getPoints());
+        System.out.println("Seconda volta: "+points.size());
+        if (points.size()!=0) {
+            ContextWrapper cw = new ContextWrapper(this);
+            File directory = cw.getDir("draw"+(folder), Context.MODE_PRIVATE);
+            File file = new File(directory.getAbsolutePath()+"/"+protocol + cornice+"_tmpscore.txt");
+            FileOutputStream fos = new FileOutputStream(file);
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fos);
+            for (int i=0; i<points.size(); i++) {
+                for (int j=0; j<points.get(i).size(); j++) {
+                    outputStreamWriter.write(points.get(i).get(j).first+"\n");
+                    outputStreamWriter.write(points.get(i).get(j).second+"\n");
+                }
+                outputStreamWriter.write("----"+"\n");
+            }
+            outputStreamWriter.flush();
+            outputStreamWriter.close();
+        }
+    }
+
+    public void restorePoints () throws IOException {
+        ArrayList<ArrayList<Pair<Float,Float>>> points = new ArrayList<>();
+        ContextWrapper cw = new ContextWrapper(this);
+        File directory = cw.getDir("draw"+(folder), Context.MODE_PRIVATE);
+        FileReader f = new FileReader(directory.getAbsolutePath()+"/"+protocol + cornice+"_tmpscore.txt");
+        LineNumberReader reader = new LineNumberReader(f);
+        String line; Float temp=null;
+        ArrayList<Pair<Float, Float>> tmp = new ArrayList<>();
+        for (int i=0; (line = reader.readLine()) != null; i++) {
+            System.out.println(line);
+            if (line.equals("----")) {
+                i = 0;
+                points.add(tmp);
+                tmp = new ArrayList<>();
+            } else if (i%2 == 0) temp = Float.parseFloat(line);
+            else tmp.add(new Pair<>(temp, Float.parseFloat(line)));
+        }
+        f.close();
+        drawView.setPoints(points);
     }
 
     @Override
