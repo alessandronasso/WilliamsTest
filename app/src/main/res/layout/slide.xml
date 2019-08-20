@@ -373,4 +373,14 @@
         android:layout_marginBottom="@dimen/_250sdp"
         android:layout_toEndOf="@+id/tabella1"
         android:text="Modifica" />
+
+    <Button
+        android:id="@+id/complete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/immagine"
+        android:layout_marginTop="@dimen/_58sdp"
+        android:layout_marginEnd="@dimen/_114sdp"
+        android:layout_toStartOf="@+id/tabella2"
+        android:text="Complessivo" />
 </RelativeLayout>

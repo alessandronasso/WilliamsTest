@@ -101,7 +101,6 @@ public class DrawingView extends View {
      * This method is used to prepare the user to draw.
      */
     private void setupDrawing(){
-
         drawPath = new Path();
         drawPaint = new Paint();
         drawPaint.setColor(paintColor);
@@ -111,7 +110,6 @@ public class DrawingView extends View {
         drawPaint.setStrokeJoin(Paint.Join.ROUND);
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
         canvasPaint = new Paint(Paint.DITHER_FLAG);
-
     }
 
     @Override
@@ -119,9 +117,9 @@ public class DrawingView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
         canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         drawCanvas = new Canvas(canvasBitmap);
-        System.out.println("SIZE DRAW: "+segments.size());
-        for (int i=0; i<segments.size(); i++)
+        for (int i=0; i<segments.size(); i++) {
             drawFromArrayList(segments.get(i));
+        }
     }
 
     @Override
@@ -269,10 +267,12 @@ public class DrawingView extends View {
      */
     public void drawFromArrayList(ArrayList<Pair<Float,Float>> points) {
         int pointCount = points.size();
+        System.out.println("-----");
         if (pointCount < 2) {
             return;
         }
         for (int i=0;i<pointCount;i++) {
+            System.out.println(points.get(i).first+", "+points.get(i).second);
             float touchX = points.get(i).first, touchY = points.get(i).second;
             if(i==0) {
                 drawPath.moveTo(touchX, touchY);

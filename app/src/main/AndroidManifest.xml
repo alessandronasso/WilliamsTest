@@ -8,7 +8,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Result"></activity>
+        <activity android:name=".FinalResult"></activity>
+        <activity android:name=".Result" />
         <activity android:name=".PaintingActivity" />
         <activity android:name=".UserList" />
         <activity android:name=".MainActivity">

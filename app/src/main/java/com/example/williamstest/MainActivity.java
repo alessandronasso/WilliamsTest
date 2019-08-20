@@ -17,8 +17,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent myIntent = new Intent(MainActivity.this, PaintingActivity.class);
                 myIntent.putExtra("protocollo", "a");
-                myIntent.putExtra("cornice", "1" +
-                        "");
+                myIntent.putExtra("cornice", "1" + "");
+                myIntent.putExtra("first", "yes");
                 MainActivity.this.startActivity(myIntent);
             }
         });
@@ -27,8 +27,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent myIntent = new Intent(MainActivity.this, PaintingActivity.class);
                 myIntent.putExtra("protocollo", "b");
-                myIntent.putExtra("cornice", "1" +
-                        "");
+                myIntent.putExtra("cornice", "1" + "");
+                myIntent.putExtra("first", "yes");
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 MainActivity.this.startActivity(myIntent);
             }

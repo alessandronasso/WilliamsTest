@@ -62,7 +62,6 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         cornice = extras.getString("cornice");
         setContentView(R.layout.activity_painting);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-
         //get drawing view
         drawView = (DrawingView)findViewById(R.id.drawing);
         drawView.setCornice(protocol, cornice);
@@ -102,7 +101,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         drawView.setDimension(displaymetrics);
-        if (cornice.equals("1")) findFolder();
+        if (extras.getString("first").equals("yes")) findFolder();
         else folder = extras.getInt("cartella");
         try {
             restorePoints();
@@ -176,6 +175,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 myIntent.putExtra("protocollo", protocol);
                 myIntent.putExtra("cornice", Integer.toString(++nextDraw));
                 myIntent.putExtra("cartella", folder);
+                myIntent.putExtra("first", "no");
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 PaintingActivity.this.startActivity(myIntent);
             } else {
@@ -213,6 +213,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 myIntent.putExtra("protocollo", protocol);
                 myIntent.putExtra("cornice", Integer.toString(prev));
                 myIntent.putExtra("cartella", folder);
+                myIntent.putExtra("first", "no");
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 PaintingActivity.this.startActivity(myIntent);
             } else
@@ -247,6 +248,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 myIntent.putExtra("protocollo", protocol);
                 myIntent.putExtra("cornice", Integer.toString(next));
                 myIntent.putExtra("cartella", folder);
+                myIntent.putExtra("first", "no");
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 PaintingActivity.this.startActivity(myIntent);
             } else if (nextDraw>12)
@@ -257,6 +259,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 myIntent.putExtra("protocollo", protocol);
                 myIntent.putExtra("cornice", Integer.toString(++nextDraw));
                 myIntent.putExtra("cartella", folder);
+                myIntent.putExtra("first", "no");
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 PaintingActivity.this.startActivity(myIntent);
             }
@@ -425,7 +428,6 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
 
     public void savePoints () throws IOException {
         ArrayList<ArrayList<Pair<Float,Float>>> points = new ArrayList<>(drawView.getPoints());
-        System.out.println("Seconda volta: "+points.size());
         if (points.size()!=0) {
             ContextWrapper cw = new ContextWrapper(this);
             File directory = cw.getDir("draw"+(folder), Context.MODE_PRIVATE);
@@ -437,7 +439,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                     outputStreamWriter.write(points.get(i).get(j).first+"\n");
                     outputStreamWriter.write(points.get(i).get(j).second+"\n");
                 }
-                outputStreamWriter.write("----"+"\n");
+                outputStreamWriter.write("----\n");
             }
             outputStreamWriter.flush();
             outputStreamWriter.close();
@@ -453,10 +455,9 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         String line; Float temp=null;
         ArrayList<Pair<Float, Float>> tmp = new ArrayList<>();
         for (int i=0; (line = reader.readLine()) != null; i++) {
-            System.out.println(line);
             if (line.equals("----")) {
-                i = 0;
-                points.add(tmp);
+                i++;
+                points.add(new ArrayList<>(tmp));
                 tmp = new ArrayList<>();
             } else if (i%2 == 0) temp = Float.parseFloat(line);
             else tmp.add(new Pair<>(temp, Float.parseFloat(line)));

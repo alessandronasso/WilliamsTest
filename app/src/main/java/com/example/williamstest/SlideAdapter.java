@@ -2,9 +2,12 @@ package com.example.williamstest;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.view.PagerAdapter;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +34,7 @@ public class SlideAdapter extends PagerAdapter {
     private String protocollo;
     private String folder;
     private EditText f;
+    private String newValue="";
 
 
     public SlideAdapter(Context context) {
@@ -55,7 +59,18 @@ public class SlideAdapter extends PagerAdapter {
         ImageView imgslide = getImage(view, position);
         TableLayout tl = (TableLayout) view.findViewById(R.id.tl);
         Button b1 = (Button) view.findViewById(R.id.modifica);
+        Button b2 = (Button) view.findViewById(R.id.complete);
         final int pos = position;
+        b2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(context, FinalResult.class);
+                myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                myIntent.putExtra("protocollo", protocollo);
+                myIntent.putExtra("cartella", folder);
+                context.startActivity(myIntent);
+            }
+        });
         b1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -156,6 +171,21 @@ public class SlideAdapter extends PagerAdapter {
         TextView txttitle= (TextView) view.findViewById(R.id.txttitle);
         String[] values = content.split("\n");
         f.setText(values[0]);
+        f.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable arg0) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                //
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                newValue = s.toString();
+            }
+        });
         fl.setText(values[1]);
         o.setText(values[2]);
         el.setText(values[3]);
@@ -182,7 +212,7 @@ public class SlideAdapter extends PagerAdapter {
         while((currentLine = reader.readLine()) != null) {
             if (i==0) {
                 i++;
-                writer.write(f.getText() + System.getProperty("line.separator"));
+                writer.write(newValue + System.getProperty("line.separator"));
             } else writer.write(currentLine + System.getProperty("line.separator"));
         }
         writer.close();
