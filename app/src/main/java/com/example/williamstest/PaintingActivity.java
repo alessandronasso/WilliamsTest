@@ -18,7 +18,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -52,6 +51,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
     private String protocol, cornice;
     //check the number of the app_draw folder
     private int folder=1;
+    private String palette;
 
 
     @Override
@@ -60,6 +60,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         Bundle extras = getIntent().getExtras();
         protocol = extras.getString("protocollo");
         cornice = extras.getString("cornice");
+        palette = extras.getString("palette");
         setContentView(R.layout.activity_painting);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         //get drawing view
@@ -91,17 +92,20 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         undoBtn = (ImageButton)findViewById(R.id.undo_btn);
         undoBtn.setOnClickListener(this);
 
-        drawBtn.setOnClickListener(new View.OnClickListener() {
+        if (palette.equals("yes"))
+            drawBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                openDialog(false);
+            public void onClick(View view) { openDialog(false);
             }
         });
 
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         drawView.setDimension(displaymetrics);
-        if (extras.getString("first").equals("yes")) findFolder();
+        if (extras.getString("first").equals("yes")) {
+            findFolder();
+            writeInfoTest(extras.getString("gender"), extras.getString("eta"), extras.getString("userLogged"));
+        }
         else folder = extras.getInt("cartella");
         try {
             restorePoints();
@@ -140,8 +144,10 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         if (view.getId() == R.id.draw_btn) {
             drawView.updateStroke(5);
             drawView.setErase(false);
-        } else if (view.getId() == R.id.erase_btn)  { drawView.setErase(true); drawView.updateStroke(25); }
-        else if (view.getId() == R.id.undo_btn) drawView.restoreDraw();
+        } else if (view.getId() == R.id.erase_btn)  {
+            drawView.setErase(true);
+            drawView.updateStroke(25);
+        } else if (view.getId() == R.id.undo_btn) drawView.restoreDraw();
         else if (view.equals(b1)){
             ContextWrapper cw = new ContextWrapper(this);
             File directory = cw.getDir("draw"+(folder), Context.MODE_PRIVATE);
@@ -176,6 +182,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 myIntent.putExtra("cornice", Integer.toString(++nextDraw));
                 myIntent.putExtra("cartella", folder);
                 myIntent.putExtra("first", "no");
+                myIntent.putExtra("palette", palette);
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 PaintingActivity.this.startActivity(myIntent);
             } else {
@@ -214,6 +221,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 myIntent.putExtra("cornice", Integer.toString(prev));
                 myIntent.putExtra("cartella", folder);
                 myIntent.putExtra("first", "no");
+                myIntent.putExtra("palette", palette);
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 PaintingActivity.this.startActivity(myIntent);
             } else
@@ -249,6 +257,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 myIntent.putExtra("cornice", Integer.toString(next));
                 myIntent.putExtra("cartella", folder);
                 myIntent.putExtra("first", "no");
+                myIntent.putExtra("palette", palette);
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 PaintingActivity.this.startActivity(myIntent);
             } else if (nextDraw>12)
@@ -260,6 +269,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 myIntent.putExtra("cornice", Integer.toString(++nextDraw));
                 myIntent.putExtra("cartella", folder);
                 myIntent.putExtra("first", "no");
+                myIntent.putExtra("palette", palette);
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 PaintingActivity.this.startActivity(myIntent);
             }
@@ -419,6 +429,23 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             outputStreamWriter.write(t2+"\n");
             outputStreamWriter.write(n+"\n");
             outputStreamWriter.write(undo+"\n");
+            outputStreamWriter.flush();
+            outputStreamWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void writeInfoTest (String gender, String eta, String userLogged) {
+        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+        File directory = cw.getDir("draw"+(folder), Context.MODE_PRIVATE);
+        File file = new File(directory.getAbsolutePath()+"/infotest.txt");
+        try {
+            FileOutputStream fos = new FileOutputStream(file);
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fos);
+            outputStreamWriter.write(userLogged+"\n");
+            outputStreamWriter.write(gender+"\n");
+            outputStreamWriter.write(eta+"\n");
             outputStreamWriter.flush();
             outputStreamWriter.close();
         } catch (IOException e) {

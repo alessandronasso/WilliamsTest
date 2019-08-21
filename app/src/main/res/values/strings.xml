@@ -11,5 +11,10 @@
     <string name="invioA">Protocollo A</string>
     <string name="invioB">Protocollo B</string>
     <string name="form_intro">Titolo</string>
+    <string name="register">REGISTER</string>
+    <string name="login_email_hint">Email</string>
+    <string name="login_password_hint">Password</string>
+    <string name="signup_login_hint">Already have an account? Sign In</string>
+    <string name="login_signup_hint">Don\'t have an account? Sign Up</string>
 
 </resources>
