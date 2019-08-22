@@ -18,7 +18,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".FinalResult" />
-        <activity android:name=".Result" />
+        <activity android:name=".Result"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".PaintingActivity" />
         <activity android:name=".UserList"
             android:theme="@style/AppTheme.NoActionBar"/>

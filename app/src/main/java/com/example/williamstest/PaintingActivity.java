@@ -194,6 +194,11 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                         .setMessage("Vuoi concludere il test?")
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
+                                try {
+                                    writeScoreNotCompleted();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                                 Intent myIntent = new Intent(PaintingActivity.this, Result.class);
                                 myIntent.putExtra("protocollo", protocol);
                                 myIntent.putExtra("cartella", Integer.toString(folder));
@@ -255,7 +260,9 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (next!=-1) {
+            if (next>12)
+                Toast.makeText(this, "Non ci sono altri disegni", Toast.LENGTH_LONG).show();
+            else if (next!=-1) {
                 drawView.clearBitmap();
                 Intent myIntent = new Intent(PaintingActivity.this, PaintingActivity.class);
                 myIntent.putExtra("protocollo", protocol);
@@ -266,19 +273,33 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 myIntent.putExtra("userLogged", logged);
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 PaintingActivity.this.startActivity(myIntent);
-            } else if (nextDraw>12)
-                Toast.makeText(this, "Non ci sono altri disegni", Toast.LENGTH_LONG).show();
-            else {
-                drawView.clearBitmap();
-                Intent myIntent = new Intent(PaintingActivity.this, PaintingActivity.class);
-                myIntent.putExtra("protocollo", protocol);
-                myIntent.putExtra("cornice", Integer.toString(++nextDraw));
-                myIntent.putExtra("cartella", folder);
-                myIntent.putExtra("first", "no");
-                myIntent.putExtra("palette", palette);
-                myIntent.putExtra("userLogged", logged);
-                myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                PaintingActivity.this.startActivity(myIntent);
+            }
+        }
+    }
+
+    public void writeScoreNotCompleted () throws IOException {
+        File dir = new File("/data/user/0/com.example.williamstest/app_draw"+folder);
+        if (!dir.isDirectory()) throw new IllegalStateException();
+        for (int i=1; i<13; i++) {
+            if (!new File(dir.getAbsolutePath() +"/"+protocol+""+i+"_score.txt").exists()) {
+                File f = new File(dir.getAbsolutePath() +"/"+protocol+""+i+"_score.txt");
+                try {
+                    FileOutputStream fos = new FileOutputStream(f);
+                    OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fos);
+                    outputStreamWriter.write("0pt."+"\n");
+                    outputStreamWriter.write("---"+"\n");
+                    outputStreamWriter.write("0pt."+"\n");
+                    outputStreamWriter.write("0pt."+"\n");
+                    outputStreamWriter.write("Senza nome"+"\n");
+                    outputStreamWriter.write("0"+"\n");
+                    outputStreamWriter.write("0"+"\n");
+                    outputStreamWriter.write("0"+"\n");
+                    outputStreamWriter.write("0"+"\n");
+                    outputStreamWriter.flush();
+                    outputStreamWriter.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -318,7 +339,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 f.close();
             }
         } else return Integer.parseInt(cornice)+1;
-        if (countLine==12) return 13; else return Integer.parseInt(cornice)+1;
+        if (countLine==12) return 13; else return -1;
     }
 
     public void deleteFromNotCompleted () throws IOException {

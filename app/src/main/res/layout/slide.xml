@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/background_main2"
     android:id="@+id/slidelinearlayout">
 
@@ -363,24 +364,24 @@
         </TableLayout>
     </LinearLayout>
 
-    <Button
+    <android.support.design.button.MaterialButton
         android:id="@+id/modifica"
+        style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="38dp"
-        android:layout_marginTop="229dp"
-        android:layout_marginBottom="@dimen/_250sdp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_87sdp"
+        android:layout_marginEnd="@dimen/_43sdp"
         android:layout_toEndOf="@+id/tabella1"
-        android:text="Modifica" />
+        android:text="Modifica"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="15sp"
+        app:backgroundTint="@color/whiteTextColor"
+        app:cornerRadius="8dp"
+        app:rippleColor="#33AAAAAA"
+        app:strokeColor="@color/colorPrimaryDark"
+        app:strokeWidth="2dp" />
 
-    <Button
-        android:id="@+id/complete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/immagine"
-        android:layout_marginTop="@dimen/_58sdp"
-        android:layout_marginEnd="@dimen/_114sdp"
-        android:layout_toStartOf="@+id/tabella2"
-        android:text="Complessivo" />
 </RelativeLayout>

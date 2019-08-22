@@ -2,7 +2,6 @@ package com.example.williamstest;
 
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.view.PagerAdapter;
@@ -60,19 +59,7 @@ public class SlideAdapter extends PagerAdapter {
         ImageView imgslide = getImage(view, position);
         TableLayout tl = (TableLayout) view.findViewById(R.id.tl);
         Button b1 = (Button) view.findViewById(R.id.modifica);
-        Button b2 = (Button) view.findViewById(R.id.complete);
         final int pos = position;
-        b2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent myIntent = new Intent(context, FinalResult.class);
-                myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                myIntent.putExtra("protocollo", protocollo);
-                myIntent.putExtra("cartella", folder);
-                myIntent.putExtra("userLogged", logged);
-                context.startActivity(myIntent);
-            }
-        });
         b1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,11 +111,17 @@ public class SlideAdapter extends PagerAdapter {
      */
     public ImageView getImage (View view, int position ) {
         ImageView img = (ImageView) view.findViewById(R.id.slideimg);
+        Bitmap b;
         try {
             ContextWrapper cw = new ContextWrapper(context);
             File directory = cw.getDir("draw", Context.MODE_PRIVATE);
-            File f = new File(directory.getAbsolutePath()+folder, protocollo+(position+1)+".png");
-            Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f));
+            if (new File(directory.getAbsolutePath()+folder, protocollo+(position+1)+".png").exists()) {
+                File f = new File(directory.getAbsolutePath() + folder, protocollo + (position + 1) + ".png");
+                b = BitmapFactory.decodeStream(new FileInputStream(f));
+            } else {
+                int resID = this.context.getResources().getIdentifier(""+protocollo+""+(position + 1), "drawable", context.getPackageName());
+                b = BitmapFactory.decodeResource(context.getResources(), resID);
+            }
             img.setImageBitmap(b);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
