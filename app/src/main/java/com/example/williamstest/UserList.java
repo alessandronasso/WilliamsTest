@@ -5,7 +5,13 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatCallback;
+import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.view.ActionMode;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -14,24 +20,43 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-public class UserList extends ListActivity {
+public class UserList extends ListActivity implements AppCompatCallback {
 
-    private String[] user = loadUser();
+    private String userLogged;
+    private String[] user = new String[0];
     private AlertDialog alertDialog;
+    private AppCompatDelegate delegate;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.user_list);
+        try {
+            user = loadUser();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        delegate = AppCompatDelegate.create(this, this);
+        delegate.onCreate(savedInstanceState);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        delegate.setSupportActionBar(myToolbar);
         final List<String> user_list = new ArrayList<String>(Arrays.asList(user));
         if (user_list.contains("Test ")) user_list.remove(user_list.indexOf("Test "));
         if (user_list.size() == 0) {
             showCustomDialog();
         } else {
-            final ArrayAdapter<String> arAd = new ArrayAdapter<String>(this, R.layout.user_list, user_list);
+
+            final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list,R.id.textList, user_list);
             setListAdapter(arAd);
             ListView listView = getListView();
             listView.setTextFilterEnabled(true);
@@ -53,8 +78,10 @@ public class UserList extends ListActivity {
                         public void onClick(View v) {
                             dialog.cancel();
                             Intent myIntent = new Intent(UserList.this, Result.class);
-                            myIntent.putExtra("cartella", user_list.get(position).replaceAll("[^\\d.]", ""));
-                            myIntent.putExtra("protocollo", findProtocol(user_list.get(position).replaceAll("[^\\d.]", "")));
+                            String[] currencies = user_list.get(position).split("\\s+");
+                            myIntent.putExtra("cartella", currencies[1]);
+                            myIntent.putExtra("protocollo", findProtocol(currencies[1]));
+                            myIntent.putExtra("userLogged", userLogged);
                             myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             UserList.this.startActivity(myIntent);
                         }
@@ -63,7 +90,8 @@ public class UserList extends ListActivity {
                         @Override
                         public void onClick(View v) {
                             dialog.cancel();
-                            File dir = new File("/data/user/0/com.example.williamstest/app_draw" + user_list.get(position).replaceAll("[^\\d.]", ""));
+                            String[] currencies = user_list.get(position).split("\\s+");
+                            File dir = new File("/data/user/0/com.example.williamstest/app_draw" + currencies[1]);
                             if (dir.isDirectory()) {
                                 String[] children = dir.list();
                                 for (int i = 0; i < children.length; i++)
@@ -90,25 +118,143 @@ public class UserList extends ListActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.ordina_genere_uomo) {
+            try { user = loadUser(); } catch (IOException e) { e.printStackTrace(); }
+            List<String> user_list = new ArrayList<String>(Arrays.asList(user));
+            List<String> u2 = new ArrayList<String>();
+            for (int i=0; i<user_list.size(); i++)
+                if (user_list.get(i).contains("Maschio")) u2.add(user_list.get(i));
+            final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list,R.id.textList, u2);
+            setListAdapter(arAd);
+            arAd.notifyDataSetChanged();
+        } else if (id == R.id.ordina_genere_donna) {
+            try { user = loadUser(); } catch (IOException e) { e.printStackTrace(); }
+            List<String> user_list = new ArrayList<String>(Arrays.asList(user));
+            List<String> u2 = new ArrayList<String>();
+            for (int i=0; i<user_list.size(); i++)
+                if (user_list.get(i).contains("Femmina")) u2.add(user_list.get(i));
+            final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list,R.id.textList, u2);
+            setListAdapter(arAd);
+            arAd.notifyDataSetChanged();
+        } else if (id == R.id.ordina_prot_a) {
+            try { user = loadUser(); } catch (IOException e) { e.printStackTrace(); }
+            List<String> user_list = new ArrayList<String>(Arrays.asList(user));
+            List<String> u2 = new ArrayList<String>();
+            for (int i=0; i<user_list.size(); i++)
+                if (user_list.get(i).contains(" a ")) u2.add(user_list.get(i));
+            final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list,R.id.textList, u2);
+            setListAdapter(arAd);
+            arAd.notifyDataSetChanged();
+        } else if (id == R.id.ordina_prot_b) {
+            try { user = loadUser(); } catch (IOException e) { e.printStackTrace(); }
+            List<String> user_list = new ArrayList<String>(Arrays.asList(user));
+            List<String> u2 = new ArrayList<String>();
+            for (int i = 0; i < user_list.size(); i++)
+                if (user_list.get(i).contains(" b ")) u2.add(user_list.get(i));
+            final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list, R.id.textList, u2);
+            setListAdapter(arAd);
+            arAd.notifyDataSetChanged();
+        } else if (id == R.id.ordina_eta_c) {
+            try { user = loadUser(); } catch (IOException e) { e.printStackTrace(); }
+            List<String> user_list = new ArrayList<String>(Arrays.asList(user));
+            Collections.sort(user_list, new Comparator<String>() {
+                public int compare(String o1, String o2) {
+                    return Comparator.comparingInt(this::extractInt)
+                            .thenComparing(Comparator.reverseOrder())
+                            .compare(o1, o2);
+                }
+                private int extractInt(String s) {
+                    try {
+                        return Integer.parseInt(s.split(":")[1].trim());
+                    }
+                    catch (NumberFormatException exception) {
+                        return -1;
+                    }
+                }
+            });
+            final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list, R.id.textList, user_list);
+            setListAdapter(arAd);
+            arAd.notifyDataSetChanged();
+        } else if (id == R.id.ordina_eta_d) {
+            try { user = loadUser(); } catch (IOException e) { e.printStackTrace(); }
+            try { user = loadUser(); } catch (IOException e) { e.printStackTrace(); }
+            List<String> user_list = new ArrayList<String>(Arrays.asList(user));
+            Collections.sort(user_list, new Comparator<String>() {
+                public int compare(String o1, String o2) {
+                    return Comparator.comparingInt(this::extractInt)
+                            .thenComparing(Comparator.naturalOrder())
+                            .compare(o1, o2);
+                }
+                private int extractInt(String s) {
+                    try {
+                        return Integer.parseInt(s.split(":")[1].trim());
+                    }
+                    catch (NumberFormatException exception) {
+                        return -1;
+                    }
+                }
+            });
+            final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list, R.id.textList, user_list);
+            setListAdapter(arAd);
+            arAd.notifyDataSetChanged();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     /**
      * This method retrives the list of test done by the users.
      *
      * @return the list of tests
      */
-    public String[] loadUser() {
+    public String[] loadUser() throws IOException{
+        Bundle extras = getIntent().getExtras();
+        userLogged = extras.getString("userLogged");
         String user[] = null;
         int numb = 0, arrayString = 0;
         File dir = new File("/data/user/0/com.example.williamstest/");
         if (!dir.isDirectory()) throw new IllegalStateException();
         for (File file : dir.listFiles()) {
-            if (file.getName().startsWith("app_draw"))
-                numb++;
+            if (file.getName().startsWith("app_draw")) {
+                if (new File(file.getAbsolutePath() + "/infotest.txt").exists()) {
+                    FileReader f = new FileReader(file.getAbsolutePath() + "/infotest.txt");
+                    LineNumberReader reader = new LineNumberReader(f);
+                    String line;
+                    line = reader.readLine();
+                    if (line.equals(userLogged)) numb++;
+                    f.close();
+                }
+            }
         }
         user = new String[numb];
         for (File file : dir.listFiles()) {
             if (file.getName().startsWith("app_draw")) {
                 String typeTest = file.getName().replaceAll("[^\\d.]", "");
-                user[arrayString++] = "Test " + typeTest;
+                if (new File(file.getAbsolutePath() + "/infotest.txt").exists()) {
+                    FileReader f = new FileReader(file.getAbsolutePath() + "/infotest.txt");
+                    LineNumberReader reader = new LineNumberReader(f);
+                    String line;
+                    line = reader.readLine();
+                    if (line.equals(userLogged)) {
+                        user[arrayString] = "Test: " + typeTest+"   ";
+                        line = reader.readLine();
+                        user[arrayString] += "    Genere: " + line;
+                        line = reader.readLine();
+                        user[arrayString] += "    Eta: " + line+"   ";
+                        line = reader.readLine();
+                        user[arrayString++] += "    Protocollo: " + line+"   ";
+                        System.out.println(user[arrayString-1]);
+                    }
+                    f.close();
+                }
             }
         }
         return user;
@@ -121,6 +267,7 @@ public class UserList extends ListActivity {
      * @return the protocol drawn by the user
      */
     public String findProtocol(String n) {
+        System.out.println (new File("/data/user/0/com.example.williamstest/app_draw8/a1_score.txt").exists());
         File dir = new File("/data/user/0/com.example.williamstest/app_draw" + n);
         if (dir.isDirectory()) {
             for (File file : dir.listFiles()) {
@@ -156,6 +303,7 @@ public class UserList extends ListActivity {
         alertDialog.dismiss();
         Intent myIntent = new Intent(UserList.this, MainActivity.class);
         myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        myIntent.putExtra("userLogged", userLogged);
         UserList.this.startActivity(myIntent);
     }
 
@@ -163,7 +311,21 @@ public class UserList extends ListActivity {
     public void onBackPressed() {
         Intent myIntent = new Intent(UserList.this, MainActivity.class);
         myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        myIntent.putExtra("userLogged", userLogged);
         UserList.this.startActivity(myIntent);
+    }
+
+    @Override
+    public ActionMode onWindowStartingSupportActionMode(ActionMode.Callback callback) {
+        return null;
+    }
+
+    @Override
+    public void onSupportActionModeStarted(ActionMode mode) {
+    }
+
+    @Override
+    public void onSupportActionModeFinished(ActionMode mode) {
     }
 
 }

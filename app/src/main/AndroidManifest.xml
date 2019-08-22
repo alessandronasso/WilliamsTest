@@ -20,13 +20,12 @@
         <activity android:name=".FinalResult" />
         <activity android:name=".Result" />
         <activity android:name=".PaintingActivity" />
-        <activity android:name=".UserList" />
+        <activity android:name=".UserList"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 

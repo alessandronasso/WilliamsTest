@@ -35,6 +35,7 @@ public class SlideAdapter extends PagerAdapter {
     private String folder;
     private EditText f;
     private String newValue="";
+    private String logged="";
 
 
     public SlideAdapter(Context context) {
@@ -68,6 +69,7 @@ public class SlideAdapter extends PagerAdapter {
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 myIntent.putExtra("protocollo", protocollo);
                 myIntent.putExtra("cartella", folder);
+                myIntent.putExtra("userLogged", logged);
                 context.startActivity(myIntent);
             }
         });
@@ -101,6 +103,8 @@ public class SlideAdapter extends PagerAdapter {
      * @param p current protocol
      */
     public void setProtocol (String p) { protocollo = p; }
+
+    public void setLogged (String l) {logged = l; }
 
 
     /**

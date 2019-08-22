@@ -53,5 +53,14 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="HeaderBar">
+        <item name="android:background">@color/whiteTextColor</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:textColorSecondary">@color/colorPrimaryDark</item>
+    </style>
 
 </resources>

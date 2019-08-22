@@ -16,7 +16,7 @@ import java.io.LineNumberReader;
 public class FinalResult extends AppCompatActivity {
 
     private int[] sum = new int[4];
-    private String protocol, folder;
+    private String protocol, folder, logged;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +26,7 @@ public class FinalResult extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         protocol = extras.getString("protocollo");
         folder = extras.getString("cartella");
+        logged = extras.getString("userLogged");
         for (int i=0; i<4; i++) sum[i]=0;
         try {
             loadContent(protocol, folder);
@@ -69,6 +70,7 @@ public class FinalResult extends AppCompatActivity {
         myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         myIntent.putExtra("protocollo", protocol);
         myIntent.putExtra("cartella", folder);
+        myIntent.putExtra("userLogged", logged);
         FinalResult.this.startActivity(myIntent);
     }
 }

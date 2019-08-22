@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".UserList">
+
+    <item
+        android:id="@+id/ordina_genere_uomo"
+        android:orderInCategory="100"
+        android:title="Filtra per: Maschio"/>
+    <item
+        android:id="@+id/ordina_genere_donna"
+        android:orderInCategory="200"
+        android:title="Filtra per: Femmina" />
+    <item
+        android:id="@+id/ordina_eta_d"
+        android:orderInCategory="300"
+        android:title="Ordina per eta' (crescente)" />
+    <item
+        android:id="@+id/ordina_eta_c"
+        android:orderInCategory="300"
+        android:title="Ordina per eta' (decrescente)" />
+    <item
+        android:id="@+id/ordina_prot_a"
+        android:orderInCategory="300"
+        android:title="Filtra per: Protocollo A" />
+    <item
+        android:id="@+id/ordina_prot_b"
+        android:orderInCategory="300"
+        android:title="Filtra per: Protocollo B" />
+
+</menu>

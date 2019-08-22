@@ -77,15 +77,8 @@
             android:id="@+id/toprow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="60dp"
+            android:layout_marginLeft="@dimen/_70sdp"
             android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dip"
-                android:layout_marginBottom="25dip"
-                android:text="@string/form_intro" />
 
             <EditText
                 android:id="@+id/edittitle"
@@ -93,7 +86,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dip"
                 android:layout_marginBottom="25dip"
-                android:singleLine="true" />
+                android:ems="10"
+                android:gravity="center_horizontal"
+                android:singleLine="true"
+                android:text="Inserisci qui il titolo" />
+
         </LinearLayout>
 
         <!-- Bottom Row -->

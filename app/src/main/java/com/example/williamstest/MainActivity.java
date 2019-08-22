@@ -15,13 +15,21 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import java.io.File;
+
 public class MainActivity extends AppCompatActivity {
+
+    private String userLogged;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        File dir = new File("/data/user/0/com.example.williamstest/");
+        if (!dir.isDirectory()) throw new IllegalStateException();
+        Bundle extras = getIntent().getExtras();
+        userLogged = extras.getString("userLogged");
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View formElementsView = inflater.inflate(R.layout.form_elements, null, false);
         final CheckBox myCheckBox = (CheckBox) formElementsView
@@ -43,14 +51,16 @@ public class MainActivity extends AppCompatActivity {
                                 int selectedId = genderRadioGroup.getCheckedRadioButtonId();
                                 RadioButton selectedRadioButton = (RadioButton) formElementsView.findViewById(selectedId);
                                 Intent myIntent = new Intent(MainActivity.this, PaintingActivity.class);
+                                myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 if (myCheckBox.isChecked()) myIntent.putExtra("palette", "yes");
                                 else myIntent.putExtra("palette", "no");
                                 myIntent.putExtra("gender", selectedRadioButton.getText());
-                                if (nameEditText.getText().length()!=0) myIntent.putExtra("eta", nameEditText.getText());
-                                else myIntent.putExtra("eta", 0);
+                                String eta = nameEditText.getText().toString();
+                                if (eta.length()!=0) myIntent.putExtra("eta", eta);
+                                else myIntent.putExtra("eta", "0");
                                 myIntent.putExtra("protocollo", "a");
                                 myIntent.putExtra("cornice", "1" + "");
-                                myIntent.putExtra("userLogged", getIntent().getExtras().getString("userLogged"));
+                                myIntent.putExtra("userLogged", userLogged);
                                 myIntent.putExtra("first", "yes");
                                 MainActivity.this.startActivity(myIntent);
                                 dialog.cancel();
@@ -69,14 +79,17 @@ public class MainActivity extends AppCompatActivity {
                                 int selectedId = genderRadioGroup.getCheckedRadioButtonId();
                                 RadioButton selectedRadioButton = (RadioButton) formElementsView.findViewById(selectedId);
                                 Intent myIntent = new Intent(MainActivity.this, PaintingActivity.class);
+                                myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 if (myCheckBox.isChecked()) myIntent.putExtra("palette", "yes");
                                 else myIntent.putExtra("palette", "no");
                                 myIntent.putExtra("gender", selectedRadioButton.getText());
-                                if (nameEditText.getText().length()!=0) myIntent.putExtra("eta", nameEditText.getText());
-                                else myIntent.putExtra("eta", 0);
+                                String eta = nameEditText.getText().toString();
+                                if (eta.length()!=0) myIntent.putExtra("eta", eta);
+                                else myIntent.putExtra("eta", "0");
                                 myIntent.putExtra("protocollo", "b");
                                 myIntent.putExtra("cornice", "1" + "");
                                 myIntent.putExtra("first", "yes");
+                                myIntent.putExtra("userLogged", userLogged);
                                 MainActivity.this.startActivity(myIntent);
                                 dialog.cancel();
                             }
@@ -89,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent myIntent = new Intent(MainActivity.this, UserList.class);
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                myIntent.putExtra("userLogged", userLogged);
                 MainActivity.this.startActivity(myIntent);
             }
         });

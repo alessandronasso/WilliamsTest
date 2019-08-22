@@ -52,6 +52,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
     //check the number of the app_draw folder
     private int folder=1;
     private String palette;
+    private String logged = "";
 
 
     @Override
@@ -61,6 +62,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         protocol = extras.getString("protocollo");
         cornice = extras.getString("cornice");
         palette = extras.getString("palette");
+        logged = extras.getString("userLogged");
         setContentView(R.layout.activity_painting);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         //get drawing view
@@ -183,6 +185,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 myIntent.putExtra("cartella", folder);
                 myIntent.putExtra("first", "no");
                 myIntent.putExtra("palette", palette);
+                myIntent.putExtra("userLogged", logged);
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 PaintingActivity.this.startActivity(myIntent);
             } else {
@@ -194,6 +197,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                                 Intent myIntent = new Intent(PaintingActivity.this, Result.class);
                                 myIntent.putExtra("protocollo", protocol);
                                 myIntent.putExtra("cartella", Integer.toString(folder));
+                                myIntent.putExtra("userLogged", logged);
                                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 PaintingActivity.this.startActivity(myIntent);
                             }
@@ -222,6 +226,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 myIntent.putExtra("cartella", folder);
                 myIntent.putExtra("first", "no");
                 myIntent.putExtra("palette", palette);
+                myIntent.putExtra("userLogged", logged);
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 PaintingActivity.this.startActivity(myIntent);
             } else
@@ -258,6 +263,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 myIntent.putExtra("cartella", folder);
                 myIntent.putExtra("first", "no");
                 myIntent.putExtra("palette", palette);
+                myIntent.putExtra("userLogged", logged);
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 PaintingActivity.this.startActivity(myIntent);
             } else if (nextDraw>12)
@@ -270,6 +276,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 myIntent.putExtra("cartella", folder);
                 myIntent.putExtra("first", "no");
                 myIntent.putExtra("palette", palette);
+                myIntent.putExtra("userLogged", logged);
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 PaintingActivity.this.startActivity(myIntent);
             }
@@ -317,23 +324,25 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
     public void deleteFromNotCompleted () throws IOException {
         ContextWrapper cw = new ContextWrapper(this);
         File directory = cw.getDir("draw"+(folder), Context.MODE_PRIVATE);
-        File inputFile = new File(directory.getAbsolutePath()+"/not-completed.txt");
-        File tempFile = new File(directory.getAbsolutePath()+"/not-completedtmp.txt");
+        if (new File(directory.getAbsolutePath()+"/not-completed.txt").exists()) {
+            File inputFile = new File(directory.getAbsolutePath() + "/not-completed.txt");
+            File tempFile = new File(directory.getAbsolutePath() + "/not-completedtmp.txt");
 
-        BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-        BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
 
-        String lineToRemove = cornice;
-        String currentLine;
+            String lineToRemove = cornice;
+            String currentLine;
 
-        while((currentLine = reader.readLine()) != null) {
-            String trimmedLine = currentLine.trim();
-            if(trimmedLine.equals(lineToRemove)) continue;
-            writer.write(currentLine + System.getProperty("line.separator"));
+            while ((currentLine = reader.readLine()) != null) {
+                String trimmedLine = currentLine.trim();
+                if (trimmedLine.equals(lineToRemove)) continue;
+                writer.write(currentLine + System.getProperty("line.separator"));
+            }
+            writer.close();
+            reader.close();
+            tempFile.renameTo(inputFile);
         }
-        writer.close();
-        reader.close();
-        tempFile.renameTo(inputFile);
     }
 
     /**
@@ -446,6 +455,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             outputStreamWriter.write(userLogged+"\n");
             outputStreamWriter.write(gender+"\n");
             outputStreamWriter.write(eta+"\n");
+            outputStreamWriter.write(protocol);
             outputStreamWriter.flush();
             outputStreamWriter.close();
         } catch (IOException e) {
@@ -477,20 +487,23 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         ArrayList<ArrayList<Pair<Float,Float>>> points = new ArrayList<>();
         ContextWrapper cw = new ContextWrapper(this);
         File directory = cw.getDir("draw"+(folder), Context.MODE_PRIVATE);
-        FileReader f = new FileReader(directory.getAbsolutePath()+"/"+protocol + cornice+"_tmpscore.txt");
-        LineNumberReader reader = new LineNumberReader(f);
-        String line; Float temp=null;
-        ArrayList<Pair<Float, Float>> tmp = new ArrayList<>();
-        for (int i=0; (line = reader.readLine()) != null; i++) {
-            if (line.equals("----")) {
-                i++;
-                points.add(new ArrayList<>(tmp));
-                tmp = new ArrayList<>();
-            } else if (i%2 == 0) temp = Float.parseFloat(line);
-            else tmp.add(new Pair<>(temp, Float.parseFloat(line)));
+        if (new File(directory.getAbsolutePath()+"/"+protocol + cornice+"_tmpscore.txt").exists()) {
+            FileReader f = new FileReader(directory.getAbsolutePath() + "/" + protocol + cornice + "_tmpscore.txt");
+            LineNumberReader reader = new LineNumberReader(f);
+            String line;
+            Float temp = null;
+            ArrayList<Pair<Float, Float>> tmp = new ArrayList<>();
+            for (int i = 0; (line = reader.readLine()) != null; i++) {
+                if (line.equals("----")) {
+                    i++;
+                    points.add(new ArrayList<>(tmp));
+                    tmp = new ArrayList<>();
+                } else if (i % 2 == 0) temp = Float.parseFloat(line);
+                else tmp.add(new Pair<>(temp, Float.parseFloat(line)));
+            }
+            f.close();
+            drawView.setPoints(points);
         }
-        f.close();
-        drawView.setPoints(points);
     }
 
     @Override

@@ -1,7 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:padding="10dp"
-    android:textSize="20sp" >
-</TextView>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        style="@style/HeaderBar"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_height="@dimen/_20sdp" />
+
+    <TextView
+        android:id="@+id/textList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/my_toolbar"
+        android:layout_centerHorizontal="true"
+        android:textSize="26dp" />
+
+    <ListView
+        android:id="@+id/android:list"
+        android:layout_below="@id/my_toolbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>
