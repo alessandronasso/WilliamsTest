@@ -7,11 +7,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-
 import java.util.ArrayList;
 
 public class LoginActivity extends AppCompatActivity {
 
+    /**
+     * List of user who can access the app.
+     */
     private ArrayList<String> acceptedUsers;
 
     @Override
@@ -23,7 +25,6 @@ public class LoginActivity extends AppCompatActivity {
         acceptedUsers.add("1111");
         final EditText edT = findViewById(R.id.editTextCode);
         Button openAct = findViewById(R.id.cirLoginButton);
-
         openAct.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (acceptedUsers.contains(edT.getText().toString())) {

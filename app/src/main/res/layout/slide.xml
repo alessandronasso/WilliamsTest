@@ -50,13 +50,12 @@
             android:id="@+id/upperTableHeader"
             android:layout_width="@dimen/_100sdp"
             android:layout_height="wrap_content"
-            android:background="@drawable/underline"
-            android:fontFamily="@font/kotta_one"
+            android:fontFamily="@font/domine_bold"
             android:gravity="top"
             android:scrollbarSize="@dimen/_152sdp"
-            android:text="Punteggio cornice:"
+            android:text="Punteggio cornice"
             android:textColor="#0A3BCE"
-            android:textSize="@dimen/_11sdp" />
+            android:textSize="@dimen/_10sdp" />
 
         <TableLayout
             android:id="@+id/tl"
@@ -354,11 +353,10 @@
             android:id="@+id/lowerTableHeader"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/underline"
-            android:fontFamily="@font/kotta_one"
-            android:text="Considerazioni aggiuntive:"
+            android:fontFamily="@font/domine_bold"
+            android:text="Considerazioni aggiuntive"
             android:textColor="#1D8314"
-            android:textSize="@dimen/_13sdp" />
+            android:textSize="@dimen/_11sdp" />
     </LinearLayout>
 
 </RelativeLayout>

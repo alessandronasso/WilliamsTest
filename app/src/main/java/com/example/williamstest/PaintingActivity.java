@@ -35,23 +35,59 @@ import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class PaintingActivity extends AppCompatActivity implements OnClickListener {
 
-    //custom drawing view
+    /**
+     * The area where the user draws.
+     */
     private DrawingView drawView;
-    //title of the draw
+
+    /**
+     * The area where the user writes the title of the draw
+     */
     private EditText title;
-    //confirm button
+
+    /**
+     * The confirm buttons.
+     */
     private Button b1, b2, b3;
-    //draw button
+
+    /**
+     * The images representing the brush, the eraser and the undo.
+     */
     private ImageButton eraseBtn, drawBtn, undoBtn;
-    //default shape points
+
+    /**
+     * List of points of the current shape.
+     */
     private ArrayList<Pair<Float, Float>> points = new ArrayList<>();
-    //check the number of the next draw and the protocol
+
+    /**
+     * The number representing the next draw the user has to do.
+     */
     private int nextDraw;
+
+    /**
+     * The current protocol/shape number.
+     */
     private String protocol, cornice;
-    //check the number of the app_draw folder
+
+    /**
+     * Number of the current folder.
+     */
     private int folder = 1;
+
+    /**
+     * String to define if the color palette has been enabled.
+     */
     private String palette;
+
+    /**
+     * The user who has logged in.
+     */
     private String logged = "";
+
+    /**
+     * Times of the user's draw.
+     */
     private int timeToDraw = 0, timeToComplete = 0;
 
 
@@ -65,35 +101,24 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         logged = extras.getString("userLogged");
         setContentView(R.layout.activity_painting);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        //get drawing view
         drawView = (DrawingView) findViewById(R.id.drawing);
         drawView.setCornice(protocol, cornice);
         nextDraw = Integer.parseInt(cornice);
-
-        //get the textview
         LinearLayout paintLayout = (LinearLayout) findViewById(R.id.toprow);
         LinearLayout paintLayout2 = (LinearLayout) findViewById(R.id.bottomrow);
-        //textfield
         title = (EditText) paintLayout.findViewById(R.id.edittitle);
-        //confirm button
         b1 = (Button) paintLayout2.findViewById(R.id.bb_1);
         b1.setOnClickListener(this);
-        //button to next draw
         b2 = (Button) paintLayout2.findViewById(R.id.bb_2);
         b2.setOnClickListener(this);
-        //button to previous draw
         b3 = (Button) paintLayout2.findViewById(R.id.bb_3);
         b3.setOnClickListener(this);
-        //erase button
         eraseBtn = (ImageButton) findViewById(R.id.erase_btn);
         eraseBtn.setOnClickListener(this);
-        //draw button
         drawBtn = (ImageButton) findViewById(R.id.draw_btn);
         drawBtn.setOnClickListener(this);
-        //undo button
         undoBtn = (ImageButton) findViewById(R.id.undo_btn);
         undoBtn.setOnClickListener(this);
-
         if (palette.equals("yes"))
             drawBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -116,6 +141,12 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         }
     }
 
+    /**
+     * Method from the AmbilWarnaDialog package used to open
+     * a custom dialog box.
+     *
+     * @param supportsAlpha
+     */
     private void openDialog(boolean supportsAlpha) {
         drawView.setErase(false);
         int currentColor = drawView.getPaintColor();
@@ -182,7 +213,6 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             String undo = drawView.getUndoNumber() + "";
             saveImage();
             writeScore(fluidita, flessibilita, originalita, elaborazione, titoli, tempoReazione, tempoCompletamentoDisegno, numeroCancellature, undo);
-            System.out.println("Controllo simmetrie: " + drawView.getSymmetryScore() + "pt.");
             try { nextDraw = findNextNotCompleted(); } catch (IOException e) { e.printStackTrace(); }
             if (nextDraw != -1 && nextDraw < 13) {
                 drawView.clearBitmap();
@@ -217,7 +247,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                         .setNegativeButton(android.R.string.no, null)
                         .show();
             }
-        } else if (view.equals(b3)) { //INDIETRO
+        } else if (view.equals(b3)) {
             try {
                 saveTemporaryTimes(Integer.parseInt(drawView.getReactionTime()), Integer.parseInt(drawView.getTimeToDraw()));
                 savePoints();
@@ -243,7 +273,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 PaintingActivity.this.startActivity(myIntent);
             } else
                 Toast.makeText(this, "Non ci sono altri disegni", Toast.LENGTH_LONG).show();
-        } else if (view.equals(b2)) { //SALTA
+        } else if (view.equals(b2)) {
             try {
                 saveTemporaryTimes(Integer.parseInt(drawView.getReactionTime()), Integer.parseInt(drawView.getTimeToDraw()));
                 savePoints();
@@ -302,13 +332,21 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         }
     }
 
+    /**
+     * This method get called once the user decide to confirm the current drawing.
+     * It calculates the two times considering the fact that it has drawn/confirmed/skipped
+     * other shapes.
+     *
+     * @param timeToD current reaction time of the user.
+     * @param timeToC current completition time of the user.
+     * @throws IOException
+     */
     private void getTemporaryTimes(int timeToD, int timeToC) throws IOException {
         timeToComplete += timeToC;
         File dir = new File("/data/user/0/com.example.williamstest/app_draw" + folder);
         if (!dir.isDirectory()) throw new IllegalStateException();
         if (new File(dir.getAbsolutePath()+"/times.txt").exists()) {
             FileReader f = new FileReader(dir.getAbsolutePath() + "/times.txt");
-            //here I check if I need to restore times
             LineNumberReader reader = new LineNumberReader(f);
             String line; boolean isContained = false;
             while ((line = reader.readLine()) != null && !isContained) {
@@ -333,6 +371,11 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         if (timeToDraw==0 && timeToD==0) timeToComplete = 0; else timeToDraw=timeToD;
     }
 
+    /**
+     * This method saves the shapes skipped by the user.
+     *
+     * @throws IOException
+     */
     public void writeScoreNotCompleted () throws IOException {
         File dir = new File("/data/user/0/com.example.williamstest/app_draw"+folder);
         if (!dir.isDirectory()) throw new IllegalStateException();
@@ -360,6 +403,13 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         }
     }
 
+    /**
+     * This method search the first shape before the current one that has not been completed.
+     * If it doesn't exists, returns a message.
+     *
+     * @return The first shape before the current one that has not been completed.
+     * @throws IOException
+     */
     public int findPreviousNotCompleted () throws IOException {
         ContextWrapper cw = new ContextWrapper(this);
         int n = -1;
@@ -378,6 +428,13 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         return n;
     }
 
+    /**
+     * This method search the first shape after the current one that has not been completed.
+     * If it doesn't exists, returns the next one.
+     *
+     * @return The first shape after the current one that has not been completed.
+     * @throws IOException
+     */
     public int findNextNotCompleted () throws IOException {
         ContextWrapper cw = new ContextWrapper(this);
         int countLine=0;
@@ -398,6 +455,12 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         } else return Integer.parseInt(cornice)+1;
     }
 
+    /**
+     * This method remove the current shape from the list of the
+     * skipped draw (if present).
+     *
+     * @throws IOException
+     */
     public void deleteFromNotCompleted () throws IOException {
         ContextWrapper cw = new ContextWrapper(this);
         File directory = cw.getDir("draw"+(folder), Context.MODE_PRIVATE);
@@ -522,6 +585,13 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         }
     }
 
+    /**
+     * This method writes some info about the user, such as the gender and the age.
+     *
+     * @param gender The gender of the user
+     * @param eta The age of the user
+     * @param userLogged The logged user.
+     */
     public void writeInfoTest (String gender, String eta, String userLogged) {
         ContextWrapper cw = new ContextWrapper(getApplicationContext());
         File directory = cw.getDir("draw"+(folder), Context.MODE_PRIVATE);
@@ -540,6 +610,11 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         }
     }
 
+    /**
+     * This method saves the points drawn by the user if he decides to skip the current shape.
+     *
+     * @throws IOException
+     */
     public void savePoints () throws IOException {
         ArrayList<ArrayList<Pair<Float,Float>>> points = new ArrayList<>(drawView.getPoints());
         if (points.size()!=0) {
@@ -557,9 +632,20 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             }
             outputStreamWriter.flush();
             outputStreamWriter.close();
+        } else {
+            ContextWrapper cw = new ContextWrapper(this);
+            File directory = cw.getDir("draw"+(folder), Context.MODE_PRIVATE);
+            if (new File(directory.getAbsolutePath()+"/"+protocol + cornice+"_tmpscore.txt").exists())
+                new File(directory.getAbsolutePath()+"/"+protocol + cornice+"_tmpscore.txt").delete();
+
         }
     }
 
+    /**
+     * This method restores the points drawn before skipping the shape.
+     *
+     * @throws IOException
+     */
     public void restorePoints () throws IOException {
         ArrayList<ArrayList<Pair<Float,Float>>> points = new ArrayList<>();
         ContextWrapper cw = new ContextWrapper(this);

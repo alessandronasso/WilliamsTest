@@ -31,36 +31,43 @@ import java.util.List;
 
 public class UserList extends ListActivity implements AppCompatCallback {
 
+    /**
+     * The current user who has logged in.
+     */
     private String userLogged;
+
+    /**
+     * The list with all the tests.
+     */
     private String[] user = new String[0];
+
+    /**
+     * The alert dialog.
+     */
     private AlertDialog alertDialog;
+
+    /**
+     * A support object to implement the toolbar since I can't extend the
+     * AppCompactActivity class.
+     */
     private AppCompatDelegate delegate;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_list);
-        try {
-            user = loadUser();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        try { user = loadUser(); } catch (IOException e) { e.printStackTrace(); }
         delegate = AppCompatDelegate.create(this, this);
         delegate.onCreate(savedInstanceState);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         delegate.setSupportActionBar(myToolbar);
         final List<String> user_list = new ArrayList<String>(Arrays.asList(user));
         if (user_list.contains("Test ")) user_list.remove(user_list.indexOf("Test "));
-        if (user_list.size() == 0) {
-            showCustomDialog();
-        } else {
-
+        if (user_list.size() == 0) showCustomDialog(); else {
             final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list,R.id.textList, user_list);
             setListAdapter(arAd);
             ListView listView = getListView();
             listView.setTextFilterEnabled(true);
-
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, final View view, final int position, long id) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(UserList.this);
@@ -70,7 +77,6 @@ public class UserList extends ListActivity implements AppCompatCallback {
                     Button btn_positive = (Button) dialogView.findViewById(R.id.dialog_positive_btn);
                     Button btn_negative = (Button) dialogView.findViewById(R.id.dialog_negative_btn);
                     Button btn_neutral = (Button) dialogView.findViewById(R.id.dialog_neutral_btn);
-
                     final AlertDialog dialog = builder.create();
                     dialog.show();
                     btn_positive.setOnClickListener(new View.OnClickListener() {
@@ -94,8 +100,7 @@ public class UserList extends ListActivity implements AppCompatCallback {
                             File dir = new File("/data/user/0/com.example.williamstest/app_draw" + currencies[1]);
                             if (dir.isDirectory()) {
                                 String[] children = dir.list();
-                                for (int i = 0; i < children.length; i++)
-                                    new File(dir, children[i]).delete();
+                                for (int i = 0; i < children.length; i++) new File(dir, children[i]).delete();
                             }
                             dir.delete();
                             final Intent scanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
@@ -178,8 +183,7 @@ public class UserList extends ListActivity implements AppCompatCallback {
                 private int extractInt(String s) {
                     try {
                         return Integer.parseInt(s.split(":")[1].trim());
-                    }
-                    catch (NumberFormatException exception) {
+                    } catch (NumberFormatException exception) {
                         return -1;
                     }
                 }
@@ -202,8 +206,7 @@ public class UserList extends ListActivity implements AppCompatCallback {
                 private int extractInt(String s) {
                     try {
                         return Integer.parseInt(s.split(":")[1].trim());
-                    }
-                    catch (NumberFormatException exception) {
+                    } catch (NumberFormatException exception) {
                         return -1;
                     }
                 }

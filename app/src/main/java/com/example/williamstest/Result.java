@@ -12,9 +12,21 @@ import android.widget.Button;
 import java.io.IOException;
 
 public class Result extends AppCompatActivity {
+    /**
+     * The area with the results.
+     */
     private ViewPager viewPager;
+
+    /**
+     * The slide mechanism of the results area.
+     */
     private SlideAdapter myadapter;
+
+    /**
+     * The current protocol/folder and logged user.
+     */
     private String logged, protocol, folder;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

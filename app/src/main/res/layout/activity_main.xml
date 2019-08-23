@@ -24,7 +24,7 @@
             android:layout_marginEnd="8dp"
             android:background="@drawable/button_bg_transparent"
             android:fontFamily="@font/kotta_one"
-            android:text="Area\n   Docenti    "
+            android:text="Area\n   Privata    "
             android:textAllCaps="false"
             android:textColor="#030000"
             android:textSize="26dp"

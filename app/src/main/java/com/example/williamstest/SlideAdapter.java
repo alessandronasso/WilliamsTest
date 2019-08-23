@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -27,13 +26,39 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 
 public class SlideAdapter extends PagerAdapter {
+    /**
+     * Current context of the app.
+     */
     Context context;
+
+    /**
+     * The Layout of the slides.
+     */
     LayoutInflater inflater;
-    private String protocollo;
-    private String folder;
+
+    /**
+     * The current protocol/folder
+     */
+    private String protocollo, folder;
+
+    /**
+     * The editText where modify the score.
+     */
     private EditText f;
+
+    /**
+     * The new value modfied by the user.
+     */
     private String newValue="";
+
+    /**
+     * The user who has logged in.
+     */
     private String logged="";
+
+    /**
+     * The position of the current shape.
+     */
     private int pos;
 
 
@@ -80,6 +105,11 @@ public class SlideAdapter extends PagerAdapter {
      */
     public void setProtocol (String p) { protocollo = p; }
 
+    /**
+     * This method sets the user that has logged in before.
+     *
+     * @param l the user logged
+     */
     public void setLogged (String l) {logged = l; }
 
     /**
@@ -183,6 +213,11 @@ public class SlideAdapter extends PagerAdapter {
         txttitle.setText(values[4]);
     }
 
+    /**
+     * This method modify the score based on what the user has inserted in the table.
+     *
+     * @throws IOException
+     */
     public void modifyFile () throws IOException {
         ContextWrapper cw = new ContextWrapper(context);
         File directory = cw.getDir("draw", Context.MODE_PRIVATE);

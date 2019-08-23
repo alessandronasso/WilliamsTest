@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 import android.widget.TextView;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -15,7 +14,15 @@ import java.io.LineNumberReader;
 
 public class FinalResult extends AppCompatActivity {
 
+    /**
+     * Sum of the results got in each shape.
+     */
     private int[] sum = new int[4];
+
+    /**
+     * Strings representing the current user logged and the
+     * current folder/protocol where get data from.
+     */
     private String protocol, folder, logged;
 
     @Override
@@ -45,6 +52,13 @@ public class FinalResult extends AppCompatActivity {
         t.setText(sum[3]+"pt.");
     }
 
+    /**
+     * This method reads and sum up all the scores got by the user.
+     *
+     * @param protocollo Current protocol
+     * @param folder Current folder
+     * @throws IOException
+     */
     public void loadContent (String protocollo, String folder) throws IOException {
         String content = "";
         ContextWrapper cw = new ContextWrapper(FinalResult.this);

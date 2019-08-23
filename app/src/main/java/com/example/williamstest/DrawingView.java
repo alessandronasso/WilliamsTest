@@ -13,49 +13,104 @@ import android.util.DisplayMetrics;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
-
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class DrawingView extends View {
 
-    //drawing path
+    /**
+     * Encapsulates compound geometric paths.
+     */
     private Path drawPath;
-    //drawing and canvas paint
+
+    /**
+     * They hold the style and color information about how to draw geometries, text and bitmaps.
+     */
     private Paint drawPaint, canvasPaint;
-    //initial color
+
+    /**
+     * The initial color of the brush
+     */
     private int paintColor = Color.BLACK;
-    //canvas
+
+    /**
+     * The area where the users can draw
+     */
     private Canvas drawCanvas;
-    //canvas bitmap
+
+    /**
+     * The drawing are converted in Bitmap
+     */
     private Bitmap canvasBitmap;
-    //erase button
+
+    /**
+     * Variable to check if the user has selected the rubbish.
+     */
     private boolean erase=false;
-    //structure for saving the single segment
+
+    /**
+     * Structure for saving the single segment drawn.
+     */
     private ArrayList<Pair<Float,Float>> points = new ArrayList<>();
-    //structure for saving all the lines drawn
+
+    /**
+     * Structure for saving all the lines drawn.
+     */
     private ArrayList<ArrayList<Pair<Float,Float>>> segments = new ArrayList<>();
-    //dimension of the square
+
+    /**
+     * Dimensions of the drawing area.
+     */
     int height, width, diameter, offset;
-    //check if user has drawn
+
+    /**
+     * Variable used to check if the user has started drawing.
+     */
     private boolean started = false;
-    //timer
+
+    /**
+     * Timers to get the drawing times.
+     */
     private long startTime=0, startActivity;
-    //string with times and title
+
+    /**
+     * Strings with times and title of the draw.
+     */
     private String s1, s2, title="";
-    //number of erasure
+
+    /**
+     * Number of erasure done by the user.
+     */
     private int eraseNumber = 0;
-    //string to define the current draw
+
+    /**
+     * Number of undo done by the user.
+     */
     private int undoNumber = 0;
-    //string to define the current draw
+
+    /**
+     * Strings to define the current draw.
+     */
     private String protocol, draw;
-    //string to determinate the score in the draw in/out part
+
+    /**
+     * Strings to determinate the score in the draw in/out part.
+     */
     private int scoreDrawOut=0, scoreDrawIn=0;
-    //range of coordinates of the starting shape
+
+    /**
+     * Range of the coordinates of the starting shape.
+     */
     private ArrayList<Pair<Float,Float>> figura;
-    //string to determinate the score of the symmetries
+
+    /**
+     * Strings to determinate the score of the symmetries.
+     */
     private int symmetryInside=0, symmetryOutside=0, asymmetryInside=0, asymmetryOutside=0;
-    //group of lines symmetric (to not check twice)
+
+    /**
+     *  Group of lines symmetric (to not check twice)
+     */
     private ArrayList<ArrayList<Pair<Float,Float>>> sym = new ArrayList<>();;
 
     public DrawingView(Context context, AttributeSet attrs) {
@@ -140,20 +195,14 @@ public class DrawingView extends View {
         float touchY = event.getY();
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                /*System.out.println(" "+touchX);
-                System.out.println(" "+touchY);*/
                 drawPath.moveTo(touchX, touchY);
                 points.add(new Pair<Float, Float>(touchX, touchY));
                 break;
             case MotionEvent.ACTION_MOVE:
-                /*System.out.println(" "+touchX);
-                System.out.println(" "+touchY);*/
                 drawPath.lineTo(touchX, touchY);
                 points.add(new Pair<Float, Float>(touchX, touchY));
                 break;
             case MotionEvent.ACTION_UP:
-                /*System.out.println(" "+touchX);
-                System.out.println(" "+touchY);*/
                 drawPath.lineTo(touchX, touchY);
                 points.add(new Pair<Float, Float>(touchX, touchY));
                 drawCanvas.drawPath(drawPath, drawPaint);
@@ -166,7 +215,6 @@ public class DrawingView extends View {
                 }
                 points.clear();
                 drawPath.reset();
-                //System.out.println("--------------------------");
                 break;
             default:
                 return false;
@@ -239,13 +287,12 @@ public class DrawingView extends View {
      */
     public void restoreDraw () {
         if (segments.size()!=0) {
+            segments.remove(segments.size() - 1);
             drawPath = null;
             canvasBitmap = Bitmap.createBitmap(width, 350, Bitmap.Config.ARGB_8888);
             drawPath = new Path();
             invalidate();
             onSizeChanged(width, height, width, height);
-            segments.remove(segments.size() - 1);
-            for (int i = 0; i < segments.size(); i++) drawFromArrayList(segments.get(i));
             undoNumber++;
         }
     }
@@ -267,12 +314,12 @@ public class DrawingView extends View {
      */
     public void drawFromArrayList(ArrayList<Pair<Float,Float>> points) {
         int pointCount = points.size();
-        System.out.println("-----");
+        //System.out.println("-----");
         if (pointCount < 2) {
             return;
         }
         for (int i=0;i<pointCount;i++) {
-            System.out.println(points.get(i).first+", "+points.get(i).second);
+            //System.out.println(points.get(i).first+", "+points.get(i).second);
             float touchX = points.get(i).first, touchY = points.get(i).second;
             if(i==0) {
                 drawPath.moveTo(touchX, touchY);
@@ -404,13 +451,13 @@ public class DrawingView extends View {
                 for (int i=z+1; i<segments.size() && segments.get(i).size()>9; i++) {
                     if (between(z, i) || between(i, z)) {
                         boolean similar = checkShape(z, segments.get(i));
-                        System.out.println("SIMILAR");
+                        //System.out.println("SIMILAR");
                         icp(z, segments.get(i));
                         boolean invertX = checkShape(z, invertAxes(segments.get(i), "x"));
-                        System.out.println("X AS");
+                        //System.out.println("X AS");
                         icp(z, reverse(segments.get(i)));
                         boolean invertY = checkShape(z, invertAxes(segments.get(i), "y"));
-                        System.out.println("Y AS");
+                        //System.out.println("Y AS");
                         icp(i, reverse(segments.get(z)));
                         if ((similar || invertX || invertY) && isInside(segments.get(z))==isInside(segments.get(i))) {
                             symmetryFound = true;
@@ -454,7 +501,7 @@ public class DrawingView extends View {
             sumValues+=copia.get(j2).first-copia.get(j2+nGroupsFirstShape-1).first;
             sumValues+=copia.get(j2).second-copia.get(j2+nGroupsFirstShape-1).second;
             nValuesFirstShape[j] = sumValues;
-            System.out.println("Primo gruppo: "+sumValues);
+            //System.out.println("Primo gruppo: "+sumValues);
         }
         ArrayList<Pair<Float,Float>> copia2 = points;
         int nGroupSecondShape = (copia2.size()*10)/100;
@@ -464,7 +511,7 @@ public class DrawingView extends View {
             sumValues+=copia2.get(j2).first-copia2.get(j2+nGroupSecondShape-1).first;
             sumValues+=copia2.get(j2).second-copia2.get(j2+nGroupSecondShape-1).second;
             nValuesSecondShape[j] = sumValues;
-            System.out.println("Secondo gruppo: "+sumValues);
+            //System.out.println("Secondo gruppo: "+sumValues);
         }
         int differences[] = new int[10];
         int numberOf = 0;
@@ -472,7 +519,7 @@ public class DrawingView extends View {
             differences[index] = nValuesFirstShape[index] - nValuesSecondShape[index];
             if (differences[index]<0) differences[index] = -differences[index];
             if (differences[index]<nGroupsFirstShape*2.5) numberOf++;
-            System.out.println("Differenze: "+differences[index]);
+            //System.out.println("Differenze: "+differences[index]);
         }
         if (numberOf>=6) return true; else return false;
     }
@@ -531,7 +578,7 @@ public class DrawingView extends View {
             eDist += (Math.pow(copia.get(i).first*Math.cos(rotation)-copia.get(i).second*Math.sin(rotation)+Tx-copia2.get(i).first, 2.0)+Math.pow(copia.get(i).first*Math.sin(rotation)+copia.get(i).second*Math.cos(rotation)+Ty-copia2.get(i).second, 2.0));
         }
 
-        System.out.println("EDIST: "+eDist);
+        //System.out.println("EDIST: "+eDist);
         return eDist;
     }
 
@@ -591,7 +638,7 @@ public class DrawingView extends View {
     /**
      * This method checks if a segment has already found a symmetry.
      *
-     * @param toCheck segment  to check.
+     * @param toCheck segment to check.
      * @return true/false depending if the segment
      * has already found a symmetry
      */
@@ -604,6 +651,12 @@ public class DrawingView extends View {
         return true;
     }
 
+    /**
+     * This method reverses a list of points.
+     *
+     * @param list group of points to reverse
+     * @return the reversed list
+     */
     private ArrayList<Pair<Float,Float>> reverse(ArrayList<Pair<Float,Float>> list) {
         for(int i = 0, j = list.size() - 1; i < j; i++) {
             list.add(i, list.remove(j));
@@ -611,10 +664,22 @@ public class DrawingView extends View {
         return list;
     }
 
+    /**
+     * This method returns the whole segments drawn by the user.
+     *
+     * @return the ArrayList of segments
+     */
     public ArrayList<ArrayList<Pair<Float,Float>>> getPoints () {
         return segments;
     }
 
+    /**
+     * This method sets the list of segments. It is used to restore
+     * all the previous lines drawn by the user before skipping
+     * to another shape.
+     *
+     * @param pts Points previously drawn by the user
+     */
     public void setPoints (ArrayList<ArrayList<Pair<Float,Float>>> pts) {
         segments = new ArrayList<>(pts);
     }
