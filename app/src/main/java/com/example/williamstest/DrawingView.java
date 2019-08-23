@@ -314,12 +314,10 @@ public class DrawingView extends View {
      */
     public void drawFromArrayList(ArrayList<Pair<Float,Float>> points) {
         int pointCount = points.size();
-        //System.out.println("-----");
         if (pointCount < 2) {
             return;
         }
         for (int i=0;i<pointCount;i++) {
-            //System.out.println(points.get(i).first+", "+points.get(i).second);
             float touchX = points.get(i).first, touchY = points.get(i).second;
             if(i==0) {
                 drawPath.moveTo(touchX, touchY);

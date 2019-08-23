@@ -90,6 +90,11 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
      */
     private int timeToDraw = 0, timeToComplete = 0;
 
+    /**
+     * Total erasure/undo in the user's draw.
+     */
+    private int totalErase = 0, totalUndo = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -202,15 +207,15 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             String elaborazione = drawView.getSymmetryScore() + "pt.";
             String titoli = drawView.getTitle();
             try {
-                getTemporaryTimes(Integer.parseInt(drawView.getReactionTime()), Integer.parseInt(drawView.getTimeToDraw()));
-                saveTemporaryTimes(Integer.parseInt(drawView.getReactionTime()), Integer.parseInt(drawView.getTimeToDraw()));
+                getTemporaryTimes(Integer.parseInt(drawView.getReactionTime()), Integer.parseInt(drawView.getTimeToDraw()), drawView.getEraseNumber(), drawView.getUndoNumber());
+                saveTemporaryTimes(Integer.parseInt(drawView.getReactionTime()), Integer.parseInt(drawView.getTimeToDraw()), drawView.getEraseNumber(), drawView.getUndoNumber());
             } catch (IOException e) {
                 e.printStackTrace();
             }
             String tempoReazione = timeToDraw + " s";
             String tempoCompletamentoDisegno = timeToComplete + " s";
-            String numeroCancellature = drawView.getEraseNumber() + "";
-            String undo = drawView.getUndoNumber() + "";
+            String numeroCancellature = totalErase + "";
+            String undo = totalUndo + "";
             saveImage();
             writeScore(fluidita, flessibilita, originalita, elaborazione, titoli, tempoReazione, tempoCompletamentoDisegno, numeroCancellature, undo);
             try { nextDraw = findNextNotCompleted(); } catch (IOException e) { e.printStackTrace(); }
@@ -249,7 +254,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             }
         } else if (view.equals(b3)) {
             try {
-                saveTemporaryTimes(Integer.parseInt(drawView.getReactionTime()), Integer.parseInt(drawView.getTimeToDraw()));
+                saveTemporaryTimes(Integer.parseInt(drawView.getReactionTime()), Integer.parseInt(drawView.getTimeToDraw()), drawView.getEraseNumber(), drawView.getUndoNumber());
                 savePoints();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -275,7 +280,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 Toast.makeText(this, "Non ci sono altri disegni", Toast.LENGTH_LONG).show();
         } else if (view.equals(b2)) {
             try {
-                saveTemporaryTimes(Integer.parseInt(drawView.getReactionTime()), Integer.parseInt(drawView.getTimeToDraw()));
+                saveTemporaryTimes(Integer.parseInt(drawView.getReactionTime()), Integer.parseInt(drawView.getTimeToDraw()), drawView.getEraseNumber(), drawView.getUndoNumber());
                 savePoints();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -315,7 +320,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         }
     }
 
-    private void saveTemporaryTimes(int timeToDraw, int timeToComplete) throws IOException {
+    private void saveTemporaryTimes(int timeToDraw, int timeToComplete, int eraseN, int undoN) throws IOException {
         File dir = new File("/data/user/0/com.example.williamstest/app_draw" + folder);
         if (!dir.isDirectory()) throw new IllegalStateException();
         File f = new File(dir.getAbsolutePath() + "/times.txt");
@@ -324,7 +329,9 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fos);
             outputStreamWriter.write(cornice + "-");
             outputStreamWriter.write(timeToDraw + "-");
-            outputStreamWriter.write(timeToComplete + "\n");
+            outputStreamWriter.write(timeToComplete + "-");
+            outputStreamWriter.write(eraseN + "-");
+            outputStreamWriter.write(undoN + "\n");
             outputStreamWriter.flush();
             outputStreamWriter.close();
         } catch (IOException e) {
@@ -341,8 +348,8 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
      * @param timeToC current completition time of the user.
      * @throws IOException
      */
-    private void getTemporaryTimes(int timeToD, int timeToC) throws IOException {
-        timeToComplete += timeToC;
+    private void getTemporaryTimes(int timeToD, int timeToC, int eraseN, int undoN) throws IOException {
+        timeToComplete += timeToC; totalErase = eraseN; totalUndo = undoN;
         File dir = new File("/data/user/0/com.example.williamstest/app_draw" + folder);
         if (!dir.isDirectory()) throw new IllegalStateException();
         if (new File(dir.getAbsolutePath()+"/times.txt").exists()) {
@@ -359,8 +366,11 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 reader = new LineNumberReader(f);
                 for (int i=0; (line = reader.readLine()) != null; i++) {
                     String[] parts = line.split("-");
-                    if (parts[0].equals(cornice) && timeToDraw == 0 && Integer.parseInt(parts[1])!=0)
-                        timeToDraw = Integer.parseInt(parts[1]);
+                    if (parts[0].equals(cornice)) {
+                        totalErase += Integer.parseInt(parts[3]);
+                        totalUndo += Integer.parseInt(parts[4]);
+                        if (timeToDraw == 0 && Integer.parseInt(parts[1])!=0) timeToDraw = Integer.parseInt(parts[1]);
+                    }
                     timeToComplete += Integer.parseInt(parts[2]);
                 }
                 if (timeToDraw == 0 && timeToD != 0) timeToDraw = timeToD;
