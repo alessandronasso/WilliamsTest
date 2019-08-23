@@ -1,8 +1,25 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/MyDialog"
     android:layout_width="@dimen/_100sdp"
-    android:layout_height="@dimen/_80sdp"
-    android:gravity="center"
-    style="@style/MyDialog">
+    android:layout_height="@dimen/_100sdp"
+    android:gravity="center">
+
+    <Button
+        android:id="@+id/button_form"
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="@dimen/_10sdp"
+        android:layout_below="@+id/nameEditText"
+        android:layout_marginLeft="@dimen/_30sdp"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginBottom="@dimen/_7sdp"
+        android:background="@drawable/button_bg"
+        android:textAlignment="center"
+        android:textColor="@color/whiteTextColor"
+        android:textSize="@dimen/_7sdp"
+        android:text="OK">
+
+    </Button>
 
     <CheckBox
         android:id="@+id/myCheckBox"
@@ -10,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_11sdp"
         android:text="Abilitare la palette di colori?" />
 
     <EditText
@@ -19,6 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/genderRadioGroup"
         android:layout_alignParentLeft="true"
+        android:layout_marginTop="@dimen/_2sdp"
         android:ems="10"
         android:hint="Inserisci l'eta'">
 
@@ -38,6 +56,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
+            android:layout_marginTop="@dimen/_3sdp"
             android:text="Maschio" />
 
 
@@ -47,6 +66,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/maleRadioButton"
             android:layout_alignParentLeft="true"
+            android:layout_marginTop="@dimen/_1sdp"
             android:text="Femmina" />
     </RadioGroup>
 </RelativeLayout>

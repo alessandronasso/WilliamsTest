@@ -9,26 +9,24 @@
 
     <TextView
         android:id="@+id/upperTableHeader"
-        android:layout_width="@dimen/_100sdp"
+        android:layout_width="@dimen/_130sdp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_194sdp"
-        android:background="@drawable/underline"
-        android:fontFamily="@font/kotta_one"
+        android:fontFamily="@font/architects_daughter"
         android:gravity="top"
         android:scrollbarSize="@dimen/_152sdp"
         android:text="Punteggio finale:"
         android:textColor="#0A3BCE"
-        android:textSize="@dimen/_13sdp"
+        android:textSize="@dimen/_15sdp"
         app:layout_constraintBottom_toTopOf="@+id/tl"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
-    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <TableLayout
         android:id="@+id/tl"
         android:layout_width="@dimen/_180sdp"
-        android:layout_height="@dimen/_100sdp"
+        android:layout_height="@dimen/_130sdp"
         android:layout_above="@+id/t2"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="8dp"
@@ -50,24 +48,24 @@
             <TextView
                 android:id="@+id/item_1"
                 android:layout_width="@dimen/_100sdp"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_20sdp"
                 android:background="@drawable/table_cell_bg"
                 android:paddingRight="10dp"
                 android:scrollbarSize="@dimen/_1sdp"
                 android:text="  Flessibilità"
                 android:textColor="#030101"
-                android:textSize="@dimen/_10sdp" />
+                android:textSize="@dimen/_13sdp" />
 
             <TextView
                 android:id="@+id/f_item_1"
                 android:layout_width="@dimen/_100sdp"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_20sdp"
                 android:background="@drawable/table_cell_bg"
                 android:gravity="left"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:textColor="#070404"
-                android:textSize="@dimen/_10sdp" />
+                android:textSize="@dimen/_13sdp" />
         </TableRow>
 
         <TableRow
@@ -80,23 +78,23 @@
             <TextView
                 android:id="@+id/item_2"
                 android:layout_width="202dp"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_20sdp"
                 android:background="@drawable/table_cell_bg"
                 android:paddingRight="10dp"
                 android:scrollbarSize="@dimen/_1sdp"
                 android:text="  Fluidità"
                 android:textColor="#070404"
-                android:textSize="@dimen/_10sdp" />
+                android:textSize="@dimen/_13sdp" />
 
             <TextView
                 android:id="@+id/fl_item_2"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_20sdp"
                 android:background="@drawable/table_cell_bg"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:textColor="#070404"
-                android:textSize="@dimen/_10sdp" />
+                android:textSize="@dimen/_13sdp" />
         </TableRow>
 
         <TableRow
@@ -109,23 +107,23 @@
             <TextView
                 android:id="@+id/item_3"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_20sdp"
                 android:background="@drawable/table_cell_bg"
                 android:paddingRight="10dp"
                 android:scrollbarSize="@dimen/_1sdp"
                 android:text="  Originalità"
                 android:textColor="#070404"
-                android:textSize="@dimen/_10sdp" />
+                android:textSize="@dimen/_13sdp" />
 
             <TextView
                 android:id="@+id/o_item_3"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_20sdp"
                 android:background="@drawable/table_cell_bg"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:textColor="#070404"
-                android:textSize="@dimen/_10sdp" />
+                android:textSize="@dimen/_13sdp" />
         </TableRow>
 
         <TableRow
@@ -138,23 +136,23 @@
             <TextView
                 android:id="@+id/item_4"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_20sdp"
                 android:background="@drawable/table_cell_bg"
                 android:paddingRight="10dp"
                 android:scrollbarSize="@dimen/_1sdp"
                 android:text="  Elaborazione"
                 android:textColor="#070404"
-                android:textSize="@dimen/_10sdp" />
+                android:textSize="@dimen/_13sdp" />
 
             <TextView
                 android:id="@+id/el_item_4"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_20sdp"
                 android:background="@drawable/table_cell_bg"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:textColor="#070404"
-                android:textSize="@dimen/_10sdp" />
+                android:textSize="@dimen/_13sdp" />
         </TableRow>
 
         <TableRow
@@ -167,23 +165,23 @@
             <TextView
                 android:id="@+id/item_5"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_20sdp"
                 android:background="@drawable/table_cell_bg"
                 android:paddingRight="10dp"
                 android:scrollbarSize="@dimen/_1sdp"
                 android:text="  Titolo"
                 android:textColor="#070404"
-                android:textSize="@dimen/_10sdp" />
+                android:textSize="@dimen/_13sdp" />
 
             <TextView
                 android:id="@+id/t_item_5"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_20sdp"
                 android:background="@drawable/table_cell_bg"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:textColor="#070404"
-                android:textSize="@dimen/_10sdp" />
+                android:textSize="@dimen/_13sdp" />
         </TableRow>
     </TableLayout>
 
