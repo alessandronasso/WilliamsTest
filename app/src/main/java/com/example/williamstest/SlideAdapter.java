@@ -10,7 +10,6 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -35,6 +34,7 @@ public class SlideAdapter extends PagerAdapter {
     private EditText f;
     private String newValue="";
     private String logged="";
+    private int pos;
 
 
     public SlideAdapter(Context context) {
@@ -58,18 +58,7 @@ public class SlideAdapter extends PagerAdapter {
         RelativeLayout layoutslide = (RelativeLayout) view.findViewById(R.id.slidelinearlayout);
         ImageView imgslide = getImage(view, position);
         TableLayout tl = (TableLayout) view.findViewById(R.id.tl);
-        Button b1 = (Button) view.findViewById(R.id.modifica);
-        final int pos = position;
-        b1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    modifyFile(pos);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        pos = position;
         try {
             setTableText(view, getDescription(position));
         } catch (IOException e) {
@@ -92,7 +81,6 @@ public class SlideAdapter extends PagerAdapter {
     public void setProtocol (String p) { protocollo = p; }
 
     public void setLogged (String l) {logged = l; }
-
 
     /**
      * This methods is used to set the folder number where retrieve
@@ -195,11 +183,11 @@ public class SlideAdapter extends PagerAdapter {
         txttitle.setText(values[4]);
     }
 
-    public void modifyFile (int position) throws IOException {
+    public void modifyFile () throws IOException {
         ContextWrapper cw = new ContextWrapper(context);
         File directory = cw.getDir("draw", Context.MODE_PRIVATE);
-        File inputFile = new File(directory.getAbsolutePath()+folder+"/"+protocollo+(position+1)+"_score.txt");
-        File tempFile = new File(directory.getAbsolutePath()+folder+"/"+protocollo+(position+1)+"_scoretmp.txt");
+        File inputFile = new File(directory.getAbsolutePath()+folder+"/"+protocollo+(pos+1)+"_score.txt");
+        File tempFile = new File(directory.getAbsolutePath()+folder+"/"+protocollo+(pos+1)+"_scoretmp.txt");
 
         BufferedReader reader = new BufferedReader(new FileReader(inputFile));
         BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));

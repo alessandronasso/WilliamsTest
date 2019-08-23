@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 
+import java.io.IOException;
+
 public class Result extends AppCompatActivity {
     private ViewPager viewPager;
     private SlideAdapter myadapter;
@@ -21,6 +23,7 @@ public class Result extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         Button b1 = (Button) findViewById(R.id.bb_4);
+        Button b2 = (Button) findViewById(R.id.applica);
         b1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -42,6 +45,16 @@ public class Result extends AppCompatActivity {
         myadapter.setFolder(folder);
         myadapter.setLogged(logged);
         viewPager.setAdapter(myadapter);
+        b2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    myadapter.modifyFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override

@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -47,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
                 new AlertDialog.Builder(MainActivity.this).setView(formElementsView)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
+                                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                                 int selectedId = genderRadioGroup.getCheckedRadioButtonId();
                                 RadioButton selectedRadioButton = (RadioButton) formElementsView.findViewById(selectedId);
@@ -66,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
                                 dialog.cancel();
                             }
 
-                        }).show();
+                        }).show().getWindow().setLayout(600, 600);
             }
         });
         final Button button2 = findViewById(R.id.button_2);
@@ -75,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
                 new AlertDialog.Builder(MainActivity.this).setView(formElementsView)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
+                                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                                 int selectedId = genderRadioGroup.getCheckedRadioButtonId();
                                 RadioButton selectedRadioButton = (RadioButton) formElementsView.findViewById(selectedId);

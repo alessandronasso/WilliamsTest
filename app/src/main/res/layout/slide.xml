@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -12,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="@dimen/_60sdp"
-        android:layout_marginTop="@dimen/_86sdp"
+        android:layout_marginTop="@dimen/_76sdp"
         android:orientation="vertical">
 
         <ImageView
@@ -53,12 +54,11 @@
             android:fontFamily="@font/kotta_one"
             android:gravity="top"
             android:scrollbarSize="@dimen/_152sdp"
-            android:text="Punteggio finale:"
+            android:text="Punteggio cornice:"
             android:textColor="#0A3BCE"
-            android:textSize="@dimen/_13sdp" />
+            android:textSize="@dimen/_11sdp" />
 
-        <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
+        <TableLayout
             android:id="@+id/tl"
             android:layout_width="@dimen/_130sdp"
             android:layout_height="@dimen/_80sdp"
@@ -86,7 +86,7 @@
 
                 <EditText
                     android:id="@+id/f_item_1"
-                    android:layout_width="@dimen/_100sdp"
+                    android:layout_width="@dimen/_130sdp"
                     android:layout_height="wrap_content"
                     android:background="@drawable/table_cell_bg"
                     android:gravity="left"
@@ -218,33 +218,20 @@
         android:id="@+id/tabella2"
         android:layout_width="@dimen/_157sdp"
         android:layout_height="@dimen/_80sdp"
+        android:layout_below="@id/tabella1"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
         android:layout_marginLeft="@dimen/_250sdp"
         android:layout_marginTop="@dimen/_10sdp"
         android:layout_marginEnd="@dimen/_74sdp"
-        android:layout_marginBottom="@dimen/_28sdp"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/lowerTableHeader"
+        <TableLayout
+            android:id="@+id/tl_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="fill_horizontal"
-            android:background="@drawable/underline"
-            android:fontFamily="@font/kotta_one"
-            android:text="Considerazioni aggiuntive:"
-            android:textColor="#1D8314"
-            android:textSize="@dimen/_13sdp" />
-
-        <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/tl_2"
-            android:layout_width="@dimen/_155sdp"
-            android:layout_height="@dimen/_553sdp"
+            android:layout_below="@id/lowerTableHeader"
             android:layout_alignEnd="@+id/tl"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="@dimen/_40sdp">
+            android:layout_gravity="bottom">
 
             <TableRow
                 android:id="@+id/tr_item_6"
@@ -362,26 +349,16 @@
                     android:textSize="@dimen/_10sdp" />
             </TableRow>
         </TableLayout>
-    </LinearLayout>
 
-    <android.support.design.button.MaterialButton
-        android:id="@+id/modifica"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="@dimen/_10sdp"
-        android:layout_marginTop="@dimen/_87sdp"
-        android:layout_marginEnd="@dimen/_43sdp"
-        android:layout_toEndOf="@+id/tabella1"
-        android:text="Modifica"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="15sp"
-        app:backgroundTint="@color/whiteTextColor"
-        app:cornerRadius="8dp"
-        app:rippleColor="#33AAAAAA"
-        app:strokeColor="@color/colorPrimaryDark"
-        app:strokeWidth="2dp" />
+        <TextView
+            android:id="@+id/lowerTableHeader"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/underline"
+            android:fontFamily="@font/kotta_one"
+            android:text="Considerazioni aggiuntive:"
+            android:textColor="#1D8314"
+            android:textSize="@dimen/_13sdp" />
+    </LinearLayout>
 
 </RelativeLayout>

@@ -166,7 +166,10 @@ public class UserList extends ListActivity implements AppCompatCallback {
         } else if (id == R.id.ordina_eta_c) {
             try { user = loadUser(); } catch (IOException e) { e.printStackTrace(); }
             List<String> user_list = new ArrayList<String>(Arrays.asList(user));
-            Collections.sort(user_list, new Comparator<String>() {
+            List<String> u2 = new ArrayList<String>();
+            for (int i = 0; i < user_list.size(); i++)
+                if (!user_list.get(i).contains(" / ")) u2.add(user_list.get(i));
+            Collections.sort(u2, new Comparator<String>() {
                 public int compare(String o1, String o2) {
                     return Comparator.comparingInt(this::extractInt)
                             .thenComparing(Comparator.reverseOrder())
@@ -181,14 +184,16 @@ public class UserList extends ListActivity implements AppCompatCallback {
                     }
                 }
             });
-            final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list, R.id.textList, user_list);
+            final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list, R.id.textList, u2);
             setListAdapter(arAd);
             arAd.notifyDataSetChanged();
         } else if (id == R.id.ordina_eta_d) {
             try { user = loadUser(); } catch (IOException e) { e.printStackTrace(); }
-            try { user = loadUser(); } catch (IOException e) { e.printStackTrace(); }
             List<String> user_list = new ArrayList<String>(Arrays.asList(user));
-            Collections.sort(user_list, new Comparator<String>() {
+            List<String> u2 = new ArrayList<String>();
+            for (int i = 0; i < user_list.size(); i++)
+                if (!user_list.get(i).contains(" / ")) u2.add(user_list.get(i));
+            Collections.sort(u2, new Comparator<String>() {
                 public int compare(String o1, String o2) {
                     return Comparator.comparingInt(this::extractInt)
                             .thenComparing(Comparator.naturalOrder())
@@ -203,7 +208,7 @@ public class UserList extends ListActivity implements AppCompatCallback {
                     }
                 }
             });
-            final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list, R.id.textList, user_list);
+            final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list, R.id.textList, u2);
             setListAdapter(arAd);
             arAd.notifyDataSetChanged();
         }
@@ -248,7 +253,8 @@ public class UserList extends ListActivity implements AppCompatCallback {
                         line = reader.readLine();
                         user[arrayString] += "    Genere: " + line;
                         line = reader.readLine();
-                        user[arrayString] += "    Eta: " + line+"   ";
+                        if (line.equals("0")) user[arrayString] += "    Eta: /   ";
+                        else user[arrayString] += "    Eta: " + line+"   ";
                         line = reader.readLine();
                         user[arrayString++] += "    Protocollo: " + line+"   ";
                         System.out.println(user[arrayString-1]);

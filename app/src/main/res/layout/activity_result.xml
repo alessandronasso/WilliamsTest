@@ -16,28 +16,45 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:background="#00aaaaaa"
-            android:layout_gravity="right"
+            android:gravity="center"
             android:layout_height="match_parent">
+
+
+            <android.support.design.button.MaterialButton
+                android:id="@+id/applica"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:text="Applica Modifiche"
+                android:gravity="left"
+                android:textColor="@color/whiteTextColor"
+                android:textSize="15sp"
+                app:backgroundTint="@color/colorPrimaryDark"
+                app:cornerRadius="8dp"
+                app:rippleColor="#33AAAAAA"
+                app:strokeColor="@color/whiteTextColor"
+                app:strokeWidth="2dp" />
 
             <android.support.design.button.MaterialButton
                 android:id="@+id/bb_4"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:text="Risultati complessivi"
                 android:textColor="@color/whiteTextColor"
                 android:textSize="15sp"
-                android:layout_marginTop="@dimen/_2sdp"
-                android:layout_marginRight="@dimen/_10sdp"
+                android:layout_alignParentRight="true"
                 app:backgroundTint="@color/colorPrimaryDark"
                 app:cornerRadius="8dp"
                 app:rippleColor="#33AAAAAA"
                 app:strokeColor="@color/whiteTextColor"
                 app:strokeWidth="2dp" />
-        </LinearLayout>
+        </RelativeLayout>
 
     </android.support.v7.widget.Toolbar>
 
