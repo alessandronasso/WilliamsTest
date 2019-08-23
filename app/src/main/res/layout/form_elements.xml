@@ -1,7 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/_100sdp"
     android:layout_height="@dimen/_80sdp"
-    android:gravity="center">
+    android:gravity="center"
+    style="@style/MyDialog">
 
     <CheckBox
         android:id="@+id/myCheckBox"

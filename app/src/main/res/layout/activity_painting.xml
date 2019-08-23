@@ -87,10 +87,9 @@
                 android:layout_marginTop="15dip"
                 android:layout_marginBottom="25dip"
                 android:ems="10"
-                android:hint="Please enter phone number"
+                android:hint="Inserisci qui il titolo"
                 android:gravity="center_horizontal"
-                android:singleLine="true"
-                android:text="Inserisci qui il titolo" />
+                android:singleLine="true"/>
 
         </LinearLayout>
 
