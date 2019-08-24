@@ -83,7 +83,7 @@
                     android:textColor="#030101"
                     android:textSize="@dimen/_10sdp" />
 
-                <EditText
+                <TextView
                     android:id="@+id/f_item_1"
                     android:layout_width="@dimen/_130sdp"
                     android:layout_height="wrap_content"
@@ -113,7 +113,7 @@
                     android:textColor="#070404"
                     android:textSize="@dimen/_10sdp" />
 
-                <TextView
+                <EditText
                     android:id="@+id/fl_item_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

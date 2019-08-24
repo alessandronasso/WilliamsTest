@@ -174,8 +174,8 @@ public class SlideAdapter extends PagerAdapter {
      * @param content the stats of the user draw
      */
     private void setTableText (View view, String content) {
-        f = (EditText) view.findViewById(R.id.f_item_1);
-        TextView fl = (TextView) view.findViewById(R.id.fl_item_2);
+        f = (EditText) view.findViewById(R.id.fl_item_2);
+        TextView fl = (TextView) view.findViewById(R.id.f_item_1);
         TextView o = (TextView) view.findViewById(R.id.o_item_3);
         TextView el = (TextView) view.findViewById(R.id.el_item_4);
         TextView t = (TextView) view.findViewById(R.id.t_item_5);
@@ -185,23 +185,22 @@ public class SlideAdapter extends PagerAdapter {
         TextView t4 = (TextView) view.findViewById(R.id.n_4);
         TextView txttitle= (TextView) view.findViewById(R.id.txttitle);
         String[] values = content.split("\n");
-        f.setText(values[0]);
+        f.setText(values[1]);
         f.addTextChangedListener(new TextWatcher() {
             @Override
-            public void afterTextChanged(Editable arg0) {
-            }
+            public void afterTextChanged(Editable arg0) { }
 
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                //
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 newValue = s.toString();
+                newValue = newValue.replaceAll("[^\\d]", "" );
+                newValue = newValue+"pt.";
             }
         });
-        fl.setText(values[1]);
+        fl.setText(values[0]);
         o.setText(values[2]);
         el.setText(values[3]);
         if (values[4].equals("Senza nome")) t.setText("0pt.");
@@ -230,10 +229,13 @@ public class SlideAdapter extends PagerAdapter {
         String currentLine; int i=0;
 
         while((currentLine = reader.readLine()) != null) {
-            if (i==0) {
+            if (i==1) {
                 i++;
                 writer.write(newValue + System.getProperty("line.separator"));
-            } else writer.write(currentLine + System.getProperty("line.separator"));
+            } else {
+                writer.write(currentLine + System.getProperty("line.separator"));
+                i++;
+            }
         }
         writer.close();
         reader.close();

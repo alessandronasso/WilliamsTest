@@ -17,7 +17,7 @@ public class FinalResult extends AppCompatActivity {
     /**
      * Sum of the results got in each shape.
      */
-    private int[] sum = new int[4];
+    private int[] sum = new int[5];
 
     /**
      * Strings representing the current user logged and the
@@ -34,7 +34,7 @@ public class FinalResult extends AppCompatActivity {
         protocol = extras.getString("protocollo");
         folder = extras.getString("cartella");
         logged = extras.getString("userLogged");
-        for (int i=0; i<4; i++) sum[i]=0;
+        for (int i=0; i<5; i++) sum[i]=0;
         try {
             loadContent(protocol, folder);
         } catch (IOException e) {
@@ -46,7 +46,7 @@ public class FinalResult extends AppCompatActivity {
         TextView el = (TextView) findViewById(R.id.el_item_4);
         TextView t = (TextView) findViewById(R.id.t_item_5);
         f.setText(sum[0]+"pt.");
-        fl.setText("---");
+        fl.setText(sum[4]+"pt.");
         o.setText(sum[1]+"pt.");
         el.setText(sum[2]+"pt.");
         t.setText(sum[3]+"pt.");
@@ -71,6 +71,8 @@ public class FinalResult extends AppCompatActivity {
             }
             String[] values = content.split("\n");
             sum[0] += Integer.parseInt(values[0].replace("pt.",""));
+            if (values[1].equals("---")) sum[4] +=0;
+            else sum[4] += Integer.parseInt(values[1].replace("pt.",""));
             sum[1] += Integer.parseInt(values[2].replace("pt.",""));
             sum[2] += Integer.parseInt(values[3].replace("pt.",""));
             if (values[4].equals("Senza nome")) sum[3] += 0;
