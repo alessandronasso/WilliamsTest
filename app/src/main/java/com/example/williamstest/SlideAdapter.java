@@ -42,14 +42,14 @@ public class SlideAdapter extends PagerAdapter {
     private String protocollo, folder;
 
     /**
-     * The editText where modify the score.
+     * The editText where the user can modify the score.
      */
-    private EditText f;
+    private EditText f, t;
 
     /**
      * The new value modfied by the user.
      */
-    private String newValue="";
+    private String newValue="", newValue2="";
 
     /**
      * The user who has logged in.
@@ -178,7 +178,7 @@ public class SlideAdapter extends PagerAdapter {
         TextView fl = (TextView) view.findViewById(R.id.f_item_1);
         TextView o = (TextView) view.findViewById(R.id.o_item_3);
         TextView el = (TextView) view.findViewById(R.id.el_item_4);
-        TextView t = (TextView) view.findViewById(R.id.t_item_5);
+        t = (EditText) view.findViewById(R.id.t_item_5);
         TextView t1 = (TextView) view.findViewById(R.id.tempo_item_1);
         TextView t2 = (TextView) view.findViewById(R.id.tempo_item_2);
         TextView t3 = (TextView) view.findViewById(R.id.n_3);
@@ -200,11 +200,24 @@ public class SlideAdapter extends PagerAdapter {
                 newValue = newValue+"pt.";
             }
         });
+        t.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable arg0) { }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                newValue2 = s.toString();
+                newValue2 = newValue2.replaceAll("[^\\d]", "" );
+                newValue2 = newValue2+"pt.";
+            }
+        });
         fl.setText(values[0]);
         o.setText(values[2]);
         el.setText(values[3]);
-        if (values[4].equals("Senza nome")) t.setText("0pt.");
-        else t.setText("0pt.");
+        t.setText(values[9]);
         t1.setText(values[5]);
         t2.setText(values[6]);
         t3.setText(values[7]);
@@ -220,22 +233,18 @@ public class SlideAdapter extends PagerAdapter {
     public void modifyFile () throws IOException {
         ContextWrapper cw = new ContextWrapper(context);
         File directory = cw.getDir("draw", Context.MODE_PRIVATE);
-        File inputFile = new File(directory.getAbsolutePath()+folder+"/"+protocollo+(pos+1)+"_score.txt");
-        File tempFile = new File(directory.getAbsolutePath()+folder+"/"+protocollo+(pos+1)+"_scoretmp.txt");
+        File inputFile = new File(directory.getAbsolutePath()+folder+"/"+protocollo+(pos)+"_score.txt");
+        File tempFile = new File(directory.getAbsolutePath()+folder+"/"+protocollo+(pos)+"_scoretmp.txt");
 
         BufferedReader reader = new BufferedReader(new FileReader(inputFile));
         BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
 
-        String currentLine; int i=0;
+        String currentLine;
 
-        while((currentLine = reader.readLine()) != null) {
-            if (i==1) {
-                i++;
-                writer.write(newValue + System.getProperty("line.separator"));
-            } else {
-                writer.write(currentLine + System.getProperty("line.separator"));
-                i++;
-            }
+        for (int i=0; (currentLine = reader.readLine()) != null; i++) {
+            if (i==1 && !newValue.equals("")) writer.write(newValue + System.getProperty("line.separator"));
+            else if (i==9 && !newValue2.equals("")) writer.write(newValue2 + System.getProperty("line.separator"));
+            else writer.write(currentLine + System.getProperty("line.separator"));
         }
         writer.close();
         reader.close();

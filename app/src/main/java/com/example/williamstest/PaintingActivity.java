@@ -404,6 +404,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                     outputStreamWriter.write("0 s"+"\n");
                     outputStreamWriter.write("0"+"\n");
                     outputStreamWriter.write("0"+"\n");
+                    outputStreamWriter.write("0pt.");
                     outputStreamWriter.flush();
                     outputStreamWriter.close();
                 } catch (IOException e) {
@@ -588,6 +589,8 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             outputStreamWriter.write(t2+"\n");
             outputStreamWriter.write(n+"\n");
             outputStreamWriter.write(undo+"\n");
+            if (tit.equals("Senza nome")) outputStreamWriter.write("0pt.");
+            else outputStreamWriter.write("1pt.");
             outputStreamWriter.flush();
             outputStreamWriter.close();
         } catch (IOException e) {

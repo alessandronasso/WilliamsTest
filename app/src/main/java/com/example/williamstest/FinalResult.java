@@ -75,8 +75,7 @@ public class FinalResult extends AppCompatActivity {
             else sum[4] += Integer.parseInt(values[1].replace("pt.",""));
             sum[1] += Integer.parseInt(values[2].replace("pt.",""));
             sum[2] += Integer.parseInt(values[3].replace("pt.",""));
-            if (values[4].equals("Senza nome")) sum[3] += 0;
-            else sum[3] += 0;
+            sum[3] += Integer.parseInt(values[9].replace("pt.",""));
         }
     }
 

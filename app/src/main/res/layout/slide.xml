@@ -200,7 +200,7 @@
                     android:textColor="#070404"
                     android:textSize="@dimen/_10sdp" />
 
-                <TextView
+                <EditText
                     android:id="@+id/t_item_5"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
