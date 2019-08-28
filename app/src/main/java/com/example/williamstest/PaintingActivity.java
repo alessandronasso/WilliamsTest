@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Pair;
 import android.view.Menu;
@@ -18,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -29,7 +32,10 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
 
@@ -95,6 +101,10 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
      */
     private int totalErase = 0, totalUndo = 0;
 
+    /**
+     * Standard name for each draw.
+     */
+    private String titoli = "Senza nome";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +122,18 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         LinearLayout paintLayout = (LinearLayout) findViewById(R.id.toprow);
         LinearLayout paintLayout2 = (LinearLayout) findViewById(R.id.bottomrow);
         title = (EditText) paintLayout.findViewById(R.id.edittitle);
+        title.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable arg0) { }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                titoli = s.toString();
+            }
+        });
         b1 = (Button) paintLayout2.findViewById(R.id.bb_1);
         b1.setOnClickListener(this);
         b2 = (Button) paintLayout2.findViewById(R.id.bb_2);
@@ -205,7 +227,6 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             String originalita = drawView.getScoreDrawInOut() + "pt.";
             String fluidita = (drawView.getScoreDrawInOut() != 0) ? "1pt." : "0pt.";
             String elaborazione = drawView.getSymmetryScore() + "pt.";
-            String titoli = drawView.getTitle();
             try {
                 getTemporaryTimes(Integer.parseInt(drawView.getReactionTime()), Integer.parseInt(drawView.getTimeToDraw()), drawView.getEraseNumber(), drawView.getUndoNumber());
                 saveTemporaryTimes(Integer.parseInt(drawView.getReactionTime()), Integer.parseInt(drawView.getTimeToDraw()), drawView.getEraseNumber(), drawView.getUndoNumber());
@@ -615,7 +636,9 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             outputStreamWriter.write(userLogged+"\n");
             outputStreamWriter.write(gender+"\n");
             outputStreamWriter.write(eta+"\n");
-            outputStreamWriter.write(protocol);
+            outputStreamWriter.write(protocol+"\n");
+            String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+            outputStreamWriter.write(currentDate);
             outputStreamWriter.flush();
             outputStreamWriter.close();
         } catch (IOException e) {

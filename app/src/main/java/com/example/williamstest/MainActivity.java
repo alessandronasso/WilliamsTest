@@ -119,6 +119,25 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Used for debugging. This method deletes all the tests.
+     */
+    public void deleteAllTests () {
+        File dir = new File("/data/user/0/com.example.williamstest/");
+        if (!dir.isDirectory()) throw new IllegalStateException();
+        for (File file : dir.listFiles()) {
+            if (file.getName().startsWith("app_draw")) {
+                File[] contents = file.listFiles();
+                if (contents != null) {
+                    for (File f : contents) {
+                        f.delete();
+                    }
+                }
+                file.delete();
+            }
+        }
+    }
+
     @Override
     public void onBackPressed() { }
 }

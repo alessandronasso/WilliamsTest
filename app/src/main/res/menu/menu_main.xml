@@ -7,19 +7,19 @@
     <item
         android:id="@+id/ordina_genere_uomo"
         android:orderInCategory="100"
-        android:title="Filtra per: Maschio"/>
+        android:title="Filtra per genere: Maschio"/>
     <item
         android:id="@+id/ordina_genere_donna"
         android:orderInCategory="200"
-        android:title="Filtra per: Femmina" />
+        android:title="Filtra per genere: Femmina" />
     <item
         android:id="@+id/ordina_eta_d"
         android:orderInCategory="300"
-        android:title="Ordina per eta' (crescente)" />
+        android:title="Ordina per: Eta' (crescente)" />
     <item
         android:id="@+id/ordina_eta_c"
         android:orderInCategory="300"
-        android:title="Ordina per eta' (decrescente)" />
+        android:title="Ordina per: Eta' (decrescente)" />
     <item
         android:id="@+id/ordina_prot_a"
         android:orderInCategory="300"
@@ -28,5 +28,13 @@
         android:id="@+id/ordina_prot_b"
         android:orderInCategory="300"
         android:title="Filtra per: Protocollo B" />
+    <item
+        android:id="@+id/ordina_data_d"
+        android:orderInCategory="300"
+        android:title="Ordina per: Data (crescente)" />
+    <item
+        android:id="@+id/ordina_data_c"
+        android:orderInCategory="300"
+        android:title="Ordina per: Data (decrescente)" />
 
 </menu>

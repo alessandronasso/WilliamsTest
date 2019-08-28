@@ -3,6 +3,7 @@ package com.example.williamstest;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.net.ParseException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatCallback;
@@ -23,6 +24,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -214,6 +216,37 @@ public class UserList extends ListActivity implements AppCompatCallback {
             final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list, R.id.textList, u2);
             setListAdapter(arAd);
             arAd.notifyDataSetChanged();
+        } else if (id == R.id.ordina_data_d) {
+            try { user = loadUser(); } catch (IOException e) { e.printStackTrace(); }
+            List<String> user_list = new ArrayList<String>(Arrays.asList(user));
+            user_list.sort(Comparator.comparing(s -> {
+                String stringDate = s.substring(s.lastIndexOf(':') + 1).trim();
+                try {
+                    return new SimpleDateFormat("dd-mm-yyyy").parse(stringDate);
+                } catch (ParseException | java.text.ParseException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }));
+            final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list, R.id.textList, user_list);
+            setListAdapter(arAd);
+            arAd.notifyDataSetChanged();
+        } else if (id == R.id.ordina_data_c) {
+            try { user = loadUser(); } catch (IOException e) { e.printStackTrace(); }
+            List<String> user_list = new ArrayList<String>(Arrays.asList(user));
+            user_list.sort(Comparator.comparing(s -> {
+                String stringDate = s.substring(s.lastIndexOf(':') + 1).trim();
+                try {
+                    return new SimpleDateFormat("dd-mm-yyyy").parse(stringDate);
+                } catch (ParseException | java.text.ParseException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }));
+            Collections.reverse(user_list);
+            final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list, R.id.textList, user_list);
+            setListAdapter(arAd);
+            arAd.notifyDataSetChanged();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -259,8 +292,9 @@ public class UserList extends ListActivity implements AppCompatCallback {
                         if (line.equals("0")) user[arrayString] += "    Eta: /   ";
                         else user[arrayString] += "    Eta: " + line+"   ";
                         line = reader.readLine();
-                        user[arrayString++] += "    Protocollo: " + line+"   ";
-                        System.out.println(user[arrayString-1]);
+                        user[arrayString] += "    Protocollo: " + line+"   ";
+                        line = reader.readLine();
+                        user[arrayString++] += "    Data: " + line+"   ";
                     }
                     f.close();
                 }
