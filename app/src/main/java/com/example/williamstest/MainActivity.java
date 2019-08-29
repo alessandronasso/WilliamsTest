@@ -1,6 +1,7 @@
 package com.example.williamstest;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -60,19 +61,7 @@ public class MainActivity extends AppCompatActivity {
                 RadioButton selectedRadioButton = (RadioButton) formElementsView.findViewById(selectedId);
                 b1.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
-                        Intent myIntent = new Intent(MainActivity.this, PaintingActivity.class);
-                        myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        if (myCheckBox.isChecked()) myIntent.putExtra("palette", "yes");
-                        else myIntent.putExtra("palette", "no");
-                        myIntent.putExtra("gender", selectedRadioButton.getText());
-                        String eta = nameEditText.getText().toString();
-                        if (eta.length()!=0) myIntent.putExtra("eta", eta);
-                        else myIntent.putExtra("eta", "0");
-                        myIntent.putExtra("protocollo", "a");
-                        myIntent.putExtra("cornice", "1" + "");
-                        myIntent.putExtra("userLogged", userLogged);
-                        myIntent.putExtra("first", "yes");
-                        MainActivity.this.startActivity(myIntent);
+                        loadProtocol("a", myCheckBox.isChecked(), nameEditText.getText().toString(), selectedRadioButton.getText().toString());
                     }
                 });
                 alert.show().getWindow().setLayout(800,550);
@@ -90,19 +79,7 @@ public class MainActivity extends AppCompatActivity {
                 RadioButton selectedRadioButton = (RadioButton) formElementsView.findViewById(selectedId);
                 b1.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
-                        Intent myIntent = new Intent(MainActivity.this, PaintingActivity.class);
-                        myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        if (myCheckBox.isChecked()) myIntent.putExtra("palette", "yes");
-                        else myIntent.putExtra("palette", "no");
-                        myIntent.putExtra("gender", selectedRadioButton.getText());
-                        String eta = nameEditText.getText().toString();
-                        if (eta.length()!=0) myIntent.putExtra("eta", eta);
-                        else myIntent.putExtra("eta", "0");
-                        myIntent.putExtra("protocollo", "b");
-                        myIntent.putExtra("cornice", "1" + "");
-                        myIntent.putExtra("userLogged", userLogged);
-                        myIntent.putExtra("first", "yes");
-                        MainActivity.this.startActivity(myIntent);
+                        loadProtocol("b", myCheckBox.isChecked(), nameEditText.getText().toString(), selectedRadioButton.getText().toString());
                     }
                 });
                 alert.show().getWindow().setLayout(800,550);
@@ -138,6 +115,50 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * This method is used to load one of the protocol chosen by the user.
+     *
+     * @param protocol The protocol chosen by the user.
+     * @param palette Used to check if the user has enabled the palette.
+     * @param eta The eta inserted by the user.
+     * @param gender The gender checked by the user.
+     */
+    public void loadProtocol (String protocol, boolean palette, String eta, String gender) {
+        Intent myIntent = new Intent(MainActivity.this, PaintingActivity.class);
+        myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        if (palette) myIntent.putExtra("palette", "yes");
+        else myIntent.putExtra("palette", "no");
+        myIntent.putExtra("gender", gender);
+        if (eta.length()!=0) myIntent.putExtra("eta", eta);
+        else myIntent.putExtra("eta", "0");
+        myIntent.putExtra("protocollo", protocol);
+        myIntent.putExtra("cornice", "1" + "");
+        myIntent.putExtra("userLogged", userLogged);
+        myIntent.putExtra("first", "yes");
+        MainActivity.this.startActivity(myIntent);
+    }
+
     @Override
-    public void onBackPressed() { }
+    public void onBackPressed() {
+        AlertDialog.Builder builder=new AlertDialog.Builder(MainActivity.this);
+        builder.setMessage("Vuoi effettuare il logout?");
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                Intent myIntent = new Intent(MainActivity.this, LoginActivity.class);
+                myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                MainActivity.this.startActivity(myIntent);
+            }
+        });
+
+        builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog alert=builder.create();
+        alert.show();
+    }
 }
