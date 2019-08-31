@@ -20,13 +20,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
@@ -106,6 +103,16 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
      */
     private String titoli = "Senza nome";
 
+    /**
+     * List of draws completed.
+     */
+    private ArrayList<Cornice> corniciCompletate = null;
+
+    /**
+     * List of draws to complete.
+     */
+    private ArrayList<Cornice> corniciNC = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,6 +121,10 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         cornice = extras.getString("cornice");
         palette = extras.getString("palette");
         logged = extras.getString("userLogged");
+        corniciCompletate = (ArrayList<Cornice>)getIntent().getSerializableExtra("corniciCompletate");
+        if (corniciCompletate==null) corniciCompletate = new ArrayList<>();
+        corniciNC = (ArrayList<Cornice>)getIntent().getSerializableExtra(("corniciNC"));
+        if (corniciNC==null) corniciNC = new ArrayList<>();
         setContentView(R.layout.activity_painting);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         drawView = (DrawingView) findViewById(R.id.drawing);
@@ -209,19 +220,8 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             drawView.updateStroke(25);
         } else if (view.getId() == R.id.undo_btn) drawView.restoreDraw();
         else if (view.equals(b1)) {
-            ContextWrapper cw = new ContextWrapper(this);
-            File directory = cw.getDir("draw" + (folder), Context.MODE_PRIVATE);
-            File file = new File(directory.getAbsolutePath() + "/completed.txt");
-            try {
-                FileOutputStream fos = new FileOutputStream(file, true);
-                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fos);
-                outputStreamWriter.append(cornice).append(String.valueOf('\n'));
-                outputStreamWriter.flush();
-                outputStreamWriter.close();
-                deleteFromNotCompleted();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            corniciCompletate.add(new Cornice(cornice));
+            deleteFromNotCompleted();
             loadShapePoints();
             String flessibilita = "---";
             String originalita = drawView.getScoreDrawInOut() + "pt.";
@@ -239,7 +239,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             String undo = totalUndo + "";
             saveImage();
             writeScore(fluidita, flessibilita, originalita, elaborazione, titoli, tempoReazione, tempoCompletamentoDisegno, numeroCancellature, undo);
-            try { nextDraw = findNextNotCompleted(); } catch (IOException e) { e.printStackTrace(); }
+            nextDraw = findNextNotCompleted();
             if (nextDraw != -1 && nextDraw < 13) {
                 drawView.clearBitmap();
                 Intent myIntent = new Intent(PaintingActivity.this, PaintingActivity.class);
@@ -249,6 +249,8 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 myIntent.putExtra("first", "no");
                 myIntent.putExtra("palette", palette);
                 myIntent.putExtra("userLogged", logged);
+                myIntent.putExtra("corniciCompletate", corniciCompletate);
+                myIntent.putExtra("corniciNC", corniciNC);
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 PaintingActivity.this.startActivity(myIntent);
             } else {
@@ -280,12 +282,8 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            int prev = -1;
-            try {
-                prev = findPreviousNotCompleted();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            corniciNC.add(new Cornice(cornice));
+            int prev = findPreviousNotCompleted();
             if (prev != -1) {
                 drawView.clearBitmap();
                 Intent myIntent = new Intent(PaintingActivity.this, PaintingActivity.class);
@@ -295,6 +293,8 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 myIntent.putExtra("first", "no");
                 myIntent.putExtra("palette", palette);
                 myIntent.putExtra("userLogged", logged);
+                myIntent.putExtra("corniciCompletate", corniciCompletate);
+                myIntent.putExtra("corniciNC", corniciNC);
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 PaintingActivity.this.startActivity(myIntent);
             } else
@@ -306,24 +306,8 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            ContextWrapper cw = new ContextWrapper(this);
-            File directory = cw.getDir("draw" + (folder), Context.MODE_PRIVATE);
-            File file = new File(directory.getAbsolutePath() + "/not-completed.txt");
-            try {
-                FileOutputStream fos = new FileOutputStream(file, true);
-                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fos);
-                outputStreamWriter.append(cornice).append(String.valueOf('\n'));
-                outputStreamWriter.flush();
-                outputStreamWriter.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            int next = -1;
-            try {
-                next = findNextNotCompleted();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            corniciNC.add(new Cornice(cornice));
+            int next = findNextNotCompleted();
             if (next > 12)
                 Toast.makeText(this, "Non ci sono altri disegni", Toast.LENGTH_LONG).show();
             else if (next != -1) {
@@ -335,6 +319,8 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 myIntent.putExtra("first", "no");
                 myIntent.putExtra("palette", palette);
                 myIntent.putExtra("userLogged", logged);
+                myIntent.putExtra("corniciCompletate", corniciCompletate);
+                myIntent.putExtra("corniciNC", corniciNC);
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 PaintingActivity.this.startActivity(myIntent);
             }
@@ -440,23 +426,13 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
      * If it doesn't exists, returns a message.
      *
      * @return The first shape before the current one that has not been completed.
-     * @throws IOException
      */
-    public int findPreviousNotCompleted () throws IOException {
-        ContextWrapper cw = new ContextWrapper(this);
+    public int findPreviousNotCompleted () {
         int n = -1;
-        File directory = cw.getDir("draw"+(folder), Context.MODE_PRIVATE);
-        if (!(new File(directory.getAbsolutePath()+"/not-completed.txt")).exists()) return n;
-        else {
-            FileReader f = new FileReader(directory.getAbsolutePath()+"/not-completed.txt");
-            LineNumberReader reader = new LineNumberReader(f);
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (Integer.parseInt(line)<Integer.parseInt(cornice) && Integer.parseInt(line)>n) n = Integer.parseInt(line);
-            }
-            f.close();
+        for (int i=0; i<corniciNC.size(); i++) {
+            if (Integer.parseInt(corniciNC.get(i).getNumero())<Integer.parseInt(cornice) && Integer.parseInt(corniciNC.get(i).getNumero())>n)
+                n = Integer.parseInt(corniciNC.get(i).getNumero());
         }
-
         return n;
     }
 
@@ -465,55 +441,25 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
      * If it doesn't exists, returns the next one.
      *
      * @return The first shape after the current one that has not been completed.
-     * @throws IOException
      */
-    public int findNextNotCompleted () throws IOException {
-        ContextWrapper cw = new ContextWrapper(this);
-        int countLine=0;
-        File directory = cw.getDir("draw"+(folder), Context.MODE_PRIVATE);
-        if ((new File(directory.getAbsolutePath()+"/completed.txt")).exists()) {
-            boolean no = false;
-            for (int count = Integer.parseInt(cornice)+1; count<13; count++, no=false) {
-                FileReader f = new FileReader(directory.getAbsolutePath()+"/completed.txt");
-                LineNumberReader reader = new LineNumberReader(f);
-                String line;
-                for (countLine=0; (line = reader.readLine()) != null; countLine++) {
-                    if (Integer.parseInt(line) == count) no=true;
-                }
-                if (!no) return count;
-                f.close();
+    public int findNextNotCompleted () {
+        boolean no = false;
+        for (int count = Integer.parseInt(cornice)+1; count<13; count++, no=false) {
+            for (int i=0; i<corniciCompletate.size(); i++) {
+                if (Integer.parseInt(corniciCompletate.get(i).getNumero())==count) no=true;
             }
-            return -1;
-        } else return Integer.parseInt(cornice)+1;
+            if (!no) return count;
+        }
+        return Integer.parseInt(cornice)+1;
     }
 
     /**
      * This method remove the current shape from the list of the
      * skipped draw (if present).
-     *
-     * @throws IOException
      */
-    public void deleteFromNotCompleted () throws IOException {
-        ContextWrapper cw = new ContextWrapper(this);
-        File directory = cw.getDir("draw"+(folder), Context.MODE_PRIVATE);
-        if (new File(directory.getAbsolutePath()+"/not-completed.txt").exists()) {
-            File inputFile = new File(directory.getAbsolutePath() + "/not-completed.txt");
-            File tempFile = new File(directory.getAbsolutePath() + "/not-completedtmp.txt");
-
-            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-            BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
-
-            String lineToRemove = cornice;
-            String currentLine;
-
-            while ((currentLine = reader.readLine()) != null) {
-                String trimmedLine = currentLine.trim();
-                if (trimmedLine.equals(lineToRemove)) continue;
-                writer.write(currentLine + System.getProperty("line.separator"));
-            }
-            writer.close();
-            reader.close();
-            tempFile.renameTo(inputFile);
+    public void deleteFromNotCompleted () {
+        for (int i=0; i<corniciNC.size(); i++) {
+            if (corniciNC.get(i).getNumero().equals(cornice)) corniciNC.remove(i--);
         }
     }
 
