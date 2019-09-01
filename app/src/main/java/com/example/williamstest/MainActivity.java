@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         File dir = new File("/data/user/0/com.example.williamstest/");
         if (!dir.isDirectory()) throw new IllegalStateException();
         Bundle extras = getIntent().getExtras();

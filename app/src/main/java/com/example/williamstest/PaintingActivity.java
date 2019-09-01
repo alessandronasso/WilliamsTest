@@ -102,11 +102,6 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
     private String titoli = "Senza nome";
 
     /**
-     * List of draws completed.
-     */
-    private ArrayList<Cornice> corniciCompletate = null;
-
-    /**
      * List of draws to complete.
      */
     private ArrayList<Cornice> corniciNC = null;
@@ -124,8 +119,6 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         cornice = extras.getString("cornice");
         palette = extras.getString("palette");
         logged = extras.getString("userLogged");
-        corniciCompletate = (ArrayList<Cornice>)getIntent().getSerializableExtra("corniciCompletate");
-        if (corniciCompletate==null) corniciCompletate = new ArrayList<>();
         corniciNC = (ArrayList<Cornice>)getIntent().getSerializableExtra(("corniciNC"));
         if (corniciNC==null) corniciNC = new ArrayList<>();
         tempi = (ArrayList<TimesAndErasures>)getIntent().getSerializableExtra(("tempi"));
@@ -221,8 +214,8 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             drawView.updateStroke(25);
         } else if (view.getId() == R.id.undo_btn) drawView.restoreDraw();
         else if (view.equals(b1)) {
-            corniciCompletate.add(new Cornice(cornice, null));
-            deleteFromNotCompleted();
+            if (findLocation()==-1) corniciNC.add(new Cornice(cornice, null, true));
+            else corniciNC.set(findLocation(), (new Cornice(cornice, null, true)));
             loadShapePoints();
             String flessibilita = "---";
             String originalita = drawView.getScoreDrawInOut() + "pt.";
@@ -230,8 +223,8 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             String elaborazione = drawView.getSymmetryScore() + "pt.";
             getTemporaryTimes(Integer.parseInt(drawView.getReactionTime()), Integer.parseInt(drawView.getTimeToDraw()), drawView.getEraseNumber(), drawView.getUndoNumber());
             tempi.add(new TimesAndErasures(cornice, Integer.parseInt(drawView.getReactionTime()), Integer.parseInt(drawView.getTimeToDraw()), drawView.getEraseNumber(), drawView.getUndoNumber()));
-            String tempoReazione = timeToDraw + " s";
-            String tempoCompletamentoDisegno = timeToComplete + " s";
+            String tempoReazione = (fluidita.equals("1pt.")) ? ""+timeToDraw+ " s" : "0" + " s";
+            String tempoCompletamentoDisegno = (fluidita.equals("1pt.")) ? ""+timeToComplete+ " s" : "0" + " s";
             String numeroCancellature = totalErase + "";
             String undo = totalUndo + "";
             saveImage();
@@ -246,7 +239,6 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 myIntent.putExtra("first", "no");
                 myIntent.putExtra("palette", palette);
                 myIntent.putExtra("userLogged", logged);
-                myIntent.putExtra("corniciCompletate", corniciCompletate);
                 myIntent.putExtra("corniciNC", corniciNC);
                 myIntent.putExtra("tempi", tempi);
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -275,8 +267,8 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             }
         } else if (view.equals(b3)) {
             tempi.add(new TimesAndErasures(cornice, Integer.parseInt(drawView.getReactionTime()), Integer.parseInt(drawView.getTimeToDraw()), drawView.getEraseNumber(), drawView.getUndoNumber()));
-            if (findLocation()==-1) corniciNC.add(new Cornice(cornice, savePoints()));
-            else corniciNC.set(findLocation(), (new Cornice(cornice, savePoints())));
+            if (findLocation()==-1) corniciNC.add(new Cornice(cornice, savePoints(), false));
+            else corniciNC.set(findLocation(), (new Cornice(cornice, savePoints(), false)));
             int prev = findPreviousNotCompleted();
             if (prev != -1) {
                 drawView.clearBitmap();
@@ -287,7 +279,6 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 myIntent.putExtra("first", "no");
                 myIntent.putExtra("palette", palette);
                 myIntent.putExtra("userLogged", logged);
-                myIntent.putExtra("corniciCompletate", corniciCompletate);
                 myIntent.putExtra("corniciNC", corniciNC);
                 myIntent.putExtra("tempi", tempi);
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -296,8 +287,8 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 Toast.makeText(this, "Non ci sono altri disegni", Toast.LENGTH_LONG).show();
         } else if (view.equals(b2)) {
             tempi.add(new TimesAndErasures(cornice, Integer.parseInt(drawView.getReactionTime()), Integer.parseInt(drawView.getTimeToDraw()), drawView.getEraseNumber(), drawView.getUndoNumber()));
-            if (findLocation()==-1) corniciNC.add(new Cornice(cornice, savePoints()));
-            else corniciNC.set(findLocation(), (new Cornice(cornice, savePoints())));
+            if (findLocation()==-1) corniciNC.add(new Cornice(cornice, savePoints(), false));
+            else corniciNC.set(findLocation(), (new Cornice(cornice, savePoints(), false)));
             int next = findNextNotCompleted();
             if (next > 12)
                 Toast.makeText(this, "Non ci sono altri disegni", Toast.LENGTH_LONG).show();
@@ -310,7 +301,6 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 myIntent.putExtra("first", "no");
                 myIntent.putExtra("palette", palette);
                 myIntent.putExtra("userLogged", logged);
-                myIntent.putExtra("corniciCompletate", corniciCompletate);
                 myIntent.putExtra("corniciNC", corniciNC);
                 myIntent.putExtra("tempi", tempi);
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -333,6 +323,8 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         for (int i=0; i<tempi.size() && !exit; i++) {
             if (tempi.get(i).getCornice().equals(cornice)) {
                 exit = true;
+                timeToComplete+= tempi.get(i).getTimeToComplete();
+                timeToDraw += tempi.get(i).getTimeToDraw();
                 totalErase += tempi.get(i).getEraseN();
                 totalUndo += tempi.get(i).getUndoN();
                 for (int j=i+1; j<tempi.size(); j++) {
@@ -343,12 +335,11 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                             timeToDraw = tempi.get(j).getTimeToDraw();
                     }
                     timeToComplete += tempi.get(j).getTimeToComplete();
+                    timeToComplete += tempi.get(j).getTimeToDraw();
                 }
                 if (timeToDraw == 0 && timeToD != 0) timeToDraw = timeToD;
-                else timeToDraw = 0;
             }
         }
-        if (timeToDraw==0 && timeToD==0) timeToComplete = 0; else timeToDraw=timeToD;
     }
 
     /**
@@ -393,7 +384,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
     public int findPreviousNotCompleted () {
         int n = -1;
         for (int i=0; i<corniciNC.size(); i++) {
-            if (Integer.parseInt(corniciNC.get(i).getNumero())<Integer.parseInt(cornice) && Integer.parseInt(corniciNC.get(i).getNumero())>n)
+            if (!corniciNC.get(i).getCompleted() && Integer.parseInt(corniciNC.get(i).getNumero())<Integer.parseInt(cornice) && Integer.parseInt(corniciNC.get(i).getNumero())>n)
                 n = Integer.parseInt(corniciNC.get(i).getNumero());
         }
         return n;
@@ -408,23 +399,14 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
     public int findNextNotCompleted () {
         boolean no = false;
         for (int count = Integer.parseInt(cornice)+1; count<13; count++, no=false) {
-            for (int i=0; i<corniciCompletate.size(); i++) {
-                if (Integer.parseInt(corniciCompletate.get(i).getNumero())==count) no=true;
+            for (int i=0; i<corniciNC.size(); i++) {
+                if (corniciNC.get(i).getCompleted() && Integer.parseInt(corniciNC.get(i).getNumero())==count) no=true;
             }
             if (!no) return count;
         }
         return Integer.parseInt(cornice)+1;
     }
 
-    /**
-     * This method remove the current shape from the list of the
-     * skipped draw (if present).
-     */
-    public void deleteFromNotCompleted () {
-        for (int i=0; i<corniciNC.size(); i++) {
-            if (corniciNC.get(i).getNumero().equals(cornice)) corniciNC.remove(i--);
-        }
-    }
 
     /**
      * This method loads the coordinates of the current shape. They are stored
