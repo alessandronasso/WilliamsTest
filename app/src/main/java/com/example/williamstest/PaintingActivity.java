@@ -23,10 +23,8 @@ import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
@@ -179,11 +177,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             findFolder();
             writeInfoTest(extras.getString("gender"), extras.getString("eta"), extras.getString("userLogged"));
         } else folder = extras.getInt("cartella");
-        try {
-            restorePoints();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        restorePoints();
     }
 
     /**
@@ -227,7 +221,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             drawView.updateStroke(25);
         } else if (view.getId() == R.id.undo_btn) drawView.restoreDraw();
         else if (view.equals(b1)) {
-            corniciCompletate.add(new Cornice(cornice));
+            corniciCompletate.add(new Cornice(cornice, null));
             deleteFromNotCompleted();
             loadShapePoints();
             String flessibilita = "---";
@@ -281,12 +275,8 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             }
         } else if (view.equals(b3)) {
             tempi.add(new TimesAndErasures(cornice, Integer.parseInt(drawView.getReactionTime()), Integer.parseInt(drawView.getTimeToDraw()), drawView.getEraseNumber(), drawView.getUndoNumber()));
-            try {
-                savePoints();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            corniciNC.add(new Cornice(cornice));
+            if (findLocation()==-1) corniciNC.add(new Cornice(cornice, savePoints()));
+            else corniciNC.set(findLocation(), (new Cornice(cornice, savePoints())));
             int prev = findPreviousNotCompleted();
             if (prev != -1) {
                 drawView.clearBitmap();
@@ -306,12 +296,8 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 Toast.makeText(this, "Non ci sono altri disegni", Toast.LENGTH_LONG).show();
         } else if (view.equals(b2)) {
             tempi.add(new TimesAndErasures(cornice, Integer.parseInt(drawView.getReactionTime()), Integer.parseInt(drawView.getTimeToDraw()), drawView.getEraseNumber(), drawView.getUndoNumber()));
-            try {
-                savePoints();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            corniciNC.add(new Cornice(cornice));
+            if (findLocation()==-1) corniciNC.add(new Cornice(cornice, savePoints()));
+            else corniciNC.set(findLocation(), (new Cornice(cornice, savePoints())));
             int next = findNextNotCompleted();
             if (next > 12)
                 Toast.makeText(this, "Non ci sono altri disegni", Toast.LENGTH_LONG).show();
@@ -570,62 +556,55 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
     }
 
     /**
-     * This method saves the points drawn by the user if he decides to skip the current shape.
+     * This method searches if the draw is already in the list.
      *
-     * @throws IOException
+     * @return the position of the current shape in the list
      */
-    public void savePoints () throws IOException {
-        ArrayList<ArrayList<Pair<Float,Float>>> points = new ArrayList<>(drawView.getPoints());
-        if (points.size()!=0) {
-            ContextWrapper cw = new ContextWrapper(this);
-            File directory = cw.getDir("draw"+(folder), Context.MODE_PRIVATE);
-            File file = new File(directory.getAbsolutePath()+"/"+protocol + cornice+"_tmpscore.txt");
-            FileOutputStream fos = new FileOutputStream(file);
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fos);
-            for (int i=0; i<points.size(); i++) {
-                for (int j=0; j<points.get(i).size(); j++) {
-                    outputStreamWriter.write(points.get(i).get(j).first+"\n");
-                    outputStreamWriter.write(points.get(i).get(j).second+"\n");
-                }
-                outputStreamWriter.write("----\n");
-            }
-            outputStreamWriter.flush();
-            outputStreamWriter.close();
-        } else {
-            ContextWrapper cw = new ContextWrapper(this);
-            File directory = cw.getDir("draw"+(folder), Context.MODE_PRIVATE);
-            if (new File(directory.getAbsolutePath()+"/"+protocol + cornice+"_tmpscore.txt").exists())
-                new File(directory.getAbsolutePath()+"/"+protocol + cornice+"_tmpscore.txt").delete();
-
+    public int findLocation () {
+        for (int i=0; i<corniciNC.size(); i++) {
+            if (corniciNC.get(i).getNumero().equals(cornice)) return i;
         }
+        return -1;
+    }
+
+    /**
+     * This method saves the points drawn by the user if he decides to skip the current shape.
+     */
+    public ArrayList<ArrayList<Float>> savePoints () {
+        ArrayList<ArrayList<Pair<Float,Float>>> points = new ArrayList<>(drawView.getPoints());
+        ArrayList<ArrayList<Float>> toReturn = new ArrayList<>();
+        if (points.size()!=0) {
+            for (int i=0; i<points.size(); i++) {
+                ArrayList<Float> tmp = new ArrayList<>(points.get(i).size());
+                for (int j=0; j<points.get(i).size(); j++) {
+                    tmp.add(points.get(i).get(j).first);
+                    tmp.add(points.get(i).get(j).second);
+                }
+                toReturn.add(tmp);
+            }
+        }
+        return toReturn;
     }
 
     /**
      * This method restores the points drawn before skipping the shape.
      *
-     * @throws IOException
      */
-    public void restorePoints () throws IOException {
+    public void restorePoints ()  {
         ArrayList<ArrayList<Pair<Float,Float>>> points = new ArrayList<>();
-        ContextWrapper cw = new ContextWrapper(this);
-        File directory = cw.getDir("draw"+(folder), Context.MODE_PRIVATE);
-        if (new File(directory.getAbsolutePath()+"/"+protocol + cornice+"_tmpscore.txt").exists()) {
-            FileReader f = new FileReader(directory.getAbsolutePath() + "/" + protocol + cornice + "_tmpscore.txt");
-            LineNumberReader reader = new LineNumberReader(f);
-            String line;
-            Float temp = null;
-            ArrayList<Pair<Float, Float>> tmp = new ArrayList<>();
-            for (int i = 0; (line = reader.readLine()) != null; i++) {
-                if (line.equals("----")) {
-                    i++;
-                    points.add(new ArrayList<>(tmp));
-                    tmp = new ArrayList<>();
-                } else if (i % 2 == 0) temp = Float.parseFloat(line);
-                else tmp.add(new Pair<>(temp, Float.parseFloat(line)));
+        ArrayList<Pair<Float,Float>> toSet = new ArrayList<>();
+        for (int i=0; i<corniciNC.size(); i++) {
+            if (corniciNC.get(i).getNumero().equals(cornice)) {
+                for (int j=0; j<corniciNC.get(i).getPoints().size(); j++) {
+                    toSet = new ArrayList<>();
+                    for (int x=0; x<corniciNC.get(i).getPoints().get(j).size(); x++) {
+                        toSet.add(new Pair<>(corniciNC.get(i).getPoints().get(j).get(x), corniciNC.get(i).getPoints().get(j).get(++x)));
+                    }
+                    points.add(toSet);
+                }
             }
-            f.close();
-            drawView.setPoints(points);
         }
+        drawView.setPoints(points);
     }
 
     @Override
