@@ -106,12 +106,17 @@ public class DrawingView extends View {
     /**
      * Strings to determinate the score of the symmetries.
      */
-    private int symmetryInside=0, symmetryOutside=0, asymmetryInside=0, asymmetryOutside=0;
+    private int asymmetryInside=0, asymmetryOutside=0;
 
     /**
      *  Group of lines symmetric (to not check twice)
      */
     private ArrayList<ArrayList<Pair<Float,Float>>> sym = new ArrayList<>();;
+
+    /**
+     * Center of the current shape.
+     */
+    private Pair<Float,Float> centerPoint;
 
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -195,14 +200,17 @@ public class DrawingView extends View {
         float touchY = event.getY();
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                System.out.println(touchX+"\n"+touchY);
                 drawPath.moveTo(touchX, touchY);
                 points.add(new Pair<Float, Float>(touchX, touchY));
                 break;
             case MotionEvent.ACTION_MOVE:
+                System.out.println(touchX+"\n"+touchY);
                 drawPath.lineTo(touchX, touchY);
                 points.add(new Pair<Float, Float>(touchX, touchY));
                 break;
             case MotionEvent.ACTION_UP:
+                System.out.println(touchX+"\n"+touchY);
                 drawPath.lineTo(touchX, touchY);
                 points.add(new Pair<Float, Float>(touchX, touchY));
                 drawCanvas.drawPath(drawPath, drawPaint);
@@ -215,6 +223,7 @@ public class DrawingView extends View {
                 }
                 points.clear();
                 drawPath.reset();
+                System.out.println("-----------");
                 break;
             default:
                 return false;
@@ -446,39 +455,74 @@ public class DrawingView extends View {
             else { asymmetryInside = 1; asymmetryOutside = 1; }
         } else {
             for (int z=0; z<segments.size() && segments.get(z).size()>9; z++, symmetryFound=false) {
-                for (int i=z+1; i<segments.size() && segments.get(i).size()>9; i++) {
-                    if (between(z, i) || between(i, z)) {
-                        boolean similar = checkShape(z, segments.get(i));
-                        //System.out.println("SIMILAR");
-                        icp(z, segments.get(i));
-                        boolean invertX = checkShape(z, invertAxes(segments.get(i), "x"));
-                        //System.out.println("X AS");
-                        icp(z, reverse(segments.get(i)));
-                        boolean invertY = checkShape(z, invertAxes(segments.get(i), "y"));
-                        //System.out.println("Y AS");
-                        icp(i, reverse(segments.get(z)));
-                        if ((similar || invertX || invertY) && isInside(segments.get(z))==isInside(segments.get(i))) {
-                            symmetryFound = true;
-                            //check first shape
-                            if (isInside(segments.get(z))==1) symmetryInside = 1;
-                            else if (isInside(segments.get(z))==2) symmetryInside = 1;
-                            else { symmetryInside = 1; symmetryOutside = 1; }
-                            //check second shape
-                            if (isInside(segments.get(i))==1) symmetryInside = 1;
-                            else if (isInside(segments.get(i))==2) symmetryInside = 1;
-                            else { symmetryInside = 1; symmetryOutside = 1; }
-                            sym.add(segments.get(z));
-                            sym.add(segments.get(i));
+                if (notSym(segments.get(z))) {
+                    for (int i = z + 1; i < segments.size() && segments.get(i).size() > 9 && !symmetryFound; i++) {
+                        if ((between(z, i) || between(i, z)) && notSym(segments.get(i)) && findAreas(segments.get(z), segments.get(i))) {
+                            boolean similar = checkShape(z, segments.get(i));
+                            boolean invertX = checkShape(z, invertAxes(segments.get(i), "x"));
+                            boolean invertY = checkShape(z, invertAxes(segments.get(i), "y"));
+                            if ((similar || invertX || invertY) && isInside(segments.get(z)) == isInside(segments.get(i))) {
+                                symmetryFound = true;
+                                sym.add(segments.get(z));
+                                sym.add(segments.get(i));
+                            }
+                        }
+                    }
+                    if (!symmetryFound) {
+                        if (isInside(segments.get(z)) == 1) asymmetryInside = 1;
+                        else if (isInside(segments.get(z)) == 2) asymmetryOutside = 1;
+                        else {
+                            asymmetryInside = 1;
+                            asymmetryOutside = 1;
                         }
                     }
                 }
-                if (!symmetryFound && notSym(segments.get(z))) {
-                    if (isInside(segments.get(z))==1) asymmetryInside = 1;
-                    else if (isInside(segments.get(z))==2) asymmetryOutside = 1;
-                    else { asymmetryInside = 1; asymmetryOutside = 1; }
-                }
             }
         }
+    }
+
+    /**
+     * This methods check the areas where the segments are.
+     *
+     * @param points First list of points to check
+     * @param points2 Second list of points to check
+     * @return true if the shapes are in the same areas
+     */
+    public boolean findAreas (ArrayList<Pair<Float,Float>> points, ArrayList<Pair<Float,Float>> points2) {
+        boolean[] quadranti = {false, false, false, false};
+        for (int i=0; i<points.size(); i++) {
+            if (points.get(i).first<centerPoint.first && points.get(i).second>centerPoint.second) quadranti[0] = true;
+        }
+        for (int i=0; i<points.size(); i++) {
+            if (points.get(i).first>centerPoint.first && points.get(i).second>centerPoint.second) quadranti[1] = true;
+        }
+        for (int i=0; i<points.size(); i++) {
+            if (points.get(i).first>centerPoint.first && points.get(i).second<centerPoint.second) quadranti[2] = true;
+        }
+        for (int i=0; i<points.size(); i++) {
+            if (points.get(i).first<centerPoint.first && points.get(i).second<centerPoint.second) quadranti[3] = true;
+        }
+
+        boolean[] quadranti2 = {false, false, false, false};
+        for (int i=0; i<points2.size(); i++) {
+            if (points2.get(i).first<centerPoint.first && points2.get(i).second>centerPoint.second) quadranti2[0] = true;
+        }
+        for (int i=0; i<points2.size(); i++) {
+            if (points2.get(i).first>centerPoint.first && points2.get(i).second>centerPoint.second) quadranti2[1] = true;
+        }
+        for (int i=0; i<points2.size(); i++) {
+            if (points2.get(i).first>centerPoint.first && points2.get(i).second<centerPoint.second) quadranti2[2] = true;
+        }
+        for (int i=0; i<points2.size(); i++) {
+            if (points2.get(i).first<centerPoint.first && points2.get(i).second<centerPoint.second) quadranti2[3] = true;
+        }
+
+        int count = 0;
+        for (int i=0; i<4; i++) {
+            if (quadranti[i]!=quadranti2[i]) count++;
+        }
+
+        if (count>=1) return true; else return false;
     }
 
     /**
@@ -499,7 +543,6 @@ public class DrawingView extends View {
             sumValues+=copia.get(j2).first-copia.get(j2+nGroupsFirstShape-1).first;
             sumValues+=copia.get(j2).second-copia.get(j2+nGroupsFirstShape-1).second;
             nValuesFirstShape[j] = sumValues;
-            //System.out.println("Primo gruppo: "+sumValues);
         }
         ArrayList<Pair<Float,Float>> copia2 = points;
         int nGroupSecondShape = (copia2.size()*10)/100;
@@ -509,7 +552,6 @@ public class DrawingView extends View {
             sumValues+=copia2.get(j2).first-copia2.get(j2+nGroupSecondShape-1).first;
             sumValues+=copia2.get(j2).second-copia2.get(j2+nGroupSecondShape-1).second;
             nValuesSecondShape[j] = sumValues;
-            //System.out.println("Secondo gruppo: "+sumValues);
         }
         int differences[] = new int[10];
         int numberOf = 0;
@@ -517,8 +559,8 @@ public class DrawingView extends View {
             differences[index] = nValuesFirstShape[index] - nValuesSecondShape[index];
             if (differences[index]<0) differences[index] = -differences[index];
             if (differences[index]<nGroupsFirstShape*2.5) numberOf++;
-            //System.out.println("Differenze: "+differences[index]);
         }
+        System.out.println("NUMBER OF: "+numberOf);
         if (numberOf>=6) return true; else return false;
     }
 
@@ -576,7 +618,6 @@ public class DrawingView extends View {
             eDist += (Math.pow(copia.get(i).first*Math.cos(rotation)-copia.get(i).second*Math.sin(rotation)+Tx-copia2.get(i).first, 2.0)+Math.pow(copia.get(i).first*Math.sin(rotation)+copia.get(i).second*Math.cos(rotation)+Ty-copia2.get(i).second, 2.0));
         }
 
-        //System.out.println("EDIST: "+eDist);
         return eDist;
     }
 
@@ -588,7 +629,8 @@ public class DrawingView extends View {
      * @return if the shapes size are similar
      */
     private boolean between (int i1, int i2) {
-        return segments.get(i1).size()>(segments.get(i2).size()/2) && segments.get(i1).size()<((segments.get(i2).size())*2);
+        double flexValue = 2.0;
+        return segments.get(i1).size()>(segments.get(i2).size()/flexValue) && segments.get(i1).size()<((segments.get(i2).size())*flexValue);
     }
 
     /**
@@ -681,6 +723,8 @@ public class DrawingView extends View {
     public void setPoints (ArrayList<ArrayList<Pair<Float,Float>>> pts) {
         segments = new ArrayList<>(pts);
     }
+
+    public void setCenterPoint (Pair p1) { centerPoint = p1; }
 
     /**
      * This method helps to clear the stack.

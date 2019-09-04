@@ -174,7 +174,7 @@ public class UserList extends ListActivity implements AppCompatCallback {
             List<String> user_list = new ArrayList<String>(Arrays.asList(user));
             List<String> u2 = new ArrayList<String>();
             for (int i = 0; i < user_list.size(); i++)
-                if (!user_list.get(i).contains(" / ")) u2.add(user_list.get(i));
+                if (!user_list.get(i).contains("Eta: / ")) u2.add(user_list.get(i));
             Collections.sort(u2, new Comparator<String>() {
                 public int compare(String o1, String o2) {
                     return Comparator.comparingInt(this::extractInt)

@@ -66,11 +66,14 @@ public class MainActivity extends AppCompatActivity {
                 AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this).setView(formElementsView);
                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                int selectedId = genderRadioGroup.getCheckedRadioButtonId();
-                RadioButton selectedRadioButton = (RadioButton) formElementsView.findViewById(selectedId);
                 b1.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
-                        loadProtocol(myCheckBox.isChecked(), nameEditText.getText().toString(), selectedRadioButton.getText().toString());
+                        final int selectedId= genderRadioGroup.getCheckedRadioButtonId();
+                        RadioButton selectedRadioButton = (RadioButton) formElementsView.findViewById(selectedId);
+                        if (selectedId==-1)
+                            loadProtocol(myCheckBox.isChecked(), nameEditText.getText().toString(), "/");
+                        else
+                            loadProtocol(myCheckBox.isChecked(), nameEditText.getText().toString(), selectedRadioButton.getText().toString());
                     }
                 });
                 alert.show().getWindow().setLayout(800,550);

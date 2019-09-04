@@ -223,6 +223,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                                 corniciNC.add(new Cornice(cornice, null, true));
                             else corniciNC.set(findLocation(), (new Cornice(cornice, null, true)));
                             loadShapePoints();
+                            loadCenterPoint();
                             String flessibilita = "---";
                             String originalita = drawView.getScoreDrawInOut() + "pt.";
                             String fluidita = (drawView.getScoreDrawInOut() != 0) ? "1pt." : "0pt.";
@@ -483,6 +484,40 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             }
         }
         drawView.setShape(points);
+    }
+
+    /**
+     * This method loads the center points of the current shape. They are stored
+     * in the asset folder in a file whose name is based on the protocol and
+     * the shape number.
+     */
+    public void loadCenterPoint () {
+        BufferedReader reader = null;
+        float height = drawView.getCanvasHeight();
+        float width = drawView.getCanvasWidth();
+        float tmp = 0;
+        Pair p1 = new Pair<Float, Float>(null, null);
+        try {
+            reader = new BufferedReader(new InputStreamReader(getAssets().open(protocol+cornice+"_center")));
+            String mLine;
+            for (int elem=0; (mLine = reader.readLine()) != null; elem++) {
+                mLine = mLine.replaceAll("\\s+","");
+                if (elem%2==0) {
+                    tmp = Float.parseFloat(mLine);
+                } else {
+                    float x = (width/2540)*(Float.valueOf(tmp));
+                    float y = (height/1109)*(Float.valueOf(Float.parseFloat(mLine)));
+                    p1 = new Pair(x, y);
+                }
+            }
+        } catch (IOException e) { } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) { }
+            }
+        }
+        drawView.setCenterPoint(p1);
     }
 
     /**
