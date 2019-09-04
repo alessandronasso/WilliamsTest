@@ -19,7 +19,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -244,6 +243,12 @@ public class UserList extends ListActivity implements AppCompatCallback {
                 return null;
             }));
             Collections.reverse(user_list);
+            final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list, R.id.textList, user_list);
+            setListAdapter(arAd);
+            arAd.notifyDataSetChanged();
+        } else if (id == R.id.remove_filter) {
+            try { user = loadUser(); } catch (IOException e) { e.printStackTrace(); }
+            List<String> user_list = new ArrayList<String>(Arrays.asList(user));
             final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list, R.id.textList, user_list);
             setListAdapter(arAd);
             arAd.notifyDataSetChanged();

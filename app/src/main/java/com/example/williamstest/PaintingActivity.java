@@ -214,57 +214,99 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             drawView.updateStroke(25);
         } else if (view.getId() == R.id.undo_btn) drawView.restoreDraw();
         else if (view.equals(b1)) {
-            if (findLocation()==-1) corniciNC.add(new Cornice(cornice, null, true));
-            else corniciNC.set(findLocation(), (new Cornice(cornice, null, true)));
-            loadShapePoints();
-            String flessibilita = "---";
-            String originalita = drawView.getScoreDrawInOut() + "pt.";
-            String fluidita = (drawView.getScoreDrawInOut() != 0) ? "1pt." : "0pt.";
-            String elaborazione = drawView.getSymmetryScore() + "pt.";
-            getTemporaryTimes(Integer.parseInt(drawView.getReactionTime()), Integer.parseInt(drawView.getTimeToDraw()), drawView.getEraseNumber(), drawView.getUndoNumber());
-            tempi.add(new TimesAndErasures(cornice, Integer.parseInt(drawView.getReactionTime()), Integer.parseInt(drawView.getTimeToDraw()), drawView.getEraseNumber(), drawView.getUndoNumber()));
-            String tempoReazione = (fluidita.equals("1pt.")) ? ""+timeToDraw+ " s" : "0" + " s";
-            String tempoCompletamentoDisegno = (fluidita.equals("1pt.")) ? ""+timeToComplete+ " s" : "0" + " s";
-            String numeroCancellature = totalErase + "";
-            String undo = totalUndo + "";
-            saveImage();
-            writeScore(fluidita, flessibilita, originalita, elaborazione, titoli, tempoReazione, tempoCompletamentoDisegno, numeroCancellature, undo);
-            nextDraw = findNextNotCompleted();
-            if (nextDraw != -1 && nextDraw < 13) {
-                drawView.clearBitmap();
-                Intent myIntent = new Intent(PaintingActivity.this, PaintingActivity.class);
-                myIntent.putExtra("protocollo", protocol);
-                myIntent.putExtra("cornice", Integer.toString(nextDraw));
-                myIntent.putExtra("cartella", folder);
-                myIntent.putExtra("first", "no");
-                myIntent.putExtra("palette", palette);
-                myIntent.putExtra("userLogged", logged);
-                myIntent.putExtra("corniciNC", corniciNC);
-                myIntent.putExtra("tempi", tempi);
-                myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                PaintingActivity.this.startActivity(myIntent);
-            } else {
-                new android.support.v7.app.AlertDialog.Builder(PaintingActivity.this)
-                        .setTitle("Chiusura test")
-                        .setMessage("Vuoi concludere il test?")
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                try {
-                                    writeScoreNotCompleted();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
+            new android.support.v7.app.AlertDialog.Builder(PaintingActivity.this)
+                    .setTitle("Salvataggio disegno")
+                    .setMessage("Procedere con il salvataggio del disegno? Dopo non potrai piu' modificarlo")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (findLocation() == -1)
+                                corniciNC.add(new Cornice(cornice, null, true));
+                            else corniciNC.set(findLocation(), (new Cornice(cornice, null, true)));
+                            loadShapePoints();
+                            String flessibilita = "---";
+                            String originalita = drawView.getScoreDrawInOut() + "pt.";
+                            String fluidita = (drawView.getScoreDrawInOut() != 0) ? "1pt." : "0pt.";
+                            String elaborazione = drawView.getSymmetryScore() + "pt.";
+                            getTemporaryTimes(Integer.parseInt(drawView.getReactionTime()), Integer.parseInt(drawView.getTimeToDraw()), drawView.getEraseNumber(), drawView.getUndoNumber());
+                            tempi.add(new TimesAndErasures(cornice, Integer.parseInt(drawView.getReactionTime()), Integer.parseInt(drawView.getTimeToDraw()), drawView.getEraseNumber(), drawView.getUndoNumber()));
+                            String tempoReazione = (fluidita.equals("1pt.")) ? "" + timeToDraw + " s" : "0" + " s";
+                            String tempoCompletamentoDisegno = (fluidita.equals("1pt.")) ? "" + timeToComplete + " s" : "0" + " s";
+                            String numeroCancellature = totalErase + "";
+                            String undo = totalUndo + "";
+                            saveImage();
+                            writeScore(fluidita, flessibilita, originalita, elaborazione, titoli, tempoReazione, tempoCompletamentoDisegno, numeroCancellature, undo);
+                            int count = 0;
+                            for (int i = 0; i < corniciNC.size(); i++) {
+                                if (corniciNC.get(i).getCompleted()) count++;
+                            }
+                            if (count == 12) {
                                 Intent myIntent = new Intent(PaintingActivity.this, Result.class);
                                 myIntent.putExtra("protocollo", protocol);
                                 myIntent.putExtra("cartella", Integer.toString(folder));
                                 myIntent.putExtra("userLogged", logged);
                                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 PaintingActivity.this.startActivity(myIntent);
+                            } else {
+                                nextDraw = findNextNotCompleted();
+                                if (nextDraw != -1 && nextDraw < 13) {
+                                    drawView.clearBitmap();
+                                    Intent myIntent = new Intent(PaintingActivity.this, PaintingActivity.class);
+                                    myIntent.putExtra("protocollo", protocol);
+                                    myIntent.putExtra("cornice", Integer.toString(nextDraw));
+                                    myIntent.putExtra("cartella", folder);
+                                    myIntent.putExtra("first", "no");
+                                    myIntent.putExtra("palette", palette);
+                                    myIntent.putExtra("userLogged", logged);
+                                    myIntent.putExtra("corniciNC", corniciNC);
+                                    myIntent.putExtra("tempi", tempi);
+                                    myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    PaintingActivity.this.startActivity(myIntent);
+                                } else {
+                                    String message;
+                                    if (count == 12) message = "Vuoi concludere il test?";
+                                    else
+                                        message = "Alcuni disegni non sono ancora stati completati. Sei sicuro di voler concludere il test?";
+                                    new android.support.v7.app.AlertDialog.Builder(PaintingActivity.this)
+                                            .setTitle("Chiusura test")
+                                            .setMessage(message)
+                                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    try {
+                                                        writeScoreNotCompleted();
+                                                    } catch (IOException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                    Intent myIntent = new Intent(PaintingActivity.this, Result.class);
+                                                    myIntent.putExtra("protocollo", protocol);
+                                                    myIntent.putExtra("cartella", Integer.toString(folder));
+                                                    myIntent.putExtra("userLogged", logged);
+                                                    myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                    PaintingActivity.this.startActivity(myIntent);
+                                                }
+                                            })
+                                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    int prev = findPreviousNotCompleted();
+                                                    drawView.clearBitmap();
+                                                    Intent myIntent = new Intent(PaintingActivity.this, PaintingActivity.class);
+                                                    myIntent.putExtra("protocollo", protocol);
+                                                    myIntent.putExtra("cornice", Integer.toString(prev));
+                                                    myIntent.putExtra("cartella", folder);
+                                                    myIntent.putExtra("first", "no");
+                                                    myIntent.putExtra("palette", palette);
+                                                    myIntent.putExtra("userLogged", logged);
+                                                    myIntent.putExtra("corniciNC", corniciNC);
+                                                    myIntent.putExtra("tempi", tempi);
+                                                    myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                    PaintingActivity.this.startActivity(myIntent);
+                                                }
+                                            })
+                                            .show();
+                                }
                             }
-                        })
-                        .setNegativeButton(android.R.string.no, null)
-                        .show();
-            }
+                        }})
+                    .setNegativeButton(android.R.string.no, null)
+                    .show();
         } else if (view.equals(b3)) {
             tempi.add(new TimesAndErasures(cornice, Integer.parseInt(drawView.getReactionTime()), Integer.parseInt(drawView.getTimeToDraw()), drawView.getEraseNumber(), drawView.getUndoNumber()));
             if (findLocation()==-1) corniciNC.add(new Cornice(cornice, savePoints(), false));
@@ -290,7 +332,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             if (findLocation()==-1) corniciNC.add(new Cornice(cornice, savePoints(), false));
             else corniciNC.set(findLocation(), (new Cornice(cornice, savePoints(), false)));
             int next = findNextNotCompleted();
-            if (next > 12)
+            if (next == -1)
                 Toast.makeText(this, "Non ci sono altri disegni", Toast.LENGTH_LONG).show();
             else if (next != -1) {
                 drawView.clearBitmap();
@@ -398,13 +440,14 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
      */
     public int findNextNotCompleted () {
         boolean no = false;
-        for (int count = Integer.parseInt(cornice)+1; count<13; count++, no=false) {
+        int count = Integer.parseInt(cornice)+1;
+        for (; count<13; count++, no=false) {
             for (int i=0; i<corniciNC.size(); i++) {
                 if (corniciNC.get(i).getCompleted() && Integer.parseInt(corniciNC.get(i).getNumero())==count) no=true;
             }
             if (!no) return count;
         }
-        return Integer.parseInt(cornice)+1;
+        if (count==13) return -1; else return Integer.parseInt(cornice)+1;
     }
 
 

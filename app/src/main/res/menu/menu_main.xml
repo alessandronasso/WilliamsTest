@@ -36,5 +36,9 @@
         android:id="@+id/ordina_data_c"
         android:orderInCategory="300"
         android:title="Ordina per: Data (decrescente)" />
+    <item
+        android:id="@+id/remove_filter"
+        android:orderInCategory="300"
+        android:title="Rimuovi filtri" />
 
 </menu>
