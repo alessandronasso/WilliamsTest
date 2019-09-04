@@ -200,17 +200,14 @@ public class DrawingView extends View {
         float touchY = event.getY();
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                System.out.println(touchX+"\n"+touchY);
                 drawPath.moveTo(touchX, touchY);
                 points.add(new Pair<Float, Float>(touchX, touchY));
                 break;
             case MotionEvent.ACTION_MOVE:
-                System.out.println(touchX+"\n"+touchY);
                 drawPath.lineTo(touchX, touchY);
                 points.add(new Pair<Float, Float>(touchX, touchY));
                 break;
             case MotionEvent.ACTION_UP:
-                System.out.println(touchX+"\n"+touchY);
                 drawPath.lineTo(touchX, touchY);
                 points.add(new Pair<Float, Float>(touchX, touchY));
                 drawCanvas.drawPath(drawPath, drawPaint);
@@ -223,7 +220,6 @@ public class DrawingView extends View {
                 }
                 points.clear();
                 drawPath.reset();
-                System.out.println("-----------");
                 break;
             default:
                 return false;
