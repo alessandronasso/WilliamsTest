@@ -1,8 +1,10 @@
 package com.example.williamstest;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -62,6 +64,16 @@ public class Result extends AppCompatActivity {
             public void onClick(View v) {
                 try {
                     myadapter.modifyFile();
+                    AlertDialog alertDialog = new AlertDialog.Builder(Result.this).create();
+                    alertDialog.setTitle("Avviso");
+                    alertDialog.setMessage("Le modifiche sono state eseguite con successo");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
