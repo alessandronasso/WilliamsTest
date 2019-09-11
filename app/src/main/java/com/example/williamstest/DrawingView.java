@@ -13,6 +13,8 @@ import android.util.DisplayMetrics;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
+import com.snatik.polygon.Point;
+import com.snatik.polygon.Polygon;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -118,6 +120,7 @@ public class DrawingView extends View {
      */
     private Pair<Float,Float> centerPoint;
 
+
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.setDrawingCacheEnabled(true);
@@ -200,14 +203,17 @@ public class DrawingView extends View {
         float touchY = event.getY();
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                System.out.println(touchX+"\n"+touchY);
                 drawPath.moveTo(touchX, touchY);
                 points.add(new Pair<Float, Float>(touchX, touchY));
                 break;
             case MotionEvent.ACTION_MOVE:
+                System.out.println(touchX+"\n"+touchY);
                 drawPath.lineTo(touchX, touchY);
                 points.add(new Pair<Float, Float>(touchX, touchY));
                 break;
             case MotionEvent.ACTION_UP:
+                System.out.println(touchX+"\n"+touchY);
                 drawPath.lineTo(touchX, touchY);
                 points.add(new Pair<Float, Float>(touchX, touchY));
                 drawCanvas.drawPath(drawPath, drawPaint);
@@ -218,6 +224,7 @@ public class DrawingView extends View {
                     eraseNumber++;
                     removeErasedPoints(points);
                 }
+                System.out.println("-----");
                 points.clear();
                 drawPath.reset();
                 break;
@@ -367,27 +374,17 @@ public class DrawingView extends View {
     }
 
 
-    /**
-     * This method checks if the user has drawn outside or inside the current shape.
-     */
-
     private void checkDrawOut() {
-        boolean compreso = false;
+        Polygon.Builder shape = Polygon.Builder();
+        for (int i=0; i<figura.size(); i++)
+            shape.addVertex(new Point(figura.get(i).first, figura.get(i).second));
+        Polygon polygon = shape.build();
         for (int x=0; x<segments.size(); x++) {
-            ArrayList<Pair<Float,Float>> punti = segments.get(x);
-            for (int j=0; j<punti.size(); j++, compreso=false) {
-                for (int i=0; i<figura.size() && !compreso; i++) {
-                    float x1 = figura.get(i).first;
-                    float y1 = figura.get(i).second;
-                    for (int ii=0; ii<figura.size() && !compreso; ii++) {
-                        float x2 = figura.get(ii).first;
-                        float y2 = figura.get(ii).second;
-                        if ((punti.get(j).first < x1 && punti.get(j).first > x2) &&
-                                (punti.get(j).second < y1 && punti.get(j).second > y2))
-                            compreso = true;
-                    }
-                }
-                if (!compreso) scoreDrawOut = 1; else scoreDrawIn = 1;
+            ArrayList<Pair<Float, Float>> punti = segments.get(x);
+            for (int j = 0; j < punti.size(); j++) {
+                if (polygon.contains(new Point(punti.get(j).first, punti.get(j).second))) {
+                    scoreDrawIn = 1;
+                } else scoreDrawOut = 1;
             }
         }
     }
@@ -404,16 +401,6 @@ public class DrawingView extends View {
         else if (scoreDrawOut == 1 && scoreDrawIn == 0) return 1;
         else if (scoreDrawOut == 0 && scoreDrawIn == 1) return 2;
         else return 3;
-    }
-
-    /**
-     * This method returns the title of the drawn inserted by the user.
-     *
-     * @return the title of the draw
-     */
-    public String getTitle () {
-        if (title=="") return "Senza nome";
-        else return  title;
     }
 
     /**
@@ -561,63 +548,6 @@ public class DrawingView extends View {
     }
 
     /**
-     * This method is based on the Iterative Closest Point algorithm
-     * (To verify)
-     *
-     * @param z the index of the first list of points
-     * @param points the second list of points to compare
-     */
-    private double icp (int z, ArrayList<Pair<Float,Float>> points) {
-        ArrayList<Pair<Float,Float>> copia = segments.get(z);
-        ArrayList<Pair<Float,Float>> copia2 = points;
-        double x_trattino = 0.0;
-        double y_trattino = 0.0;
-        double x_trattino_primo = 0.0;
-        double y_trattino_primo = 0.0;
-        for (int i=0; i<copia.size(); i++) {
-            x_trattino+=copia.get(i).first;
-            y_trattino+=copia.get(i).second;
-        }
-        x_trattino = x_trattino*((double)1/copia.size());
-        y_trattino = y_trattino*((double)1/copia.size());
-        for (int i=0; i<copia2.size(); i++) {
-            x_trattino_primo+=copia2.get(i).first;
-            y_trattino_primo+=copia2.get(i).second;
-        }
-        x_trattino_primo = x_trattino_primo*((double)1/copia2.size());
-        y_trattino_primo = y_trattino_primo*((double)1/copia2.size());
-        double Sxx = 0.0;
-        double Syy = 0.0;
-        double Sxy = 0.0;
-        double Syx = 0.0;
-        int min = 0;
-        if (copia.size()>copia2.size()) min = copia2.size(); else min = copia.size();
-        for (int i=0; i<min; i++) {
-            Sxx+=((copia.get(i).first-x_trattino)*(copia2.get(i).first-x_trattino_primo));
-        }
-        for (int i=0; i<min; i++) {
-            Syy+=((copia.get(i).second-y_trattino)*(copia2.get(i).second-y_trattino_primo));
-        }
-        for (int i=0; i<min; i++) {
-            Sxy+=((copia.get(i).first-x_trattino)*(copia2.get(i).second-y_trattino_primo));
-        }
-        for (int i=0; i<min; i++) {
-            Syx+=((copia.get(i).second-y_trattino)*(copia2.get(i).first-x_trattino_primo));
-        }
-        double rotation = Math.atan((Sxy-Syx)/(Sxx+Syy));
-
-        double Tx = x_trattino_primo - (x_trattino*Math.cos(rotation)-y_trattino*Math.sin(rotation));
-        double Ty = y_trattino_primo - (x_trattino*Math.sin(rotation)+y_trattino*Math.cos(rotation));
-        double eDist = 0.0;
-
-        for (int i=0; i<min; i++) {
-            eDist += (Math.pow(copia.get(i).first*Math.cos(rotation)-copia.get(i).second*Math.sin(rotation)+Tx-copia2.get(i).first, 2.0)+Math.pow(copia.get(i).first*Math.sin(rotation)+copia.get(i).second*Math.cos(rotation)+Ty-copia2.get(i).second, 2.0));
-        }
-
-        return eDist;
-    }
-
-    /**
      * This methods checks if the shapes have a similar size.
      *
      * @param i1 index of the first ArrayList
@@ -637,21 +567,18 @@ public class DrawingView extends View {
      * @return the position of the draw
      */
     public int isInside(ArrayList<Pair<Float,Float>> toCheck) {
-        boolean compreso = false;
         int drawIn = 0, drawOut = 0;
-        for (int j=0; j<toCheck.size(); j++, compreso=false) {
-            for (int i=0; i<figura.size() && !compreso; i++) {
-                float x1 = figura.get(i).first;
-                float y1 = figura.get(i).second;
-                for (int ii=0; ii<figura.size() && !compreso; ii++) {
-                    float x2 = figura.get(ii).first;
-                    float y2 = figura.get(ii).second;
-                    if ((toCheck.get(j).first < x1 && toCheck.get(j).first > x2) &&
-                            (toCheck.get(j).second < y1 && toCheck.get(j).second > y2))
-                        compreso = true;
-                }
+        Polygon.Builder shape = Polygon.Builder();
+        for (int i=0; i<figura.size(); i++)
+            shape.addVertex(new Point(figura.get(i).first, figura.get(i).second));
+        Polygon polygon = shape.build();
+        for (int x=0; x<segments.size(); x++) {
+            ArrayList<Pair<Float, Float>> punti = segments.get(x);
+            for (int j = 0; j < punti.size(); j++) {
+                if (polygon.contains(new Point(toCheck.get(j).first, toCheck.get(j).second))) {
+                    drawIn = 1;
+                } else drawOut = 1;
             }
-            if (!compreso) drawOut = 1; else drawIn = 1;
         }
         if (drawIn == 1 && drawOut == 1) return 3;
         else if (drawOut == 1) return 2;
@@ -687,18 +614,6 @@ public class DrawingView extends View {
         return true;
     }
 
-    /**
-     * This method reverses a list of points.
-     *
-     * @param list group of points to reverse
-     * @return the reversed list
-     */
-    private ArrayList<Pair<Float,Float>> reverse(ArrayList<Pair<Float,Float>> list) {
-        for(int i = 0, j = list.size() - 1; i < j; i++) {
-            list.add(i, list.remove(j));
-        }
-        return list;
-    }
 
     /**
      * This method returns the whole segments drawn by the user.
