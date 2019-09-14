@@ -572,13 +572,9 @@ public class DrawingView extends View {
         for (int i=0; i<figura.size(); i++)
             shape.addVertex(new Point(figura.get(i).first, figura.get(i).second));
         Polygon polygon = shape.build();
-        for (int x=0; x<segments.size(); x++) {
-            ArrayList<Pair<Float, Float>> punti = segments.get(x);
-            for (int j = 0; j < punti.size(); j++) {
-                if (polygon.contains(new Point(toCheck.get(j).first, toCheck.get(j).second))) {
-                    drawIn = 1;
-                } else drawOut = 1;
-            }
+        for (int x=0; x<toCheck.size(); x++) {
+            if (polygon.contains(new Point(toCheck.get(x).first, toCheck.get(x).second)))
+                drawIn = 1; else drawOut = 1;
         }
         if (drawIn == 1 && drawOut == 1) return 3;
         else if (drawOut == 1) return 2;
