@@ -383,6 +383,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 if (timeToDraw == 0 && timeToD != 0) timeToDraw = timeToD;
             }
         }
+        if (!exit) timeToDraw = timeToD;
     }
 
     /**

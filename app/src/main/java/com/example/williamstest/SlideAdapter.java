@@ -83,7 +83,6 @@ public class SlideAdapter extends PagerAdapter {
         RelativeLayout layoutslide = (RelativeLayout) view.findViewById(R.id.slidelinearlayout);
         ImageView imgslide = getImage(view, position);
         TableLayout tl = (TableLayout) view.findViewById(R.id.tl);
-        pos = position;
         try {
             setTableText(view, getDescription(position));
         } catch (IOException e) {
@@ -159,6 +158,7 @@ public class SlideAdapter extends PagerAdapter {
         ContextWrapper cw = new ContextWrapper(context());
         File directory = cw.getDir("draw", Context.MODE_PRIVATE);
         LineNumberReader reader = new LineNumberReader(new FileReader(directory.getAbsolutePath()+folder+"/"+protocollo+(position+1)+"_score.txt"));
+        pos = position+1;
         String line;
         while ((line = reader.readLine()) != null) {
            content+=line+"\n";
@@ -233,8 +233,8 @@ public class SlideAdapter extends PagerAdapter {
     public void modifyFile () throws IOException {
         ContextWrapper cw = new ContextWrapper(context);
         File directory = cw.getDir("draw", Context.MODE_PRIVATE);
-        File inputFile = new File(directory.getAbsolutePath()+folder+"/"+protocollo+(pos)+"_score.txt");
-        File tempFile = new File(directory.getAbsolutePath()+folder+"/"+protocollo+(pos)+"_scoretmp.txt");
+        File inputFile = new File(directory.getAbsolutePath()+folder+"/"+protocollo+(pos-1)+"_score.txt");
+        File tempFile = new File(directory.getAbsolutePath()+folder+"/"+protocollo+(pos-1)+"_scoretmp.txt");
 
         BufferedReader reader = new BufferedReader(new FileReader(inputFile));
         BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));

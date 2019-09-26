@@ -16,6 +16,7 @@ import android.view.View;
 import com.snatik.polygon.Point;
 import com.snatik.polygon.Polygon;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class DrawingView extends View {
@@ -196,7 +197,7 @@ public class DrawingView extends View {
         if (!started) {
             started = true;
             long millis = System.currentTimeMillis() - startTime;
-            s1 = String.format("%d", TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MILLISECONDS.toSeconds(startActivity));
+            s1 = String.format(Locale.ITALIAN, "%d", TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MILLISECONDS.toSeconds(startActivity));
             startTime = 0;
         }
         float touchX = event.getX();
