@@ -50,6 +50,15 @@ style="@style/loginParent">
             <include
                 layout="@layout/layout_login"/>
 
+            <Switch
+                android:id="@+id/switchColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-smallcaps"
+                android:text="Abilitazione palette dei colori"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textStyle="bold" />
+
         </LinearLayout>
     </RelativeLayout>
 

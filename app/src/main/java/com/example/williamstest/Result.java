@@ -27,7 +27,7 @@ public class Result extends AppCompatActivity {
     /**
      * The current protocol/folder and logged user.
      */
-    private String logged, protocol, folder;
+    private String logged, protocol, folder, palette;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +38,11 @@ public class Result extends AppCompatActivity {
         setSupportActionBar(myToolbar);
         Button b1 = (Button) findViewById(R.id.bb_4);
         Button b2 = (Button) findViewById(R.id.applica);
+        Bundle extras = getIntent().getExtras();
+        protocol = extras.getString("protocollo");
+        logged = extras.getString("userLogged");
+        folder = extras.getString("cartella");
+        palette = extras.getString("palette");
         b1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -45,14 +50,11 @@ public class Result extends AppCompatActivity {
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 myIntent.putExtra("protocollo", protocol);
                 myIntent.putExtra("cartella", folder);
+                myIntent.putExtra("palette", palette);
                 myIntent.putExtra("userLogged", logged);
                 Result.this.startActivity(myIntent);
             }
         });
-        Bundle extras = getIntent().getExtras();
-        protocol = extras.getString("protocollo");
-        logged = extras.getString("userLogged");
-        folder = extras.getString("cartella");
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         myadapter = new SlideAdapter(this);
         myadapter.setProtocol(protocol);
@@ -87,6 +89,7 @@ public class Result extends AppCompatActivity {
         Intent myIntent = new Intent(Result.this, MainActivity.class);
         myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         myIntent.putExtra("userLogged", extras.getString("userLogged"));
+        myIntent.putExtra("palette", extras.getString("palette"));
         Result.this.startActivity(myIntent);
     }
 }

@@ -9,29 +9,21 @@
         android:id="@+id/button_form"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/nameEditText"
-        android:layout_marginLeft="@dimen/_24sdp"
+        android:layout_below="@id/dateSelect"
+        android:layout_centerInParent="false"
+        android:layout_marginLeft="@dimen/_16sdp"
         android:layout_marginTop="@dimen/_5sdp"
         android:layout_marginBottom="@dimen/_7sdp"
         android:background="@drawable/button_bg"
+        android:text="OK"
         android:textAlignment="center"
         android:textColor="@color/whiteTextColor"
-        android:textSize="@dimen/_7sdp"
-        android:text="OK">
+        android:textSize="@dimen/_7sdp">
 
     </Button>
 
-    <CheckBox
-        android:id="@+id/myCheckBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="@dimen/_11sdp"
-        android:text="Abilitare la palette di colori?" />
-
-    <EditText
-        android:id="@+id/nameEditText"
+    <Button
+        android:id="@+id/dateSelect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/genderRadioGroup"
@@ -41,13 +33,12 @@
         android:hint="Inserisci l'eta'">
 
         <requestFocus />
-    </EditText>
+    </Button>
 
     <RadioGroup
         android:id="@+id/genderRadioGroup"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/myCheckBox">
+        android:layout_height="wrap_content">
 
 
         <RadioButton

@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Switch;
+
 import java.util.ArrayList;
 
 public class LoginActivity extends AppCompatActivity {
@@ -24,12 +26,15 @@ public class LoginActivity extends AppCompatActivity {
         acceptedUsers.add("0000");
         acceptedUsers.add("1111");
         final EditText edT = findViewById(R.id.editTextCode);
+        final Switch switchColor = (Switch) findViewById(R.id.switchColor);
         Button openAct = findViewById(R.id.cirLoginButton);
         openAct.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (acceptedUsers.contains(edT.getText().toString())) {
                     Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
                     myIntent.putExtra("userLogged", edT.getText().toString());
+                    if (switchColor.isChecked()) myIntent.putExtra("palette", "yes");
+                    else myIntent.putExtra("palette", "no");
                     LoginActivity.this.startActivity(myIntent);
                 } else {
                     new AlertDialog.Builder(LoginActivity.this)

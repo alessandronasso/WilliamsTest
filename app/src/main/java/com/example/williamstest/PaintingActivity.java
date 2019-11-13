@@ -244,6 +244,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                                 Intent myIntent = new Intent(PaintingActivity.this, Result.class);
                                 myIntent.putExtra("protocollo", protocol);
                                 myIntent.putExtra("cartella", Integer.toString(folder));
+                                myIntent.putExtra("palette", palette);
                                 myIntent.putExtra("userLogged", logged);
                                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 PaintingActivity.this.startActivity(myIntent);
@@ -281,6 +282,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                                                     myIntent.putExtra("protocollo", protocol);
                                                     myIntent.putExtra("cartella", Integer.toString(folder));
                                                     myIntent.putExtra("userLogged", logged);
+                                                    myIntent.putExtra("palette", palette);
                                                     myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                                     PaintingActivity.this.startActivity(myIntent);
                                                 }

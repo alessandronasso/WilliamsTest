@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -36,6 +37,11 @@ public class UserList extends ListActivity implements AppCompatCallback {
      * The current user who has logged in.
      */
     private String userLogged;
+
+    /**
+     * The string representing if the palette has been enabled.
+     */
+    private String paletteSelected;
 
     /**
      * The list with all the tests.
@@ -89,6 +95,7 @@ public class UserList extends ListActivity implements AppCompatCallback {
                             myIntent.putExtra("cartella", currencies[1]);
                             myIntent.putExtra("protocollo", findProtocol(currencies[1]));
                             myIntent.putExtra("userLogged", userLogged);
+                            myIntent.putExtra("palette", paletteSelected);
                             myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             UserList.this.startActivity(myIntent);
                         }
@@ -174,21 +181,19 @@ public class UserList extends ListActivity implements AppCompatCallback {
             List<String> user_list = new ArrayList<String>(Arrays.asList(user));
             List<String> u2 = new ArrayList<String>();
             for (int i = 0; i < user_list.size(); i++)
-                if (!user_list.get(i).contains("Eta: / ")) u2.add(user_list.get(i));
-            Collections.sort(u2, new Comparator<String>() {
-                public int compare(String o1, String o2) {
-                    return Comparator.comparingInt(this::extractInt)
-                            .thenComparing(Comparator.reverseOrder())
-                            .compare(o1, o2);
+                if (!user_list.get(i).contains("Eta: /")) u2.add(user_list.get(i));
+            u2.sort(Comparator.comparing(s -> {
+                String stringDate = s.split(":")[3].trim();
+                stringDate = stringDate.replaceAll("[^\\d-]", "");
+                System.out.println(stringDate);
+                try {
+                    return new SimpleDateFormat("dd-mm-yyyy").parse(stringDate);
+                } catch (ParseException | java.text.ParseException e) {
+                    e.printStackTrace();
                 }
-                private int extractInt(String s) {
-                    try {
-                        return Integer.parseInt(s.split(":")[1].trim());
-                    } catch (NumberFormatException exception) {
-                        return -1;
-                    }
-                }
-            });
+                return null;
+            }));
+            Collections.reverse(u2);
             final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list, R.id.textList, u2);
             setListAdapter(arAd);
             arAd.notifyDataSetChanged();
@@ -197,21 +202,17 @@ public class UserList extends ListActivity implements AppCompatCallback {
             List<String> user_list = new ArrayList<String>(Arrays.asList(user));
             List<String> u2 = new ArrayList<String>();
             for (int i = 0; i < user_list.size(); i++)
-                if (!user_list.get(i).contains(" / ")) u2.add(user_list.get(i));
-            Collections.sort(u2, new Comparator<String>() {
-                public int compare(String o1, String o2) {
-                    return Comparator.comparingInt(this::extractInt)
-                            .thenComparing(Comparator.naturalOrder())
-                            .compare(o1, o2);
+                if (!user_list.get(i).contains("Eta: /")) u2.add(user_list.get(i));
+            u2.sort(Comparator.comparing(s -> {
+                String stringDate = s.split(":")[3].trim();
+                stringDate = stringDate.replaceAll("[^\\d-]", "");
+                try {
+                    return new SimpleDateFormat("dd-mm-yyyy").parse(stringDate);
+                } catch (ParseException | java.text.ParseException e) {
+                    e.printStackTrace();
                 }
-                private int extractInt(String s) {
-                    try {
-                        return Integer.parseInt(s.split(":")[1].trim());
-                    } catch (NumberFormatException exception) {
-                        return -1;
-                    }
-                }
-            });
+                return null;
+            }));
             final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list, R.id.textList, u2);
             setListAdapter(arAd);
             arAd.notifyDataSetChanged();
@@ -264,6 +265,7 @@ public class UserList extends ListActivity implements AppCompatCallback {
     public String[] loadUser() throws IOException{
         Bundle extras = getIntent().getExtras();
         userLogged = extras.getString("userLogged");
+        paletteSelected = extras.getString("palette");
         String user[] = null;
         int numb = 0, arrayString = 0;
         File dir = new File("/data/user/0/com.example.williamstest/");
@@ -352,6 +354,7 @@ public class UserList extends ListActivity implements AppCompatCallback {
         Intent myIntent = new Intent(UserList.this, MainActivity.class);
         myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         myIntent.putExtra("userLogged", userLogged);
+        myIntent.putExtra("palette", paletteSelected);
         UserList.this.startActivity(myIntent);
     }
 
@@ -360,6 +363,7 @@ public class UserList extends ListActivity implements AppCompatCallback {
         Intent myIntent = new Intent(UserList.this, MainActivity.class);
         myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         myIntent.putExtra("userLogged", userLogged);
+        myIntent.putExtra("palette", paletteSelected);
         UserList.this.startActivity(myIntent);
     }
 

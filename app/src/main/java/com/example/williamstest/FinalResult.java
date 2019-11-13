@@ -23,7 +23,7 @@ public class FinalResult extends AppCompatActivity {
      * Strings representing the current user logged and the
      * current folder/protocol where get data from.
      */
-    private String protocol, folder, logged;
+    private String protocol, folder, logged, palette;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +34,7 @@ public class FinalResult extends AppCompatActivity {
         protocol = extras.getString("protocollo");
         folder = extras.getString("cartella");
         logged = extras.getString("userLogged");
+        palette = extras.getString("palette");
         for (int i=0; i<5; i++) sum[i]=0;
         try {
             loadContent(protocol, folder);
@@ -86,6 +87,7 @@ public class FinalResult extends AppCompatActivity {
         myIntent.putExtra("protocollo", protocol);
         myIntent.putExtra("cartella", folder);
         myIntent.putExtra("userLogged", logged);
+        myIntent.putExtra("palette", palette);
         FinalResult.this.startActivity(myIntent);
     }
 }

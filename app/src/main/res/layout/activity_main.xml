@@ -54,7 +54,7 @@
             android:layout_weight="0.4"
             android:fontFamily="@font/kotta_one"
             android:gravity="center"
-            android:text="Test del pensiero\ndivergente"
+            android:text="Creatività e pensiero\ndivergente"
             android:textColor="#000000"
             android:textSize="110dp"
             android:textStyle="bold"
