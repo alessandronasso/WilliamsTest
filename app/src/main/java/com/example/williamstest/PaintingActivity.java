@@ -5,8 +5,8 @@ import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
@@ -20,6 +20,9 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,7 +35,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import yuku.ambilwarna.AmbilWarnaDialog;
+import petrov.kristiyan.colorpicker.ColorPicker;
 
 public class PaintingActivity extends AppCompatActivity implements OnClickListener {
 
@@ -159,7 +162,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             drawBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    openDialog(false);
+                    openDialog();
                 }
             });
 
@@ -174,28 +177,30 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
     }
 
     /**
-     * Method from the AmbilWarnaDialog package used to open
+     * Method from the ColorPicker package used to open
      * a custom dialog box.
      *
-     * @param supportsAlpha
      */
-    private void openDialog(boolean supportsAlpha) {
+    private void openDialog() {
         drawView.setErase(false);
-        int currentColor = drawView.getPaintColor();
-        AmbilWarnaDialog dialog = new AmbilWarnaDialog(this, currentColor, supportsAlpha, new AmbilWarnaDialog.OnAmbilWarnaListener() {
+        ColorPicker colorPicker = new ColorPicker(this);
+        colorPicker.setRoundColorButton(true);
+        colorPicker.setColors(Color.BLACK, Color.RED, Color.BLUE, Color.GREEN, Color.CYAN, Color.GRAY, Color.MAGENTA,
+        Color.DKGRAY, Color.YELLOW, Color.LTGRAY);
+        colorPicker.show();
+        colorPicker.setOnChooseColorListener(new ColorPicker.OnChooseColorListener() {
             @Override
-            public void onOk(AmbilWarnaDialog dialog, int color) {
+            public void onChooseColor(int position,int color) {
                 drawView.setPaintColor(color);
                 drawView.updateStroke(5);
                 drawView.setErase(false);
             }
 
             @Override
-            public void onCancel(AmbilWarnaDialog dialog) {
-                //do nothing
+            public void onCancel(){
+                //DO NOTHING
             }
         });
-        dialog.show();
     }
 
     @Override
@@ -214,7 +219,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             drawView.updateStroke(25);
         } else if (view.getId() == R.id.undo_btn) drawView.restoreDraw();
         else if (view.equals(b1)) {
-            new android.support.v7.app.AlertDialog.Builder(PaintingActivity.this)
+            new androidx.appcompat.app.AlertDialog.Builder(PaintingActivity.this)
                     .setTitle("Salvataggio disegno")
                     .setMessage("Procedere con il salvataggio del disegno? Dopo non potrai piu' modificarlo")
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -268,7 +273,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                                     if (count == 12) message = "Vuoi concludere il test?";
                                     else
                                         message = "Alcuni disegni non sono ancora stati completati. Sei sicuro di voler concludere il test?";
-                                    new android.support.v7.app.AlertDialog.Builder(PaintingActivity.this)
+                                    new androidx.appcompat.app.AlertDialog.Builder(PaintingActivity.this)
                                             .setTitle("Chiusura test")
                                             .setMessage(message)
                                             .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
