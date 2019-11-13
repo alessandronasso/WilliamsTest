@@ -57,7 +57,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
     /**
      * The images representing the brush, the eraser and the undo.
      */
-    private ImageButton eraseBtn, drawBtn, undoBtn;
+    private ImageButton eraseBtn, drawBtn, undoBtn, colorPickerBtn;
 
     /**
      * List of points of the current shape.
@@ -154,12 +154,14 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         b3.setOnClickListener(this);
         eraseBtn = (ImageButton) findViewById(R.id.erase_btn);
         eraseBtn.setOnClickListener(this);
+        colorPickerBtn = (ImageButton) findViewById(R.id.colorPicker);
+        colorPickerBtn.setOnClickListener(this);
         drawBtn = (ImageButton) findViewById(R.id.draw_btn);
         drawBtn.setOnClickListener(this);
         undoBtn = (ImageButton) findViewById(R.id.undo_btn);
         undoBtn.setOnClickListener(this);
         if (palette.equals("yes"))
-            drawBtn.setOnClickListener(new View.OnClickListener() {
+            colorPickerBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     openDialog();
