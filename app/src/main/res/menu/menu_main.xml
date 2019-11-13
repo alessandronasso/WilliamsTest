@@ -40,5 +40,9 @@
         android:id="@+id/remove_filter"
         android:orderInCategory="300"
         android:title="Rimuovi filtri" />
+    <item
+        android:id="@+id/import_excel"
+        android:orderInCategory="300"
+        android:title="Importa lista" />
 
 </menu>

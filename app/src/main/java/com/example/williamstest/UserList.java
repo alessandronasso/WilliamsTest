@@ -1,15 +1,15 @@
 package com.example.williamstest;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.ParseException;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatCallback;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.view.ActionMode;
-import androidx.appcompat.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,7 +20,23 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
+import androidx.appcompat.app.AppCompatCallback;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.view.ActionMode;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
@@ -30,6 +46,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class UserList extends ListActivity implements AppCompatCallback {
 
@@ -61,7 +79,9 @@ public class UserList extends ListActivity implements AppCompatCallback {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        System.out.println(isStoragePermissionGranted());
         super.onCreate(savedInstanceState);
+        System.setProperty("org.apache.poi.javax.xml.stream.XMLInputFactory", "com.fasterxml.aalto.stax.InputFactoryImpl"); System.setProperty("org.apache.poi.javax.xml.stream.XMLOutputFactory", "com.fasterxml.aalto.stax.OutputFactoryImpl"); System.setProperty("org.apache.poi.javax.xml.stream.XMLEventFactory", "com.fasterxml.aalto.stax.EventFactoryImpl");
         setContentView(R.layout.user_list);
         try { user = loadUser(); } catch (IOException e) { e.printStackTrace(); }
         delegate = AppCompatDelegate.create(this, this);
@@ -253,6 +273,12 @@ public class UserList extends ListActivity implements AppCompatCallback {
             final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list, R.id.textList, user_list);
             setListAdapter(arAd);
             arAd.notifyDataSetChanged();
+        } else if (id == R.id.import_excel) {
+            try {
+                importIntoExcel();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -330,6 +356,50 @@ public class UserList extends ListActivity implements AppCompatCallback {
     }
 
     /**
+     * This method generates an xlsx file with all the tests recorded.
+     */
+    private void importIntoExcel() throws IOException {
+        String[] columns = { "Numero Test", "Fluidità", "Flessibilità",
+                "Elaborazione", "Titolo", "Tempo Reazione",
+                "Tempo Completamento", "Numero cancellature",
+                "Numero Undo", "Genere", "Data di nascita", "Data del test"};
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("RiepilogoTest");
+
+        Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerFont.setFontHeightInPoints((short) 14);
+        headerFont.setColor(IndexedColors.RED.getIndex());
+
+        CellStyle headerCellStyle = workbook.createCellStyle();
+        headerCellStyle.setFont(headerFont);
+
+        // Create a Row
+        Row headerRow = sheet.createRow(0);
+
+        for (int i = 0; i < columns.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(columns[i]);
+            cell.setCellStyle(headerCellStyle);
+        }
+
+        // Create Other rows and cells with contacts data
+        int rowNum = 1;
+
+        //Inserisco i dati
+
+
+        //Auto Size columns TODO riga per riga appena so la grandezza del testo
+        for (int i=0; i<columns.length; i++) sheet.autoSizeColumn(i);
+
+        // Write the output to a file
+        FileOutputStream fileOut = new FileOutputStream(new File("/storage/emulated/0/Download/risultatiTest.xlsx"));
+        workbook.write(fileOut);
+        fileOut.close();
+    }
+
+    /**
      * This methods generates the alert dialog if the page has no elements
      * to show.
      */
@@ -378,6 +448,25 @@ public class UserList extends ListActivity implements AppCompatCallback {
 
     @Override
     public void onSupportActionModeFinished(ActionMode mode) {
+    }
+
+    public  boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.v(TAG,"Permission is granted");
+                return true;
+            } else {
+
+                Log.v(TAG,"Permission is revoked");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        }
+        else { //permission is automatically granted on sdk<23 upon installation
+            Log.v(TAG,"Permission is granted");
+            return true;
+        }
     }
 
 }

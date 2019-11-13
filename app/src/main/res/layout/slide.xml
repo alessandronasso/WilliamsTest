@@ -79,7 +79,7 @@
                     android:background="@drawable/table_cell_bg"
                     android:paddingRight="10dp"
                     android:scrollbarSize="@dimen/_1sdp"
-                    android:text="  Flessibilità"
+                    android:text="  Fluidità"
                     android:textColor="#030101"
                     android:textSize="@dimen/_10sdp" />
 
@@ -109,7 +109,7 @@
                     android:background="@drawable/table_cell_bg"
                     android:paddingRight="10dp"
                     android:scrollbarSize="@dimen/_1sdp"
-                    android:text="  Fluidità"
+                    android:text="  Flessibilità"
                     android:textColor="#070404"
                     android:textSize="@dimen/_10sdp" />
 
