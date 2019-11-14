@@ -29,6 +29,7 @@ import androidx.core.app.ActivityCompat;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -79,19 +80,25 @@ public class UserList extends ListActivity implements AppCompatCallback {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        System.out.println(isStoragePermissionGranted());
         super.onCreate(savedInstanceState);
-        System.setProperty("org.apache.poi.javax.xml.stream.XMLInputFactory", "com.fasterxml.aalto.stax.InputFactoryImpl"); System.setProperty("org.apache.poi.javax.xml.stream.XMLOutputFactory", "com.fasterxml.aalto.stax.OutputFactoryImpl"); System.setProperty("org.apache.poi.javax.xml.stream.XMLEventFactory", "com.fasterxml.aalto.stax.EventFactoryImpl");
+        System.setProperty("org.apache.poi.javax.xml.stream.XMLInputFactory", "com.fasterxml.aalto.stax.InputFactoryImpl");
+        System.setProperty("org.apache.poi.javax.xml.stream.XMLOutputFactory", "com.fasterxml.aalto.stax.OutputFactoryImpl");
+        System.setProperty("org.apache.poi.javax.xml.stream.XMLEventFactory", "com.fasterxml.aalto.stax.EventFactoryImpl");
         setContentView(R.layout.user_list);
-        try { user = loadUser(); } catch (IOException e) { e.printStackTrace(); }
+        try {
+            user = loadUser();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         delegate = AppCompatDelegate.create(this, this);
         delegate.onCreate(savedInstanceState);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         delegate.setSupportActionBar(myToolbar);
         final List<String> user_list = new ArrayList<String>(Arrays.asList(user));
         if (user_list.contains("Test ")) user_list.remove(user_list.indexOf("Test "));
-        if (user_list.size() == 0) showCustomDialog(); else {
-            final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list,R.id.textList, user_list);
+        if (user_list.size() == 0) showCustomDialog();
+        else {
+            final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list, R.id.textList, user_list);
             setListAdapter(arAd);
             ListView listView = getListView();
             listView.setTextFilterEnabled(true);
@@ -128,7 +135,8 @@ public class UserList extends ListActivity implements AppCompatCallback {
                             File dir = new File("/data/user/0/com.example.williamstest/app_draw" + currencies[1]);
                             if (dir.isDirectory()) {
                                 String[] children = dir.list();
-                                for (int i = 0; i < children.length; i++) new File(dir, children[i]).delete();
+                                for (int i = 0; i < children.length; i++)
+                                    new File(dir, children[i]).delete();
                             }
                             dir.delete();
                             final Intent scanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
@@ -161,34 +169,50 @@ public class UserList extends ListActivity implements AppCompatCallback {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.ordina_genere_uomo) {
-            try { user = loadUser(); } catch (IOException e) { e.printStackTrace(); }
+            try {
+                user = loadUser();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             List<String> user_list = new ArrayList<String>(Arrays.asList(user));
             List<String> u2 = new ArrayList<String>();
-            for (int i=0; i<user_list.size(); i++)
+            for (int i = 0; i < user_list.size(); i++)
                 if (user_list.get(i).contains("Maschio")) u2.add(user_list.get(i));
-            final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list,R.id.textList, u2);
+            final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list, R.id.textList, u2);
             setListAdapter(arAd);
             arAd.notifyDataSetChanged();
         } else if (id == R.id.ordina_genere_donna) {
-            try { user = loadUser(); } catch (IOException e) { e.printStackTrace(); }
+            try {
+                user = loadUser();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             List<String> user_list = new ArrayList<String>(Arrays.asList(user));
             List<String> u2 = new ArrayList<String>();
-            for (int i=0; i<user_list.size(); i++)
+            for (int i = 0; i < user_list.size(); i++)
                 if (user_list.get(i).contains("Femmina")) u2.add(user_list.get(i));
-            final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list,R.id.textList, u2);
+            final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list, R.id.textList, u2);
             setListAdapter(arAd);
             arAd.notifyDataSetChanged();
         } else if (id == R.id.ordina_prot_a) {
-            try { user = loadUser(); } catch (IOException e) { e.printStackTrace(); }
+            try {
+                user = loadUser();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             List<String> user_list = new ArrayList<String>(Arrays.asList(user));
             List<String> u2 = new ArrayList<String>();
-            for (int i=0; i<user_list.size(); i++)
+            for (int i = 0; i < user_list.size(); i++)
                 if (user_list.get(i).contains(" a ")) u2.add(user_list.get(i));
-            final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list,R.id.textList, u2);
+            final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list, R.id.textList, u2);
             setListAdapter(arAd);
             arAd.notifyDataSetChanged();
         } else if (id == R.id.ordina_prot_b) {
-            try { user = loadUser(); } catch (IOException e) { e.printStackTrace(); }
+            try {
+                user = loadUser();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             List<String> user_list = new ArrayList<String>(Arrays.asList(user));
             List<String> u2 = new ArrayList<String>();
             for (int i = 0; i < user_list.size(); i++)
@@ -197,7 +221,11 @@ public class UserList extends ListActivity implements AppCompatCallback {
             setListAdapter(arAd);
             arAd.notifyDataSetChanged();
         } else if (id == R.id.ordina_eta_c) {
-            try { user = loadUser(); } catch (IOException e) { e.printStackTrace(); }
+            try {
+                user = loadUser();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             List<String> user_list = new ArrayList<String>(Arrays.asList(user));
             List<String> u2 = new ArrayList<String>();
             for (int i = 0; i < user_list.size(); i++)
@@ -218,7 +246,11 @@ public class UserList extends ListActivity implements AppCompatCallback {
             setListAdapter(arAd);
             arAd.notifyDataSetChanged();
         } else if (id == R.id.ordina_eta_d) {
-            try { user = loadUser(); } catch (IOException e) { e.printStackTrace(); }
+            try {
+                user = loadUser();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             List<String> user_list = new ArrayList<String>(Arrays.asList(user));
             List<String> u2 = new ArrayList<String>();
             for (int i = 0; i < user_list.size(); i++)
@@ -237,7 +269,11 @@ public class UserList extends ListActivity implements AppCompatCallback {
             setListAdapter(arAd);
             arAd.notifyDataSetChanged();
         } else if (id == R.id.ordina_data_d) {
-            try { user = loadUser(); } catch (IOException e) { e.printStackTrace(); }
+            try {
+                user = loadUser();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             List<String> user_list = new ArrayList<String>(Arrays.asList(user));
             user_list.sort(Comparator.comparing(s -> {
                 String stringDate = s.substring(s.lastIndexOf(':') + 1).trim();
@@ -252,7 +288,11 @@ public class UserList extends ListActivity implements AppCompatCallback {
             setListAdapter(arAd);
             arAd.notifyDataSetChanged();
         } else if (id == R.id.ordina_data_c) {
-            try { user = loadUser(); } catch (IOException e) { e.printStackTrace(); }
+            try {
+                user = loadUser();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             List<String> user_list = new ArrayList<String>(Arrays.asList(user));
             user_list.sort(Comparator.comparing(s -> {
                 String stringDate = s.substring(s.lastIndexOf(':') + 1).trim();
@@ -268,13 +308,18 @@ public class UserList extends ListActivity implements AppCompatCallback {
             setListAdapter(arAd);
             arAd.notifyDataSetChanged();
         } else if (id == R.id.remove_filter) {
-            try { user = loadUser(); } catch (IOException e) { e.printStackTrace(); }
+            try {
+                user = loadUser();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             List<String> user_list = new ArrayList<String>(Arrays.asList(user));
             final ArrayAdapter arAd = new ArrayAdapter<String>(this, R.layout.user_list, R.id.textList, user_list);
             setListAdapter(arAd);
             arAd.notifyDataSetChanged();
         } else if (id == R.id.import_excel) {
             try {
+                isStoragePermissionGranted();
                 importIntoExcel();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -288,7 +333,7 @@ public class UserList extends ListActivity implements AppCompatCallback {
      *
      * @return the list of tests
      */
-    public String[] loadUser() throws IOException{
+    public String[] loadUser() throws IOException {
         Bundle extras = getIntent().getExtras();
         userLogged = extras.getString("userLogged");
         paletteSelected = extras.getString("palette");
@@ -318,16 +363,16 @@ public class UserList extends ListActivity implements AppCompatCallback {
                     String line;
                     line = reader.readLine();
                     if (line.equals(userLogged)) {
-                        user[arrayString] = "Test: " + typeTest+"   ";
+                        user[arrayString] = "Test: " + typeTest + "   ";
                         line = reader.readLine();
                         user[arrayString] += "    Genere: " + line;
                         line = reader.readLine();
                         if (line.equals("0")) user[arrayString] += "    Eta: /   ";
-                        else user[arrayString] += "    Eta: " + line+"   ";
+                        else user[arrayString] += "    Eta: " + line + "   ";
                         line = reader.readLine();
-                        user[arrayString] += "    Protocollo: " + line+"   ";
+                        user[arrayString] += "    Protocollo: " + line + "   ";
                         line = reader.readLine();
-                        user[arrayString++] += "    Data: " + line+"   ";
+                        user[arrayString++] += "    Data: " + line + "   ";
                     }
                     f.close();
                 }
@@ -343,7 +388,7 @@ public class UserList extends ListActivity implements AppCompatCallback {
      * @return the protocol drawn by the user
      */
     public String findProtocol(String n) {
-        System.out.println (new File("/data/user/0/com.example.williamstest/app_draw8/a1_score.txt").exists());
+        System.out.println(new File("/data/user/0/com.example.williamstest/app_draw8/a1_score.txt").exists());
         File dir = new File("/data/user/0/com.example.williamstest/app_draw" + n);
         if (dir.isDirectory()) {
             for (File file : dir.listFiles()) {
@@ -359,10 +404,9 @@ public class UserList extends ListActivity implements AppCompatCallback {
      * This method generates an xlsx file with all the tests recorded.
      */
     private void importIntoExcel() throws IOException {
-        String[] columns = { "Numero Test", "Fluidità", "Flessibilità",
-                "Elaborazione", "Titolo", "Tempo Reazione",
-                "Tempo Completamento", "Numero cancellature",
-                "Numero Undo", "Genere", "Data di nascita", "Data del test"};
+        String[] columns = {"Numero Test", "Genere", "Data di nascita", "Protocollo", "Data del test", " ", "Cornice", "Fluidità", "Flessibilità",
+                "Originalita'", "Elaborazione'", "Titolo", "Tempo Reazione", "Tempo Completamento", "Numero cancellature", "Numero Undo"};
+
 
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("RiepilogoTest");
@@ -374,24 +418,82 @@ public class UserList extends ListActivity implements AppCompatCallback {
 
         CellStyle headerCellStyle = workbook.createCellStyle();
         headerCellStyle.setFont(headerFont);
+        headerCellStyle.setAlignment(HorizontalAlignment.CENTER_SELECTION);
 
         // Create a Row
         Row headerRow = sheet.createRow(0);
+
 
         for (int i = 0; i < columns.length; i++) {
             Cell cell = headerRow.createCell(i);
             cell.setCellValue(columns[i]);
             cell.setCellStyle(headerCellStyle);
+
         }
 
         // Create Other rows and cells with contacts data
         int rowNum = 1;
 
-        //Inserisco i dati
+        //Inserting the data
+        File dir = new File("/data/user/0/com.example.williamstest/");
 
+        for (File file : dir.listFiles()) {
+            if (file.getName().startsWith("app_draw")) {
+                String typeTest = file.getName().replaceAll("[^\\d.]", "");
+                if (new File(file.getAbsolutePath() + "/infotest.txt").exists()) {
+                    FileReader f = new FileReader(file.getAbsolutePath() + "/infotest.txt");
+                    LineNumberReader reader = new LineNumberReader(f);
+                    String line;
+                    String protocollo = "";
+                    line = reader.readLine();
+                    Row row = null;
+                    if (line.equals(userLogged)) {
+                        row = sheet.createRow(rowNum++);
+                        row.createCell(0).setCellValue("Test: " + typeTest);
+                        line = reader.readLine();
+                        row.createCell(1).setCellValue(line);
+                        line = reader.readLine();
+                        if (line.equals("0")) row.createCell(2).setCellValue("/");
+                        row.createCell(2).setCellValue(line);
+                        line = reader.readLine();
+                        protocollo = line;
+                        row.createCell(3).setCellValue(line);
+                        line = reader.readLine();
+                        row.createCell(4).setCellValue(line);
+                    }
+                    for (int i=0; i<12; i++) {
+                        String content = "";
+                        reader = new LineNumberReader(new FileReader(file.getAbsolutePath() + "/" + protocollo + (i + 1) + "_score.txt"));
+                        while ((line = reader.readLine()) != null) {
+                            content+=line+"\n";
+                        }
+                        String[] values = content.split("\n");
+                        row.createCell(5).setCellValue(" "); //Vuota
+                        row.createCell(6).setCellValue(i+1); //Cornice
+                        row.createCell(7).setCellValue(values[0]); //Fluidita
+                        row.createCell(8).setCellValue(values[1]); //Flessibilita
+                        row.createCell(9).setCellValue(values[2]); //Originalita'
+                        row.createCell(10).setCellValue(values[3]); //Elaborazione
+                        if (values[4].equals("Senza nome")) row.createCell(11).setCellValue("0pt.");
+                        else row.createCell(11).setCellValue("1pt."); //Titolo
+                        row.createCell(12).setCellValue(values[5]); //Tempo reazione
+                        row.createCell(13).setCellValue(values[6]); //Tempo Completamento
+                        row.createCell(14).setCellValue(values[7]); //Numero cancellature
+                        row.createCell(15).setCellValue(values[8]); //Numero undo
 
-        //Auto Size columns TODO riga per riga appena so la grandezza del testo
-        for (int i=0; i<columns.length; i++) sheet.autoSizeColumn(i);
+                        row = sheet.createRow(rowNum++);
+                        row.createCell(0).setCellValue(" ");
+                        row.createCell(1).setCellValue(" ");
+                        row.createCell(2).setCellValue(" ");
+                        row.createCell(3).setCellValue(" ");
+                        row.createCell(4).setCellValue(" ");
+                    }
+                    f.close();
+                }
+            }
+        }
+
+        sheet.setDefaultColumnWidth(23);
 
         // Write the output to a file
         FileOutputStream fileOut = new FileOutputStream(new File("/storage/emulated/0/Download/risultatiTest.xlsx"));
@@ -450,21 +552,20 @@ public class UserList extends ListActivity implements AppCompatCallback {
     public void onSupportActionModeFinished(ActionMode mode) {
     }
 
-    public  boolean isStoragePermissionGranted() {
+    public boolean isStoragePermissionGranted() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
-                Log.v(TAG,"Permission is granted");
+                Log.v(TAG, "Permission is granted");
                 return true;
             } else {
 
-                Log.v(TAG,"Permission is revoked");
+                Log.v(TAG, "Permission is revoked");
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                 return false;
             }
-        }
-        else { //permission is automatically granted on sdk<23 upon installation
-            Log.v(TAG,"Permission is granted");
+        } else { //permission is automatically granted on sdk<23 upon installation
+            Log.v(TAG, "Permission is granted");
             return true;
         }
     }
