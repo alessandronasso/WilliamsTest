@@ -70,9 +70,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 final Calendar c = Calendar.getInstance();
-                int mYear = c.get(Calendar.YEAR);
-                int mMonth = c.get(Calendar.MONTH);
-                int mDay = c.get(Calendar.DAY_OF_MONTH);
+                int mYear = 01;
+                int mMonth = 01;
+                int mDay = 2000;
 
                 final Calendar c1 = Calendar.getInstance();
                 DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.this, R.style.MySpinnerDatePickerStyle, new DatePickerDialog.OnDateSetListener() {

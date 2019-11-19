@@ -1,7 +1,9 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/MyDialog"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center">
 
@@ -11,14 +13,16 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/dateSelect"
         android:layout_centerInParent="false"
-        android:layout_marginLeft="@dimen/_16sdp"
-        android:layout_marginTop="@dimen/_5sdp"
-        android:layout_marginBottom="@dimen/_7sdp"
-        android:background="@drawable/button_bg"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="20dp"
         android:text="OK"
-        android:textAlignment="center"
+        android:background="@drawable/button_bg"
         android:textColor="@color/whiteTextColor"
-        android:textSize="@dimen/_7sdp">
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dateSelect">
 
     </Button>
 
@@ -27,18 +31,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/genderRadioGroup"
-        android:layout_alignParentLeft="true"
-        android:layout_marginTop="@dimen/_2sdp"
-        android:ems="10"
-        android:hint="Inserisci l'eta'">
-
-        <requestFocus />
-    </Button>
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:text="Inserisci l'età"
+        android:textColor="#050505"
+        android:theme="@style/Button2Style"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/genderRadioGroup" />
 
     <RadioGroup
         android:id="@+id/genderRadioGroup"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
 
         <RadioButton
@@ -46,7 +55,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_marginTop="@dimen/_3sdp"
             android:text="Maschio" />
 
 
@@ -56,7 +64,6 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/maleRadioButton"
             android:layout_alignParentLeft="true"
-            android:layout_marginTop="@dimen/_1sdp"
             android:text="Femmina" />
     </RadioGroup>
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
