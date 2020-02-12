@@ -36,6 +36,9 @@ import java.util.Date;
 import java.util.Locale;
 
 import petrov.kristiyan.colorpicker.ColorPicker;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
 public class PaintingActivity extends AppCompatActivity implements OnClickListener {
 
@@ -161,7 +164,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         undoBtn = (ImageButton) findViewById(R.id.undo_btn);
         undoBtn.setOnClickListener(this);
         if (palette.equals("yes"))
-            colorPickerBtn.setOnClickListener(new View.OnClickListener() {
+            colorPickerBtn.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     openDialog();
@@ -172,10 +175,35 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         drawView.setDimension(displaymetrics);
         if (extras.getString("first").equals("yes")) {
+            showTutorial();
             findFolder();
             writeInfoTest(extras.getString("gender"), extras.getString("eta"), extras.getString("userLogged"));
         } else folder = extras.getInt("cartella");
         restorePoints();
+    }
+
+    private void showTutorial () {
+        ShowcaseConfig config = new ShowcaseConfig();
+        config.setDelay(500); // half second between each showcase view
+        final int[] numElemMostrati = {0};
+
+        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this);
+        sequence.setConfig(config);
+        sequence.addSequenceItem(b1,
+                "This is button one", "HO CAPITO!");
+        sequence.addSequenceItem(b2,
+                "This is button two", "HO CAPITO");
+        sequence.addSequenceItem(b3,
+                "This is button three", "HO CAPITO");
+        sequence.setOnItemDismissedListener(new MaterialShowcaseSequence.OnSequenceItemDismissedListener() {
+            @Override
+            public void onDismiss(MaterialShowcaseView materialShowcaseView, int i) {
+                numElemMostrati[0]++;
+                if (numElemMostrati[0]==3)
+                    System.out.println("PARTITO ORA");
+            }
+        });
+        sequence.start();
     }
 
     /**
