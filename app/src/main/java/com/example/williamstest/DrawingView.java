@@ -112,7 +112,7 @@ public class DrawingView extends View {
     private int asymmetryInside=0, asymmetryOutside=0;
 
     /**
-     *  Group of lines symmetric (to not check twice)
+     *  Group of lines symmetric (to not check twice).
      */
     private ArrayList<ArrayList<Pair<Float,Float>>> sym = new ArrayList<>();;
 
@@ -120,6 +120,11 @@ public class DrawingView extends View {
      * Center of the current shape.
      */
     private Pair<Float,Float> centerPoint;
+
+    /**
+     * Time spent by the user on the tutorial.
+     */
+    private long tutorialTime = 0;
 
 
     public DrawingView(Context context, AttributeSet attrs) {
@@ -197,24 +202,21 @@ public class DrawingView extends View {
         if (!started) {
             started = true;
             long millis = System.currentTimeMillis() - startTime;
-            s1 = String.format(Locale.ITALIAN, "%d", TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MILLISECONDS.toSeconds(startActivity));
+            s1 = String.format(Locale.ITALIAN, "%d", TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MILLISECONDS.toSeconds(startActivity) - TimeUnit.MILLISECONDS.toSeconds(tutorialTime));
             startTime = 0;
         }
         float touchX = event.getX();
         float touchY = event.getY();
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                System.out.println(touchX+"\n"+touchY);
                 drawPath.moveTo(touchX, touchY);
                 points.add(new Pair<Float, Float>(touchX, touchY));
                 break;
             case MotionEvent.ACTION_MOVE:
-                System.out.println(touchX+"\n"+touchY);
                 drawPath.lineTo(touchX, touchY);
                 points.add(new Pair<Float, Float>(touchX, touchY));
                 break;
             case MotionEvent.ACTION_UP:
-                System.out.println(touchX+"\n"+touchY);
                 drawPath.lineTo(touchX, touchY);
                 points.add(new Pair<Float, Float>(touchX, touchY));
                 drawCanvas.drawPath(drawPath, drawPaint);
@@ -225,7 +227,6 @@ public class DrawingView extends View {
                     eraseNumber++;
                     removeErasedPoints(points);
                 }
-                System.out.println("-----");
                 points.clear();
                 drawPath.reset();
                 break;
@@ -421,7 +422,7 @@ public class DrawingView extends View {
      */
     public String getTimeToDraw () {
         long millis = System.currentTimeMillis() - startTime;
-        s2 = String.format("%d", TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MILLISECONDS.toSeconds(startActivity));
+        s2 = String.format("%d", TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MILLISECONDS.toSeconds(startActivity) - TimeUnit.MILLISECONDS.toSeconds(tutorialTime));
         startTime = 0;
         return s2;
     }
@@ -544,7 +545,6 @@ public class DrawingView extends View {
             if (differences[index]<0) differences[index] = -differences[index];
             if (differences[index]<nGroupsFirstShape*2.5) numberOf++;
         }
-        System.out.println("NUMBER OF: "+numberOf);
         if (numberOf>=6) return true; else return false;
     }
 
@@ -687,5 +687,9 @@ public class DrawingView extends View {
     public void setPaintColor (int color) {
         paintColor = color;
         drawPaint.setColor(paintColor);
+    }
+
+    public void setTutorialTime (long time) {
+        tutorialTime = time;
     }
 }

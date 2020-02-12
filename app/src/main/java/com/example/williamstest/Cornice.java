@@ -14,16 +14,20 @@ public class Cornice implements Serializable, Parcelable {
 
     private boolean completed;
 
-    public Cornice (String n, ArrayList<ArrayList<Float>> p, boolean c) {
+    private String titolo;
+
+    public Cornice (String n, ArrayList<ArrayList<Float>> p, boolean c, String t) {
         numero = n;
         points = p;
         completed = c;
+        titolo = t;
     }
 
     protected Cornice(Parcel in) {
         numero = in.readString();
         points = in.readArrayList(ArrayList.class.getClassLoader());
         completed = in.readByte() != 0;
+        titolo = in.readString();
     }
 
     public static final Creator<Cornice> CREATOR = new Creator<Cornice>() {
@@ -46,6 +50,10 @@ public class Cornice implements Serializable, Parcelable {
 
     public void setCompleted (boolean c) { completed = c; }
 
+    public void setTitolo (String t) { titolo = t; }
+
+    public String getTitolo () { return titolo; }
+
     @Override
     public int describeContents() {
         return 0;
@@ -56,5 +64,6 @@ public class Cornice implements Serializable, Parcelable {
         dest.writeString(numero);
         dest.writeList(points);
         dest.writeByte((byte) (completed ? 1 : 0));
+        dest.writeString(titolo);
     }
 }
