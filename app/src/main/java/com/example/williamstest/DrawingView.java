@@ -126,6 +126,11 @@ public class DrawingView extends View {
      */
     private long tutorialTime = 0;
 
+    /**
+     * Color of each line drawn by the user.
+     */
+    private ArrayList<Integer> lineColor = new ArrayList<>();
+
 
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -187,8 +192,10 @@ public class DrawingView extends View {
         canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         drawCanvas = new Canvas(canvasBitmap);
         for (int i=0; i<segments.size(); i++) {
+            if (lineColor.size()!=0) setPaintColor(lineColor.get(i));
             drawFromArrayList(segments.get(i));
         }
+        setPaintColor(Color.BLACK);
     }
 
     @Override
@@ -221,6 +228,7 @@ public class DrawingView extends View {
                 points.add(new Pair<Float, Float>(touchX, touchY));
                 drawCanvas.drawPath(drawPath, drawPaint);
                 if (!erase) {
+                    lineColor.add(getPaintColor());
                     ArrayList<Pair<Float, Float>> clone = new ArrayList<>(points);
                     segments.add(clone);
                 } else  {
@@ -257,8 +265,10 @@ public class DrawingView extends View {
                     }
                 }
             }
-            if (segments.get(i).size()==0 || ((segments.get(i).size()*100)/initialSize)<=20)
+            if (segments.get(i).size()==0 || ((segments.get(i).size()*100)/initialSize)<=20) {
                 segments.remove(i--);
+                lineColor.remove(i--);
+            }
         }
     }
 
@@ -376,6 +386,9 @@ public class DrawingView extends View {
     }
 
 
+    /**
+     * Method used to check if the user has drawn outside the frame.
+     */
     private void checkDrawOut() {
         Polygon.Builder shape = Polygon.Builder();
         for (int i=0; i<figura.size(); i++)
@@ -632,6 +645,11 @@ public class DrawingView extends View {
         segments = new ArrayList<>(pts);
     }
 
+    /**
+     * Method used to set the center point of the current frame
+     *
+     * @param p1 central point of the shape
+     */
     public void setCenterPoint (Pair p1) { centerPoint = p1; }
 
     /**
@@ -689,7 +707,30 @@ public class DrawingView extends View {
         drawPaint.setColor(paintColor);
     }
 
+    /**
+     * Method used to caluclate the time spent by the user on the tutorial.
+     *
+     * @param time Time spent by the user on the tutorial.
+     */
     public void setTutorialTime (long time) {
         tutorialTime = time;
+    }
+
+    /**
+     * Method used to get all the colors used in the draw.
+     *
+     * @return the colors
+     */
+    public ArrayList<Integer> getLineColor () {
+        return lineColor;
+    }
+
+    /**
+     * Method used to set all the colors used in the draw.
+     *
+     * @param lc list of color
+     */
+    public void setLineColor (ArrayList<Integer> lc) {
+        lineColor = lc;
     }
 }

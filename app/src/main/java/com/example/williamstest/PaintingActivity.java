@@ -108,10 +108,9 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
     private ArrayList<TimesAndErasures> tempi = null;
 
     /**
-     * Time spent by the user on the tutorial
+     * Time spent by the user on the tutorial.
      */
     private long timeTutorial = 0;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +128,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         drawView = (DrawingView) findViewById(R.id.drawing);
         drawView.setCornice(protocol, cornice);
+        if (findLocation()!=-1) drawView.setLineColor(corniciNC.get(findLocation()).getColors());
         LinearLayout paintLayout = (LinearLayout) findViewById(R.id.toprow);
         LinearLayout paintLayout2 = (LinearLayout) findViewById(R.id.bottomrow);
         title = (EditText) paintLayout.findViewById(R.id.edittitle);
@@ -200,7 +200,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                         "l'ultima\n linea disegnata!", "HO CAPITO");
         if (palette.equals("yes")) sequence.addSequenceItem(colorPickerBtn, "Questo è lo strumento per i colori!\nClicca qui sopra per cambiare il colore\ndella matita!", "HO CAPITO");
         sequence.addSequenceItem(b2, "Questo è il tasto Avanti!\nUtilizza questo tasto per passare al prossimo disegno!", "HO CAPITO");
-        sequence.addSequenceItem(b3, "Questo è lo tasto Indietro!\nUtilizza questo tasto per tornare al disegno precedente!", "HO CAPITO");
+        sequence.addSequenceItem(b3, "Questo è il tasto Indietro!\nUtilizza questo tasto per tornare al disegno precedente!", "HO CAPITO");
         sequence.setOnItemDismissedListener(new MaterialShowcaseSequence.OnSequenceItemDismissedListener() {
             @Override
             public void onDismiss(MaterialShowcaseView materialShowcaseView, int i) {
@@ -257,9 +257,9 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         else if (view.equals(b3)) {  //TASTO INDIETRO
             tempi.add(new TimesAndErasures(cornice, Integer.parseInt(drawView.getReactionTime()), Integer.parseInt(drawView.getTimeToDraw()), drawView.getEraseNumber(), drawView.getUndoNumber()));
             if (findLocation() == -1) {
-                corniciNC.add(new Cornice(cornice, savePoints(), false, title.getText().toString()));
+                corniciNC.add(new Cornice(cornice, savePoints(), false, title.getText().toString(), getColorSelected()));
             } else
-                corniciNC.set(findLocation(), (new Cornice(cornice, savePoints(), false, title.getText().toString())));
+                corniciNC.set(findLocation(), (new Cornice(cornice, savePoints(), false, title.getText().toString(), getColorSelected())));
             if (Integer.parseInt(cornice)-1 != 0) {
                 loadShapePoints();
                 loadCenterPoint();
@@ -290,9 +290,9 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         } else if (view.equals(b2)) { //TASTO AVANTI
             tempi.add(new TimesAndErasures(cornice, Integer.parseInt(drawView.getReactionTime()), Integer.parseInt(drawView.getTimeToDraw()), drawView.getEraseNumber(), drawView.getUndoNumber()));
             if (findLocation() == -1) {
-                corniciNC.add(new Cornice(cornice, savePoints(), false, title.getText().toString()));
+                corniciNC.add(new Cornice(cornice, savePoints(), false, title.getText().toString(), getColorSelected()));
             } else
-                corniciNC.set(findLocation(), (new Cornice(cornice, savePoints(), false, title.getText().toString())));
+                corniciNC.set(findLocation(), (new Cornice(cornice, savePoints(), false, title.getText().toString(), getColorSelected())));
             loadShapePoints();
             loadCenterPoint();
             String flessibilita = "---";
@@ -342,6 +342,11 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         }
     }
 
+    /**
+     * Method used to calculate the reaction time of the frame.
+     *
+     * @return the reaction time
+     */
     public int getTimeToDrawTime () {
         int timeToDraw = 0;
         for (int i=0; i<tempi.size() && timeToDraw==0; i++) {
@@ -352,6 +357,12 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         return timeToDraw;
     }
 
+    /**
+     * Method used to calculate the completition time of the frame
+     * according to all the draws made by the user.
+     *
+     * @return the completition time
+     */
     public int getTotalCompletitionTime () {
         int firstIndexElem = -1;
         int sumTot = 0;
@@ -577,6 +588,15 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             }
         }
         drawView.setPoints(points);
+    }
+
+    /**
+     * Method used to get all the colors used in the current frame.
+     *
+     * @return the color used
+     */
+    public ArrayList<Integer> getColorSelected () {
+        return drawView.getLineColor();
     }
 
     @Override
