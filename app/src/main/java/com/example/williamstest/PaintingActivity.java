@@ -196,7 +196,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 "a disegnare!", "HO CAPITO");
         sequence.addSequenceItem(eraseBtn, "Questo è lo strumento gomma!\nClicca qui sopra per cancellare",
                 "HO CAPITO");
-        sequence.addSequenceItem(undoBtn, " Questo è lo strumento undo!\n Clicca qui sopra per cancellare\n istantaneamente" +
+        sequence.addSequenceItem(undoBtn, " Questo è lo strumento undo!\n Clicca qui sopra per cancellare\n istantaneamente " +
                         "l'ultima\n linea disegnata!", "HO CAPITO");
         if (palette.equals("yes")) sequence.addSequenceItem(colorPickerBtn, "Questo è lo strumento per i colori!\nClicca qui sopra per cambiare il colore\ndella matita!", "HO CAPITO");
         sequence.addSequenceItem(b2, "Questo è il tasto Avanti!\nUtilizza questo tasto per passare al prossimo disegno!", "HO CAPITO");
