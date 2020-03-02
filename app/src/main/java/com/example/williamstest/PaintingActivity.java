@@ -311,9 +311,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                         .setMessage("Vuoi veramente concludere il test?")
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                Intent myIntent = new Intent(PaintingActivity.this, Result.class);
-                                myIntent.putExtra("protocollo", protocol);
-                                myIntent.putExtra("cartella", Integer.toString(folder));
+                                Intent myIntent = new Intent(PaintingActivity.this, MainActivity.class);
                                 myIntent.putExtra("userLogged", logged);
                                 myIntent.putExtra("palette", palette);
                                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
