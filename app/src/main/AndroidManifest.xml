@@ -2,31 +2,44 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.williamstest">
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-
     <application
+        android:configChanges="keyboardHidden|orientation"
         android:icon="@mipmap/ic_launcher"
         android:label="TCD - D"
         android:roundIcon="@mipmap/ic_launcher_round"
-        tools:replace="android:icon"
         android:supportsRtl="true"
-        android:configChanges="keyboardHidden|orientation"
-        android:theme="@style/AppTheme">
-        <activity android:name=".LoginActivity" android:screenOrientation="landscape">
+        android:theme="@style/AppTheme"
+        tools:replace="android:icon">
+        <activity android:name=".InstructionsActivity"></activity>
+        <activity
+            android:name=".LoginActivity"
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".FinalResult" android:screenOrientation="landscape"/>
-        <activity android:name=".Result" android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".PaintingActivity" android:screenOrientation="landscape"/>
-        <activity android:name=".UserList" android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".MainActivity" android:screenOrientation="landscape">
+        <activity
+            android:name=".FinalResult"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".Result"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".PaintingActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".UserList"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />

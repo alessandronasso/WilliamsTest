@@ -170,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
      * @param gender The gender checked by the user.
      */
     public void loadProtocol(String eta, String gender) {
-        Intent myIntent = new Intent(MainActivity.this, PaintingActivity.class);
+        Intent myIntent = new Intent(MainActivity.this, InstructionsActivity.class);
         myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         myIntent.putExtra("palette", paletteSelected);
         myIntent.putExtra("gender", gender);
