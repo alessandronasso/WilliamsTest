@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import androidx.viewpager.widget.PagerAdapter;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -15,6 +14,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
+
+import androidx.viewpager.widget.PagerAdapter;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -44,12 +46,12 @@ public class SlideAdapter extends PagerAdapter {
     /**
      * The editText where the user can modify the score.
      */
-    private EditText f, t;
+    private EditText f, t, fl, o, el;
 
     /**
      * The new value modfied by the user.
      */
-    private String newValue="", newValue2="";
+    private String newValue="", newValue2="", newValue3="", newValue4="", newValue5="";
 
     /**
      * The user who has logged in.
@@ -175,9 +177,9 @@ public class SlideAdapter extends PagerAdapter {
      */
     private void setTableText (View view, String content) {
         f = (EditText) view.findViewById(R.id.fl_item_2);
-        TextView fl = (TextView) view.findViewById(R.id.f_item_1);
-        TextView o = (TextView) view.findViewById(R.id.o_item_3);
-        TextView el = (TextView) view.findViewById(R.id.el_item_4);
+        fl = (EditText) view.findViewById(R.id.f_item_1);
+        o = (EditText) view.findViewById(R.id.o_item_3);
+        el = (EditText) view.findViewById(R.id.el_item_4);
         t = (EditText) view.findViewById(R.id.t_item_5);
         TextView t1 = (TextView) view.findViewById(R.id.tempo_item_1);
         TextView t2 = (TextView) view.findViewById(R.id.tempo_item_2);
@@ -215,8 +217,50 @@ public class SlideAdapter extends PagerAdapter {
             }
         });
         fl.setText(values[0]);
+        fl.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable arg0) { }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                newValue3 = s.toString();
+                newValue3 = newValue3.replaceAll("[^\\d]", "" );
+                newValue3 = newValue3+"pt.";
+            }
+        });
         o.setText(values[2]);
+        o.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable arg0) { }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                newValue4 = s.toString();
+                newValue4 = newValue4.replaceAll("[^\\d]", "" );
+                newValue4 = newValue4+"pt.";
+            }
+        });
         el.setText(values[3]);
+        el.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable arg0) { }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                newValue5 = s.toString();
+                newValue5 = newValue5.replaceAll("[^\\d]", "" );
+                newValue5 = newValue5+"pt.";
+            }
+        });
         t.setText(values[9]);
         t1.setText(values[5]);
         t2.setText(values[6]);
@@ -244,6 +288,9 @@ public class SlideAdapter extends PagerAdapter {
         for (int i=0; (currentLine = reader.readLine()) != null; i++) {
             if (i==1 && !newValue.equals("")) writer.write(newValue + System.getProperty("line.separator"));
             else if (i==9 && !newValue2.equals("")) writer.write(newValue2 + System.getProperty("line.separator"));
+            else if (i==0 && !newValue3.equals("")) writer.write(newValue3 + System.getProperty("line.separator"));
+            else if (i==2 && !newValue4.equals("")) writer.write(newValue4 + System.getProperty("line.separator"));
+            else if (i==3 && !newValue5.equals("")) writer.write(newValue5 + System.getProperty("line.separator"));
             else writer.write(currentLine + System.getProperty("line.separator"));
         }
         writer.close();

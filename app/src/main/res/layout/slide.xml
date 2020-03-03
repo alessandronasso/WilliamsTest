@@ -83,7 +83,7 @@
                     android:textColor="#030101"
                     android:textSize="@dimen/_10sdp" />
 
-                <TextView
+                <EditText
                     android:id="@+id/f_item_1"
                     android:layout_width="@dimen/_130sdp"
                     android:layout_height="wrap_content"
@@ -142,7 +142,7 @@
                     android:textColor="#070404"
                     android:textSize="@dimen/_10sdp" />
 
-                <TextView
+                <EditText
                     android:id="@+id/o_item_3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -171,7 +171,7 @@
                     android:textColor="#070404"
                     android:textSize="@dimen/_10sdp" />
 
-                <TextView
+                <EditText
                     android:id="@+id/el_item_4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

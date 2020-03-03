@@ -325,7 +325,7 @@ public class UserList extends ListActivity implements AppCompatCallback {
             try {
                 isStoragePermissionGranted();
                 importIntoExcel();
-                generatePdf();
+                generateImages();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -405,6 +405,11 @@ public class UserList extends ListActivity implements AppCompatCallback {
         return null;
     }
 
+    /**
+     * This method is used to delete a list of files recursively.
+     *
+     * @param fileOrDirectory Directory containing the files to delete.
+     */
     public void deleteRecursive(File fileOrDirectory) {
 
         if (fileOrDirectory.isDirectory()) {
@@ -416,7 +421,12 @@ public class UserList extends ListActivity implements AppCompatCallback {
         fileOrDirectory.delete();
     }
 
-    private void generatePdf() throws IOException {
+    /**
+     * This method generates a directory containing all the images drawn by the users.
+     *
+     * @throws IOException if it is not possible to create a folder
+     */
+    private void generateImages() throws IOException {
         File dir = new File("/data/user/0/com.example.williamstest/");
         File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), "/Download/ImmaginiTest");
         if (!mediaStorageDir.exists()) {
@@ -431,10 +441,9 @@ public class UserList extends ListActivity implements AppCompatCallback {
                 mediaStorageDir.mkdirs();
             }
         for (File file : dir.listFiles()) {
-            if (file.getName().startsWith("app_draw")) {
+            if (file.getName().startsWith("app_draw") && Character.isDigit(file.getName().charAt(file.getName().length() - 1))) {
                 File makingDir = new File(Environment.getExternalStorageDirectory(), "/Download/ImmaginiTest/Test"+file.getName().substring(file.getName().length() - 1));
                 makingDir.mkdirs();
-                if (makingDir.exists()) System.out.println("ESISTEEE: "+makingDir.getPath());
                 for (File fileS : file.listFiles()) {
                     if (fileS.getName().endsWith(".png")) {
                         Bitmap b = BitmapFactory.decodeStream(new FileInputStream(fileS));
@@ -533,8 +542,7 @@ public class UserList extends ListActivity implements AppCompatCallback {
                         row.createCell(8).setCellValue(values[1]); //Flessibilita
                         row.createCell(9).setCellValue(values[2]); //Originalita'
                         row.createCell(10).setCellValue(values[3]); //Elaborazione
-                        if (values[4].equals("Senza nome")) row.createCell(11).setCellValue("0pt.");
-                        else row.createCell(11).setCellValue("1pt."); //Titolo
+                        row.createCell(11).setCellValue(values[9]); //Titolo
                         row.createCell(12).setCellValue(values[5]); //Tempo reazione
                         row.createCell(13).setCellValue(values[6]); //Tempo Completamento
                         row.createCell(14).setCellValue(values[7]); //Numero cancellature
@@ -555,6 +563,8 @@ public class UserList extends ListActivity implements AppCompatCallback {
         sheet.setDefaultColumnWidth(23);
 
         // Write the output to a file
+        if (new File("/storage/emulated/0/Download/risultatiTest.xlsx").exists())
+            new File("/storage/emulated/0/Download/risultatiTest.xlsx").delete();
         FileOutputStream fileOut = new FileOutputStream(new File("/storage/emulated/0/Download/risultatiTest.xlsx"));
         workbook.write(fileOut);
         fileOut.close();

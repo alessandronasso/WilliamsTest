@@ -222,7 +222,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         ColorPicker colorPicker = new ColorPicker(this);
         colorPicker.setRoundColorButton(true);
         colorPicker.setColors(Color.BLACK, Color.RED, Color.BLUE, Color.GREEN, Color.CYAN, Color.GRAY, Color.MAGENTA,
-                Color.DKGRAY, Color.YELLOW, Color.LTGRAY);
+                Color.rgb(255, 182, 193), Color.YELLOW, Color.rgb(255, 165, 0));
         colorPicker.show();
         colorPicker.setOnChooseColorListener(new ColorPicker.OnChooseColorListener() {
             @Override
