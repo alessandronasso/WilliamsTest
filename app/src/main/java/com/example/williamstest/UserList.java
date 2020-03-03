@@ -3,6 +3,7 @@ package com.example.williamstest;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -21,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatCallback;
@@ -39,10 +41,13 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.text.SimpleDateFormat;
@@ -156,11 +161,54 @@ public class UserList extends ListActivity implements AppCompatCallback {
                         @Override
                         public void onClick(View v) {
                             dialog.cancel();
+                            final EditText code = new EditText(UserList.this);
+                            new AlertDialog.Builder(UserList.this)
+                                    .setMessage("Inserisci il codice identificativo del ragazzo")
+                                    .setView(code)
+                                    .setPositiveButton("Conferma", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+                                            if (!code.getText().toString().equals("")) {
+                                                try {
+                                                    updateID(code.getText().toString(), user_list.get(position).split("\\s+"));
+                                                    user = loadUser();
+                                                    List<String> user_list = new ArrayList<String>(Arrays.asList(user));
+                                                    final ArrayAdapter arAd = new ArrayAdapter<String>(UserList.this, R.layout.user_list, R.id.textList, user_list);
+                                                    setListAdapter(arAd);
+                                                    arAd.notifyDataSetChanged();
+                                                } catch (IOException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        }
+                                    })
+                                    .setNegativeButton("Indietro", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+                                        }
+                                    }).show();
                         }
                     });
                 }
             });
         }
+    }
+
+    public void updateID (String id, String[] pos) throws IOException {
+        String[] currencies = pos;
+        File inputFile = new File("/data/user/0/com.example.williamstest/app_draw" + currencies[1]+"/infotest.txt");
+        File tempFile = new File("/data/user/0/com.example.williamstest/app_draw" + currencies[1]+"/infotest_tmp.txt");
+
+        BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+        BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+
+        String currentLine;
+
+        for (int i=0; (currentLine = reader.readLine()) != null; i++) {
+            if (i==5) writer.write(id);
+            else writer.write(currentLine + System.getProperty("line.separator"));
+        }
+        writer.close();
+        reader.close();
+        tempFile.renameTo(inputFile);
     }
 
     @Override
@@ -375,9 +423,14 @@ public class UserList extends ListActivity implements AppCompatCallback {
                         if (line.equals("0")) user[arrayString] += "    Eta: /   ";
                         else user[arrayString] += "    Eta: " + line + "   ";
                         line = reader.readLine();
+                        System.out.println("LINE1: "+line);
                         user[arrayString] += "    Protocollo: " + line + "   ";
                         line = reader.readLine();
-                        user[arrayString++] += "    Data: " + line + "   ";
+                        System.out.println("LINE2: "+line);
+                        user[arrayString] += "    Data: " + line + "   ";
+                        line = reader.readLine();
+                        System.out.println("LINE3: "+line);
+                        user[arrayString++] += "    ID Ragazzo: " + line + "   ";
                     }
                     f.close();
                 }
@@ -471,7 +524,7 @@ public class UserList extends ListActivity implements AppCompatCallback {
      * This method generates an xlsx file with all the tests recorded.
      */
     private void importIntoExcel() throws IOException {
-        String[] columns = {"Numero Test", "Genere", "Data di nascita", "Protocollo", "Data del test", " ", "Cornice", "Fluidità", "Flessibilità",
+        String[] columns = {"Numero Test", "Codice ID", "Genere", "Data di nascita", "Protocollo", "Data del test", " ", "Cornice", "Fluidità", "Flessibilità",
                 "Originalita'", "Elaborazione'", "Titolo", "Tempo Reazione", "Tempo Completamento", "Numero cancellature", "Numero Undo"};
 
 
@@ -518,15 +571,17 @@ public class UserList extends ListActivity implements AppCompatCallback {
                         row = sheet.createRow(rowNum++);
                         row.createCell(0).setCellValue("Test: " + typeTest);
                         line = reader.readLine();
-                        row.createCell(1).setCellValue(line);
-                        line = reader.readLine();
-                        if (line.equals("0")) row.createCell(2).setCellValue("/");
                         row.createCell(2).setCellValue(line);
                         line = reader.readLine();
-                        protocollo = line;
+                        if (line.equals("0")) row.createCell(2).setCellValue("/");
                         row.createCell(3).setCellValue(line);
                         line = reader.readLine();
+                        protocollo = line;
                         row.createCell(4).setCellValue(line);
+                        line = reader.readLine();
+                        row.createCell(5).setCellValue(line);
+                        line = reader.readLine();
+                        row.createCell(1).setCellValue(line);
                     }
                     for (int i=0; i<12; i++) {
                         String content = "";
@@ -536,17 +591,17 @@ public class UserList extends ListActivity implements AppCompatCallback {
                         }
 
                         String[] values = content.split("\n");
-                        row.createCell(5).setCellValue(" "); //Vuota
-                        row.createCell(6).setCellValue(i+1); //Cornice
-                        row.createCell(7).setCellValue(values[0]); //Fluidita
-                        row.createCell(8).setCellValue(values[1]); //Flessibilita
-                        row.createCell(9).setCellValue(values[2]); //Originalita'
-                        row.createCell(10).setCellValue(values[3]); //Elaborazione
-                        row.createCell(11).setCellValue(values[9]); //Titolo
-                        row.createCell(12).setCellValue(values[5]); //Tempo reazione
-                        row.createCell(13).setCellValue(values[6]); //Tempo Completamento
-                        row.createCell(14).setCellValue(values[7]); //Numero cancellature
-                        row.createCell(15).setCellValue(values[8]); //Numero undo
+                        row.createCell(6).setCellValue(" "); //Vuota
+                        row.createCell(7).setCellValue(i+1); //Cornice
+                        row.createCell(8).setCellValue(values[0]); //Fluidita
+                        row.createCell(9).setCellValue(values[1]); //Flessibilita
+                        row.createCell(10).setCellValue(values[2]); //Originalita'
+                        row.createCell(12).setCellValue(values[3]); //Elaborazione
+                        row.createCell(12).setCellValue(values[9]); //Titolo
+                        row.createCell(13).setCellValue(values[5]); //Tempo reazione
+                        row.createCell(14).setCellValue(values[6]); //Tempo Completamento
+                        row.createCell(15).setCellValue(values[7]); //Numero cancellature
+                        row.createCell(16).setCellValue(values[8]); //Numero undo
 
                         row = sheet.createRow(rowNum++);
                         row.createCell(0).setCellValue(" ");
@@ -554,6 +609,7 @@ public class UserList extends ListActivity implements AppCompatCallback {
                         row.createCell(2).setCellValue(" ");
                         row.createCell(3).setCellValue(" ");
                         row.createCell(4).setCellValue(" ");
+                        row.createCell(5).setCellValue(" ");
                     }
                     f.close();
                 }

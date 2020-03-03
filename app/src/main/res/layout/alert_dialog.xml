@@ -34,7 +34,7 @@
         android:id="@+id/dialog_neutral_btn"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
-        android:text="Indietro"
+        android:text="Codice ragazzo"
         android:layout_below="@id/dialog_tv"
         android:textColor="@android:color/black"
         android:background="@drawable/button_bg_3" />

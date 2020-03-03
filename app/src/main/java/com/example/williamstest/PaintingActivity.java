@@ -529,6 +529,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             outputStreamWriter.write(protocol+"\n");
             String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
             outputStreamWriter.write(currentDate);
+            outputStreamWriter.write("\n/"); //ID CODE child
             outputStreamWriter.flush();
             outputStreamWriter.close();
         } catch (IOException e) {
