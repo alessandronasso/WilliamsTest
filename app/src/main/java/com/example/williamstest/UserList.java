@@ -5,10 +5,13 @@ import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ParseException;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -37,6 +40,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -321,6 +325,7 @@ public class UserList extends ListActivity implements AppCompatCallback {
             try {
                 isStoragePermissionGranted();
                 importIntoExcel();
+                generatePdf();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -400,6 +405,59 @@ public class UserList extends ListActivity implements AppCompatCallback {
         return null;
     }
 
+    public void deleteRecursive(File fileOrDirectory) {
+
+        if (fileOrDirectory.isDirectory()) {
+            for (File child : fileOrDirectory.listFiles()) {
+                deleteRecursive(child);
+            }
+        }
+
+        fileOrDirectory.delete();
+    }
+
+    private void generatePdf() throws IOException {
+        File dir = new File("/data/user/0/com.example.williamstest/");
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), "/Download/ImmaginiTest");
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs())
+                Log.d("App", "failed to create directory");
+        } else {
+                if (mediaStorageDir.isDirectory()) {
+                    for (File child : mediaStorageDir.listFiles())
+                        deleteRecursive(child);
+                }
+                mediaStorageDir.delete();
+                mediaStorageDir.mkdirs();
+            }
+        for (File file : dir.listFiles()) {
+            if (file.getName().startsWith("app_draw")) {
+                File makingDir = new File(Environment.getExternalStorageDirectory(), "/Download/ImmaginiTest/Test"+file.getName().substring(file.getName().length() - 1));
+                makingDir.mkdirs();
+                if (makingDir.exists()) System.out.println("ESISTEEE: "+makingDir.getPath());
+                for (File fileS : file.listFiles()) {
+                    if (fileS.getName().endsWith(".png")) {
+                        Bitmap b = BitmapFactory.decodeStream(new FileInputStream(fileS));
+                        File mypath=new File(makingDir, fileS.getName());
+                        FileOutputStream fos = null;
+                        try {
+                            fos = new FileOutputStream(mypath);
+                            b.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            try {
+                                fos.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * This method generates an xlsx file with all the tests recorded.
      */
@@ -467,6 +525,7 @@ public class UserList extends ListActivity implements AppCompatCallback {
                         while ((line = reader.readLine()) != null) {
                             content+=line+"\n";
                         }
+
                         String[] values = content.split("\n");
                         row.createCell(5).setCellValue(" "); //Vuota
                         row.createCell(6).setCellValue(i+1); //Cornice

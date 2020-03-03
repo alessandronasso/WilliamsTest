@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         userLogged = extras.getString("userLogged");
         paletteSelected = extras.getString("palette");
+        System.out.println("STAMPO USER: "+userLogged);
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View formElementsView = inflater.inflate(R.layout.form_elements, null, false);
 
