@@ -44,7 +44,7 @@ public class InstructionsActivity extends AppCompatActivity {
                 TypedValue.COMPLEX_UNIT_DIP);
         instructionsText.setText("Nelle prossime pagine ci sono 12 cornici che contengono alcune linee o abbozzi\n" +
                 "di forme. Partendo dalle linee o dalle forme che trovate potrete disegnare oggetti\n" +
-                "e figure interessanti. Cercate di fare del disegni in tutte e 12 le cornici, disegnando\n" +
+                "e figure interessanti. Cercate di fare dei disegni in tutte e 12 le cornici, disegnando\n" +
                 "cose originali a cui nessun altro penserebbe. Disegnate rapidamente con matite\n" +
                 "a colori. Le cornici sono numerate, quindi seguite l'ordine stabilito dalla prima\n" +
                 "cornice all'ultima. È importante! Sulla riga che si trova sotto ciascuna cornice\n" +

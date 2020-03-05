@@ -269,8 +269,8 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 String elaborazione = drawView.getSymmetryScore() + "pt.";
                 String tempoReazione = (fluidita.equals("1pt.")) ? "" + getTimeToDrawTime() + " s" : "0" + " s";
                 String tempoCompletamentoDisegno = (fluidita.equals("1pt.")) ? "" + getTotalCompletitionTime() + " s" : "0" + " s";
-                String numeroCancellature = totalErase + "";
-                String undo = totalUndo + "";
+                String numeroCancellature = getTotalErasures() + "";
+                String undo = getTotalUndo() + "";
                 saveImage();
                 writeScore(fluidita, flessibilita, originalita, elaborazione, titoli, tempoReazione, tempoCompletamentoDisegno, numeroCancellature, undo);
                 drawView.clearBitmap();
@@ -301,8 +301,8 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             String elaborazione = drawView.getSymmetryScore() + "pt.";
             String tempoReazione = (fluidita.equals("1pt.")) ? "" + getTimeToDrawTime() + " s" : "0" + " s";
             String tempoCompletamentoDisegno = (fluidita.equals("1pt.")) ? "" + getTotalCompletitionTime() + " s" : "0" + " s";
-            String numeroCancellature = totalErase + "";
-            String undo = totalUndo + "";
+            String numeroCancellature = getTotalErasures() + "";
+            String undo = getTotalUndo() + "";
             saveImage();
             writeScore(fluidita, flessibilita, originalita, elaborazione, titoli, tempoReazione, tempoCompletamentoDisegno, numeroCancellature, undo);
             if (Integer.parseInt(cornice)+1 ==13) {
@@ -587,6 +587,34 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
             }
         }
         drawView.setPoints(points);
+    }
+
+    /**
+     * This method returns the total number of erasures.
+     *
+     * @return the number of erasures
+     */
+    public int getTotalErasures () {
+        int sum = 0;
+        for (int i=0; i<tempi.size(); i++) {
+            if (tempi.get(i).getCornice().equals(cornice))
+                sum+=tempi.get(i).getEraseN();
+        }
+        return sum;
+    }
+
+    /**
+     * This method returns the total number of undo.
+     *
+     * @return the number of undo
+     */
+    public int getTotalUndo () {
+        int sum = 0;
+        for (int i=0; i<tempi.size(); i++) {
+            if (tempi.get(i).getCornice().equals(cornice))
+                sum+=tempi.get(i).getUndoN();
+        }
+        return sum;
     }
 
     /**

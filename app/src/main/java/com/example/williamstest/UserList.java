@@ -124,10 +124,10 @@ public class UserList extends ListActivity implements AppCompatCallback {
         l3.gravity= Gravity.END;
         b1.setLayoutParams(l3);
         myToolbar.addView(b1);
+        isStoragePermissionGranted();
 
         b1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                isStoragePermissionGranted();
                 DynamicToast.make(UserList.this, "Attendere qualche secondo...", 2000).show();
                 b1.setEnabled(false);
                     Handler handler =new Handler();
