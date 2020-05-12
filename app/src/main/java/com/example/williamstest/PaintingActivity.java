@@ -311,6 +311,7 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                         .setMessage("Vuoi veramente concludere il test?")
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
+                                if (!logged.equals("0000")) addCompletedUser(logged);
                                 Intent myIntent = new Intent(PaintingActivity.this, MainActivity.class);
                                 myIntent.putExtra("userLogged", logged);
                                 myIntent.putExtra("palette", palette);
@@ -615,6 +616,19 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
                 sum+=tempi.get(i).getUndoN();
         }
         return sum;
+    }
+
+    private void addCompletedUser (String userLogged) {
+        File inputFile = new File("/data/user/0/com.example.williamstest/testCompleted.txt");
+        try {
+            FileOutputStream fos = new FileOutputStream(inputFile, true);
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fos);
+            outputStreamWriter.append(userLogged).append("\n");
+            outputStreamWriter.flush();
+            outputStreamWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

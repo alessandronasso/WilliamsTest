@@ -19,7 +19,10 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -96,26 +99,36 @@ public class MainActivity extends AppCompatActivity {
         final Button b1 = (Button) formElementsView
                 .findViewById(R.id.button_form);
 
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                ViewGroup parent = (ViewGroup) formElementsView.getParent();
-                if (parent != null) parent.removeView(formElementsView);
-                AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this).setView(formElementsView);
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                b1.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        final int selectedId = genderRadioGroup.getCheckedRadioButtonId();
-                        RadioButton selectedRadioButton = (RadioButton) formElementsView.findViewById(selectedId);
-                        if (selectedId == -1)
-                            loadProtocol(eta, "/");
-                        else
-                            loadProtocol(eta, selectedRadioButton.getText().toString());
+        if (checkCompleted()) {
+            button.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    if (!checkCompleted()) {
+                        new AlertDialog.Builder(MainActivity.this)
+                                .setTitle("Errore")
+                                .setMessage("Test già completato!")
+                                .setPositiveButton(android.R.string.ok, null)
+                                .show();
+                    } else {
+                        ViewGroup parent = (ViewGroup) formElementsView.getParent();
+                        if (parent != null) parent.removeView(formElementsView);
+                        AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this).setView(formElementsView);
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                        b1.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View v) {
+                                final int selectedId = genderRadioGroup.getCheckedRadioButtonId();
+                                RadioButton selectedRadioButton = (RadioButton) formElementsView.findViewById(selectedId);
+                                if (selectedId == -1)
+                                    loadProtocol(eta, "/");
+                                else
+                                    loadProtocol(eta, selectedRadioButton.getText().toString());
+                            }
+                        });
+                        alert.show().getWindow().setLayout(800, 550);
                     }
-                });
-                alert.show().getWindow().setLayout(800, 550);
-            }
-        });
+                }
+            });
+        }
         final TextView button3 = findViewById(R.id.button_3);
         button3.setShadowLayer(20, 0, 0, Color.BLACK);
     }
@@ -205,5 +218,20 @@ public class MainActivity extends AppCompatActivity {
 
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    private boolean checkCompleted () {
+        File inputFile = new File("/data/user/0/com.example.williamstest/testCompleted.txt");
+        if (!inputFile.exists()) return true;
+        else  {
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(inputFile));
+                String line;
+                while ((line = br.readLine()) != null)
+                    if (userLogged.equals(line)) return false;
+                br.close();
+            } catch (IOException e) { }
+        }
+        return true;
     }
 }

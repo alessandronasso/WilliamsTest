@@ -135,11 +135,12 @@ public class UserList extends ListActivity implements AppCompatCallback {
                         @Override
                         public void run() {
                             try {
-                            importIntoExcel();
                             generateImages();
+                            importIntoExcel();
                             DynamicToast.makeSuccess(UserList.this, "Salvataggio completato!", 2000).show();
                             b1.setEnabled(true);
                             } catch (IOException e) {
+                                DynamicToast.makeError(UserList.this, "Errore nel salvataggio!", 2000).show();
                                 e.printStackTrace();
                             }
                         }
@@ -462,7 +463,7 @@ public class UserList extends ListActivity implements AppCompatCallback {
                     LineNumberReader reader = new LineNumberReader(f);
                     String line;
                     line = reader.readLine();
-                    if (line.equals(userLogged)) numb++;
+                    if (line.equals(userLogged) || userLogged.equals("0000")) numb++;
                     f.close();
                 }
             }
@@ -476,7 +477,7 @@ public class UserList extends ListActivity implements AppCompatCallback {
                     LineNumberReader reader = new LineNumberReader(f);
                     String line;
                     line = reader.readLine();
-                    if (line.equals(userLogged)) {
+                    if (line.equals(userLogged) || userLogged.equals("0000")) {
                         String[] tmp = {"", "", "", "", "", ""};
                         tmp[0] = "Test: " + typeTest + "   ";
                         line = reader.readLine();
@@ -602,7 +603,6 @@ public class UserList extends ListActivity implements AppCompatCallback {
         // Create a Row
         Row headerRow = sheet.createRow(0);
 
-
         for (int i = 0; i < columns.length; i++) {
             Cell cell = headerRow.createCell(i);
             cell.setCellValue(columns[i]);
@@ -626,7 +626,7 @@ public class UserList extends ListActivity implements AppCompatCallback {
                     String protocollo = "";
                     line = reader.readLine();
                     Row row = null;
-                    if (line.equals(userLogged)) {
+                    if (line.equals(userLogged) || userLogged.equals("0000")) {
                         row = sheet.createRow(rowNum++);
                         row.createCell(0).setCellValue("Test: " + typeTest);
                         line = reader.readLine();
@@ -679,9 +679,7 @@ public class UserList extends ListActivity implements AppCompatCallback {
         sheet.setDefaultColumnWidth(23);
 
         // Write the output to a file
-        if (new File("/storage/emulated/0/Download/risultatiTest.xlsx").exists())
-            new File("/storage/emulated/0/Download/risultatiTest.xlsx").delete();
-        FileOutputStream fileOut = new FileOutputStream(new File("/storage/emulated/0/Download/risultatiTest.xlsx"));
+        FileOutputStream fileOut = new FileOutputStream(new File(Environment.getExternalStorageDirectory(), "/Download/risultatiTest.xlsx"));
         workbook.write(fileOut);
         fileOut.close();
     }
