@@ -226,6 +226,12 @@ public class MainActivity extends AppCompatActivity {
         alert.show();
     }
 
+    /**
+     * Method which checks if the user has already completed
+     * the test.
+     *
+     * @return true if the user has already completed the test.
+     */
     private boolean checkCompleted () {
         File inputFile = new File("/data/user/0/com.example.williamstest/testCompleted.txt");
         if (!inputFile.exists()) return true;
@@ -241,6 +247,9 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Method which adds the users to a list as soon as they open the test.
+     */
     private void addUserTime () {
         if (!alreadyStarted() && !userLogged.equals("0000")) {
             File inputFile = new File("/data/user/0/com.example.williamstest/testOpenedAt.txt");
@@ -256,6 +265,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Method which checks if the user has opened the test before this attempt.
+     *
+     * @return true if the user has already opened the test previously.
+     */
     private boolean alreadyStarted () {
         File inputFile = new File("/data/user/0/com.example.williamstest/testOpenedAt.txt");
         if (!inputFile.exists()) return false;

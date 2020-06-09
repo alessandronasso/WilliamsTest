@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -61,6 +62,12 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Method to check if a user has previously completed the test.
+     *
+     * @param userSubmitted userID
+     * @return true if a user has already completed the test
+     */
     private boolean checkCompleted (String userSubmitted) {
         File inputFile = new File("/data/user/0/com.example.williamstest/testCompleted.txt");
         if (!inputFile.exists()) return true;
@@ -76,13 +83,18 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Method to check if a user has previously opened the test.
+     *
+     * @param userSubmitted userID
+     * @return true if a user is trying to access the app after 2 hours
+     * from the last login
+     */
     private boolean timeNotElapsed (String userSubmitted) {
         File inputFile = new File("/data/user/0/com.example.williamstest/testOpenedAt.txt");
         Date currentTime = Calendar.getInstance().getTime();
-        //
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
-        //
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
         if (!inputFile.exists()) return true;
         else  {
             try {
@@ -96,6 +108,7 @@ public class LoginActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     Date d2 = cal.getTime();
+                    System.out.println("CURRENT TIME 2: "+d2);
                     long diff = currentTime.getTime() - d2.getTime();
                     if (userSubmitted.equals(result[0]) && (diff / (60 * 60 * 1000) % 24)>=2) return false;
                 }

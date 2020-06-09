@@ -618,6 +618,12 @@ public class PaintingActivity extends AppCompatActivity implements OnClickListen
         return sum;
     }
 
+    /**
+     * Method which create the list of the users that have already
+     * completed the test.
+     *
+     * @param userLogged userID
+     */
     private void addCompletedUser (String userLogged) {
         File inputFile = new File("/data/user/0/com.example.williamstest/testCompleted.txt");
         try {
