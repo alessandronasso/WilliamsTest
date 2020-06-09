@@ -21,8 +21,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -118,10 +120,12 @@ public class MainActivity extends AppCompatActivity {
                             public void onClick(View v) {
                                 final int selectedId = genderRadioGroup.getCheckedRadioButtonId();
                                 RadioButton selectedRadioButton = (RadioButton) formElementsView.findViewById(selectedId);
-                                if (selectedId == -1)
+                                addUserTime();
+                                if (selectedId == -1) {
                                     loadProtocol(eta, "/");
-                                else
+                                } else {
                                     loadProtocol(eta, selectedRadioButton.getText().toString());
+                                }
                             }
                         });
                         alert.show().getWindow().setLayout(800, 550);
@@ -169,11 +173,13 @@ public class MainActivity extends AppCompatActivity {
      * @param view the current view.
      */
     public void loadListOfTests(View view) {
-        Intent myIntent = new Intent(MainActivity.this, UserList.class);
-        myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        myIntent.putExtra("userLogged", userLogged);
-        myIntent.putExtra("palette", paletteSelected);
-        MainActivity.this.startActivity(myIntent);
+        if (userLogged.equals("0000")) {
+            Intent myIntent = new Intent(MainActivity.this, UserList.class);
+            myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            myIntent.putExtra("userLogged", userLogged);
+            myIntent.putExtra("palette", paletteSelected);
+            MainActivity.this.startActivity(myIntent);
+        }
     }
 
     /**
@@ -233,5 +239,37 @@ public class MainActivity extends AppCompatActivity {
             } catch (IOException e) { }
         }
         return true;
+    }
+
+    private void addUserTime () {
+        if (!alreadyStarted() && !userLogged.equals("0000")) {
+            File inputFile = new File("/data/user/0/com.example.williamstest/testOpenedAt.txt");
+            try {
+                FileOutputStream fos = new FileOutputStream(inputFile, true);
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fos);
+                outputStreamWriter.append(userLogged + ";" + Calendar.getInstance().getTime()).append("\n");
+                outputStreamWriter.flush();
+                outputStreamWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private boolean alreadyStarted () {
+        File inputFile = new File("/data/user/0/com.example.williamstest/testOpenedAt.txt");
+        if (!inputFile.exists()) return false;
+        else  {
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(inputFile));
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] result = line.split(";");
+                    if (userLogged.equals(result[0])) return true;
+                }
+                br.close();
+            } catch (IOException e) { }
+        }
+        return false;
     }
 }

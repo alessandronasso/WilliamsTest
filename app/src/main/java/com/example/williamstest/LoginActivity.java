@@ -14,7 +14,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -40,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
         Button openAct = findViewById(R.id.cirLoginButton);
         openAct.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (acceptedUsers.contains(edT.getText().toString()) && checkCompleted(edT.getText().toString())) {
+                if (acceptedUsers.contains(edT.getText().toString()) && checkCompleted(edT.getText().toString()) && timeNotElapsed(edT.getText().toString())) {
                     Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
                     myIntent.putExtra("userLogged", edT.getText().toString());
                     if (switchColor.isChecked()) myIntent.putExtra("palette", "yes");
@@ -66,6 +70,35 @@ public class LoginActivity extends AppCompatActivity {
                 String line;
                 while ((line = br.readLine()) != null)
                     if (userSubmitted.equals(line)) return false;
+                br.close();
+            } catch (IOException e) { }
+        }
+        return true;
+    }
+
+    private boolean timeNotElapsed (String userSubmitted) {
+        File inputFile = new File("/data/user/0/com.example.williamstest/testOpenedAt.txt");
+        Date currentTime = Calendar.getInstance().getTime();
+        //
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
+        //
+        if (!inputFile.exists()) return true;
+        else  {
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(inputFile));
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] result = line.split(";");
+                    try {
+                        cal.setTime(sdf.parse(result[1]));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    Date d2 = cal.getTime();
+                    long diff = currentTime.getTime() - d2.getTime();
+                    if (userSubmitted.equals(result[0]) && (diff / (60 * 60 * 1000) % 24)>=2) return false;
+                }
                 br.close();
             } catch (IOException e) { }
         }
