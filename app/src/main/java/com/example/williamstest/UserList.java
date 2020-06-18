@@ -476,9 +476,11 @@ public class UserList extends ListActivity implements AppCompatCallback {
                     FileReader f = new FileReader(file.getAbsolutePath() + "/infotest.txt");
                     LineNumberReader reader = new LineNumberReader(f);
                     String line;
+                    String userCode = "";
                     line = reader.readLine();
+                    userCode = line;
                     if (line.equals(userLogged) || userLogged.equals("0000")) {
-                        String[] tmp = {"", "", "", "", "", ""};
+                        String[] tmp = {"", "", "", "", "", "", ""};
                         tmp[0] = "Test: " + typeTest + "   ";
                         line = reader.readLine();
                         tmp[1] += "    Genere: " + line;
@@ -491,7 +493,8 @@ public class UserList extends ListActivity implements AppCompatCallback {
                         tmp[4] += "    Data: " + line + "   ";
                         line = reader.readLine();
                         tmp[5] += "    ID Ragazzo: " + line + "   ";
-                        user[arrayString++] = tmp[0]+tmp[5]+tmp[1]+tmp[2]+tmp[3]+tmp[4];
+                        tmp[6] += "    ID Prova: " + userCode + "    ";
+                        user[arrayString++] = tmp[0]+tmp[5]+tmp[1]+tmp[2]+tmp[3]+tmp[4]+tmp[6];
                     }
                     f.close();
                 }
@@ -584,7 +587,7 @@ public class UserList extends ListActivity implements AppCompatCallback {
      * This method generates an xlsx file with all the tests recorded.
      */
     private void importIntoExcel() throws IOException {
-        String[] columns = {"Numero Test", "Codice ID", "Genere", "Data di nascita", "Protocollo", "Data del test", " ", "Cornice", "Nome cornice", "Fluidità", "Flessibilità",
+        String[] columns = {"Numero Test", "Codice ID", "ID Prova", "Genere", "Data di nascita", "Protocollo", "Data del test", " ", "Cornice", "Nome cornice", "Fluidità", "Flessibilità",
                 "Originalita'", "Elaborazione'", "Titolo", "Tempo Reazione", "Tempo Completamento", "Numero cancellature", "Numero Undo"};
 
 
@@ -624,52 +627,77 @@ public class UserList extends ListActivity implements AppCompatCallback {
                     LineNumberReader reader = new LineNumberReader(f);
                     String line;
                     String protocollo = "";
+                    String testCode  ="";
                     line = reader.readLine();
+                    testCode = line;
                     Row row = null;
                     if (line.equals(userLogged) || userLogged.equals("0000")) {
                         row = sheet.createRow(rowNum++);
                         row.createCell(0).setCellValue("Test: " + typeTest);
                         line = reader.readLine();
-                        row.createCell(2).setCellValue(line);
-                        line = reader.readLine();
-                        if (line.equals("0")) row.createCell(2).setCellValue("/");
+                        row.createCell(2).setCellValue(testCode);
                         row.createCell(3).setCellValue(line);
                         line = reader.readLine();
-                        protocollo = line;
+                        if (line.equals("0")) row.createCell(2).setCellValue("/");
                         row.createCell(4).setCellValue(line);
                         line = reader.readLine();
+                        protocollo = line;
                         row.createCell(5).setCellValue(line);
+                        line = reader.readLine();
+                        row.createCell(6).setCellValue(line);
                         line = reader.readLine();
                         row.createCell(1).setCellValue(line);
                     }
                     for (int i=0; i<12; i++) {
                         String content = "";
-                        reader = new LineNumberReader(new FileReader(file.getAbsolutePath() + "/" + protocollo + (i + 1) + "_score.txt"));
-                        while ((line = reader.readLine()) != null) {
-                            content+=line+"\n";
+                        if (new File (file.getAbsolutePath() + "/" + protocollo + (i + 1) + "_score.txt").exists()) {
+                            reader = new LineNumberReader(new FileReader(file.getAbsolutePath() + "/" + protocollo + (i + 1) + "_score.txt"));
+                            while ((line = reader.readLine()) != null) content += line + "\n";
+
+                            String[] values = content.split("\n");
+                            row.createCell(6).setCellValue(" "); //Vuota
+                            row.createCell(7).setCellValue(i + 1); //Cornice
+                            row.createCell(8).setCellValue(values[4]); //Nome cornice
+                            row.createCell(9).setCellValue(values[0]); //Fluidita
+                            row.createCell(10).setCellValue(values[1]); //Flessibilita
+                            row.createCell(11).setCellValue(values[2]); //Originalita'
+                            row.createCell(12).setCellValue(values[3]); //Elaborazione
+                            row.createCell(13).setCellValue(values[9]); //Titolo
+                            row.createCell(14).setCellValue(values[5]); //Tempo reazione
+                            row.createCell(15).setCellValue(values[6]); //Tempo Completamento
+                            row.createCell(16).setCellValue(values[7]); //Numero cancellature
+                            row.createCell(17).setCellValue(values[8]); //Numero undo
+
+                            row = sheet.createRow(rowNum++);
+                            row.createCell(0).setCellValue(" ");
+                            row.createCell(1).setCellValue(" ");
+                            row.createCell(2).setCellValue(" ");
+                            row.createCell(3).setCellValue(" ");
+                            row.createCell(4).setCellValue(" ");
+                            row.createCell(5).setCellValue(" ");
+                        } else {
+                            String[] values = content.split("\n");
+                            row.createCell(6).setCellValue(" "); //Vuota
+                            row.createCell(7).setCellValue(i + 1); //Cornice
+                            row.createCell(8).setCellValue("Non disponibile"); //Nome cornice
+                            row.createCell(9).setCellValue("Non disponibile"); //Fluidita
+                            row.createCell(10).setCellValue("Non disponibile"); //Flessibilita
+                            row.createCell(11).setCellValue("Non disponibile"); //Originalita'
+                            row.createCell(12).setCellValue("Non disponibile"); //Elaborazione
+                            row.createCell(13).setCellValue("Non disponibile"); //Titolo
+                            row.createCell(14).setCellValue("Non disponibile"); //Tempo reazione
+                            row.createCell(15).setCellValue("Non disponibile"); //Tempo Completamento
+                            row.createCell(16).setCellValue("Non disponibile"); //Numero cancellature
+                            row.createCell(17).setCellValue("Non disponibile"); //Numero undo
+
+                            row = sheet.createRow(rowNum++);
+                            row.createCell(0).setCellValue(" ");
+                            row.createCell(1).setCellValue(" ");
+                            row.createCell(2).setCellValue(" ");
+                            row.createCell(3).setCellValue(" ");
+                            row.createCell(4).setCellValue(" ");
+                            row.createCell(5).setCellValue(" ");
                         }
-
-                        String[] values = content.split("\n");
-                        row.createCell(6).setCellValue(" "); //Vuota
-                        row.createCell(7).setCellValue(i+1); //Cornice
-                        row.createCell(8).setCellValue(values[4]); //Nome cornice
-                        row.createCell(9).setCellValue(values[0]); //Fluidita
-                        row.createCell(10).setCellValue(values[1]); //Flessibilita
-                        row.createCell(11).setCellValue(values[2]); //Originalita'
-                        row.createCell(12).setCellValue(values[3]); //Elaborazione
-                        row.createCell(13).setCellValue(values[9]); //Titolo
-                        row.createCell(14).setCellValue(values[5]); //Tempo reazione
-                        row.createCell(15).setCellValue(values[6]); //Tempo Completamento
-                        row.createCell(16).setCellValue(values[7]); //Numero cancellature
-                        row.createCell(17).setCellValue(values[8]); //Numero undo
-
-                        row = sheet.createRow(rowNum++);
-                        row.createCell(0).setCellValue(" ");
-                        row.createCell(1).setCellValue(" ");
-                        row.createCell(2).setCellValue(" ");
-                        row.createCell(3).setCellValue(" ");
-                        row.createCell(4).setCellValue(" ");
-                        row.createCell(5).setCellValue(" ");
                     }
                     f.close();
                 }
@@ -747,7 +775,7 @@ public class UserList extends ListActivity implements AppCompatCallback {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                 return false;
             }
-        } else { //permission is automatically granted on sdk<23 upon installation
+        } else {
             Log.v(TAG, "Permission is granted");
             return true;
         }
